@@ -30,8 +30,7 @@
   .topbar {
     background: var(--steel); color: #fff;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 0 20px; height: 56px;
-    position: sticky; top: 0; z-index: 100;
+    padding: 0 20px; height: 56px; position: sticky; top: 0; z-index: 100;
     box-shadow: 0 2px 8px rgba(0,0,0,.3);
   }
   .topbar .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; letter-spacing: .04em; }
@@ -44,10 +43,7 @@
   .topbar .week-nav button:hover { background: var(--accent); }
   .week-label { font-size: .9rem; font-weight: 600; min-width: 200px; text-align: center; }
   .topbar .stats { display: flex; gap: 18px; font-size: .82rem; }
-  .stat-box {
-    background: var(--steel-mid); border-radius: 8px; padding: 4px 12px;
-    display: flex; flex-direction: column; align-items: center;
-  }
+  .stat-box { background: var(--steel-mid); border-radius: 8px; padding: 4px 12px; display: flex; flex-direction: column; align-items: center; }
   .stat-box .val { font-size: 1.15rem; font-weight: 700; color: var(--amber); }
   .stat-box .lbl { font-size: .68rem; opacity: .7; }
 
@@ -60,72 +56,34 @@
   }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-  .grid-container {
-    background: var(--card); border-radius: 12px;
-    border: 1px solid var(--border); overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,.06);
-  }
+  .grid-container { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+
   .grid-header {
-    display: grid;
-    grid-template-columns: var(--col-label) repeat(5, var(--col-day));
-    background: var(--steel); height: var(--header-h);
-    position: sticky; top: 56px; z-index: 50;
+    display: grid; grid-template-columns: var(--col-label) repeat(5, var(--col-day));
+    background: var(--steel); height: var(--header-h); position: sticky; top: 56px; z-index: 50;
   }
-  .grid-header .h-corner {
-    display: flex; align-items: center; padding: 0 12px;
-    color: rgba(255,255,255,.5); font-size: .72rem; font-weight: 600;
-    letter-spacing: .06em; text-transform: uppercase;
-    border-right: 1px solid rgba(255,255,255,.08);
-  }
-  .grid-header .h-day {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    color: #fff; border-right: 1px solid rgba(255,255,255,.08); font-size: .82rem;
-  }
+  .grid-header .h-corner { display: flex; align-items: center; padding: 0 12px; color: rgba(255,255,255,.5); font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-right: 1px solid rgba(255,255,255,.08); }
+  .grid-header .h-day { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; border-right: 1px solid rgba(255,255,255,.08); font-size: .82rem; }
   .grid-header .h-day .day-name { font-weight: 700; font-size: .9rem; }
   .grid-header .h-day .day-date { font-size: .72rem; opacity: .6; }
   .grid-header .h-day.today { background: var(--accent); }
 
-  .grid-row {
-    display: grid;
-    grid-template-columns: var(--col-label) repeat(5, var(--col-day));
-    height: var(--slot-h); border-bottom: 1px solid var(--border); position: relative;
-  }
+  .grid-row { display: grid; grid-template-columns: var(--col-label) repeat(5, var(--col-day)); height: var(--slot-h); border-bottom: 1px solid var(--border); position: relative; }
   .grid-row:last-child { border-bottom: none; }
-  .grid-row:hover .row-label { background: rgba(0,0,0,.02); }
 
-  .row-label {
-    display: flex; align-items: center; padding: 0 10px;
-    border-right: 2px solid var(--border); gap: 7px;
-    font-size: .83rem; font-weight: 600; white-space: nowrap; overflow: hidden;
-    cursor: default; position: relative; z-index: 2; background: var(--card);
-  }
+  .row-label { display: flex; align-items: center; padding: 0 10px; border-right: 2px solid var(--border); gap: 7px; font-size: .83rem; font-weight: 600; white-space: nowrap; overflow: hidden; cursor: default; position: relative; z-index: 2; background: var(--card); }
   .row-label .vehicle-icon { font-size: 1rem; flex-shrink: 0; }
-  .row-label .vehicle-name {
-    flex: 1; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
-    border-bottom: 1px dashed transparent; transition: border-color .15s;
-    padding: 2px 4px; border-radius: 3px;
-  }
+  .row-label .vehicle-name { flex: 1; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-bottom: 1px dashed transparent; transition: border-color .15s; padding: 2px 4px; border-radius: 3px; }
   .row-label .vehicle-name:hover { border-color: var(--accent); background: rgba(232,76,30,.05); }
-  .row-label input.vehicle-edit {
-    flex: 1; border: 1.5px solid var(--accent); border-radius: 4px;
-    padding: 2px 6px; font-size: .83rem; font-weight: 600;
-    font-family: inherit; color: var(--text); outline: none; background: #fff;
-  }
-  .loan-badge {
-    font-size: .6rem; background: var(--loan-hd); color: #fff;
-    border-radius: 3px; padding: 1px 5px; font-weight: 700;
-    letter-spacing: .04em; flex-shrink: 0;
-  }
+  .row-label input.vehicle-edit { flex: 1; border: 1.5px solid var(--accent); border-radius: 4px; padding: 2px 6px; font-size: .83rem; font-weight: 600; font-family: inherit; color: var(--text); outline: none; background: #fff; }
+  .loan-badge { font-size: .6rem; background: var(--loan-hd); color: #fff; border-radius: 3px; padding: 1px 5px; font-weight: 700; letter-spacing: .04em; flex-shrink: 0; }
 
   .grid-row.has-loan .row-label { background: var(--loan-bg); }
   .grid-row.has-loan .day-cell  { background: rgba(26,82,118,.03); }
   .grid-row.no-loan .row-label  { background: var(--noloan-bg); }
   .grid-row.no-loan .day-cell   { background: rgba(125,78,27,.02); }
 
-  .day-cell {
-    border-right: 1px solid var(--border); position: relative;
-    cursor: pointer; transition: background .1s;
-  }
+  .day-cell { border-right: 1px solid var(--border); position: relative; cursor: pointer; transition: background .1s; }
   .day-cell:last-child { border-right: none; }
   .day-cell:hover { background: rgba(232,76,30,.06) !important; }
   .day-cell.today-col { background: rgba(232,76,30,.04) !important; }
@@ -133,117 +91,72 @@
 
   .appt {
     position: absolute; top: 4px; bottom: 4px; left: 3px; right: 3px;
-    border-radius: 6px; display: flex; align-items: center;
-    padding: 0 8px; font-size: .76rem; font-weight: 600; gap: 6px;
-    overflow: hidden; white-space: nowrap; cursor: move;
-    box-shadow: 0 2px 6px rgba(0,0,0,.15); user-select: none; z-index: 10;
+    border-radius: 6px; display: flex; align-items: center; padding: 0 8px;
+    font-size: .76rem; font-weight: 600; gap: 5px; overflow: hidden; white-space: nowrap;
+    cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,.15); user-select: none; z-index: 10;
   }
   .appt .appt-name { flex: 1; overflow: hidden; text-overflow: ellipsis; }
-  .appt .appt-hours {
-    font-size: .7rem; opacity: .85; background: rgba(255,255,255,.25);
-    border-radius: 4px; padding: 1px 5px; flex-shrink: 0;
-  }
-  .appt .appt-del {
-    opacity: 0; cursor: pointer; font-size: .9rem;
-    transition: opacity .15s; padding: 0 2px; flex-shrink: 0;
-  }
+  .appt .appt-hours { font-size: .7rem; opacity: .85; background: rgba(255,255,255,.25); border-radius: 4px; padding: 1px 5px; flex-shrink: 0; }
+  .appt .appt-del { opacity: 0; cursor: pointer; font-size: .9rem; transition: opacity .15s; padding: 0 2px; flex-shrink: 0; }
   .appt:hover .appt-del { opacity: 1; }
+
+  /* RESIZE HANDLE — grande zone de 16px, bien visible */
   .appt .resize-handle {
-    position: absolute; right: 0; top: 0; bottom: 0; width: 10px;
-    cursor: ew-resize; background: rgba(255,255,255,.25);
-    border-radius: 0 6px 6px 0; display: flex; align-items: center;
-    justify-content: center; font-size: .6rem; color: rgba(255,255,255,.7);
+    position: absolute; right: 0; top: 0; bottom: 0; width: 16px;
+    cursor: ew-resize; border-radius: 0 6px 6px 0;
+    background: rgba(0,0,0,.18);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; color: rgba(255,255,255,.9);
+    flex-shrink: 0;
   }
-  /* badge suite semaine suivante */
-  .appt .suite-badge {
-    font-size: .58rem; font-weight: 800; letter-spacing: .05em;
-    color: #fff; background: rgba(0,0,0,.3);
-    border-radius: 3px; padding: 1px 5px; flex-shrink: 0;
-  }
+  .appt .resize-handle:hover { background: rgba(0,0,0,.32); }
+
+  /* Badge suite */
+  .appt .suite-badge { font-size: .58rem; font-weight: 800; letter-spacing: .05em; color: #fff; background: rgba(0,0,0,.3); border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
 
   /* PIÈCE COMMANDÉE */
-  .appt.piece-ok .piece-badge {
-    font-size: .58rem; font-weight: 800; letter-spacing: .05em;
-    color: #fff; background: #e67e22; border-radius: 3px; padding: 1px 5px; flex-shrink: 0;
-  }
+  .appt.piece-ok .piece-badge { font-size: .58rem; font-weight: 800; letter-spacing: .05em; color: #fff; background: #e67e22; border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
   .appt:not(.piece-ok) .piece-badge { display: none; }
 
   /* STATUT ARRIVÉ */
   .appt.arrived { outline: 3px solid #2ecc71; outline-offset: -2px; }
-  .appt.arrived .arrived-badge {
-    font-size: .58rem; font-weight: 800; letter-spacing: .05em;
-    color: #fff; background: #2ecc71; border-radius: 3px; padding: 1px 5px; flex-shrink: 0;
-  }
+  .appt.arrived .arrived-badge { font-size: .58rem; font-weight: 800; letter-spacing: .05em; color: #fff; background: #2ecc71; border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
 
   /* MODAL */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.5); z-index: 200;
-    align-items: center; justify-content: center;
-  }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 200; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
-  .modal {
-    background: #fff; border-radius: 14px; padding: 28px 30px;
-    width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,.25);
-  }
-  .modal h2 {
-    font-size: 1.1rem; font-weight: 700; color: var(--steel);
-    margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
-  }
+  .modal { background: #fff; border-radius: 14px; padding: 28px 30px; width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+  .modal h2 { font-size: 1.1rem; font-weight: 700; color: var(--steel); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
   .modal h2::before { content: '🔧'; font-size: 1.2rem; }
-  .modal label {
-    display: block; font-size: .78rem; font-weight: 600; color: var(--muted);
-    text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; margin-top: 14px;
-  }
-  .modal input, .modal select {
-    width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
-    padding: 9px 12px; font-size: .88rem; font-family: inherit;
-    color: var(--text); outline: none; transition: border-color .15s;
-  }
-  .modal input:focus, .modal select:focus { border-color: var(--accent); }
+  .modal label { display: block; font-size: .78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; margin-top: 14px; }
+  .modal input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 12px; font-size: .88rem; font-family: inherit; color: var(--text); outline: none; transition: border-color .15s; }
+  .modal input:focus { border-color: var(--accent); }
   .modal .hours-row { display: flex; gap: 10px; align-items: flex-end; }
   .modal .hours-row > div { flex: 1; }
   .modal .duration-note { font-size: .75rem; color: var(--muted); margin-top: 6px; display: flex; align-items: center; gap: 5px; }
   .color-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
-  .color-swatch {
-    width: 26px; height: 26px; border-radius: 50%; cursor: pointer;
-    border: 3px solid transparent; transition: transform .15s, border-color .15s;
-  }
+  .color-swatch { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform .15s, border-color .15s; }
   .color-swatch:hover { transform: scale(1.15); }
   .color-swatch.selected { border-color: var(--text); }
   .modal .btn-row { display: flex; gap: 10px; margin-top: 22px; }
-  .btn-primary {
-    flex: 1; background: var(--accent); color: #fff; border: none;
-    border-radius: 8px; padding: 10px; font-size: .9rem; font-weight: 700;
-    cursor: pointer; transition: background .15s;
-  }
+  .btn-primary { flex: 1; background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: .9rem; font-weight: 700; cursor: pointer; transition: background .15s; }
   .btn-primary:hover { background: #c43f18; }
-  .btn-secondary {
-    background: var(--surface); color: var(--muted); border: 1.5px solid var(--border);
-    border-radius: 8px; padding: 10px 18px; font-size: .9rem; cursor: pointer; transition: background .15s;
-  }
+  .btn-secondary { background: var(--surface); color: var(--muted); border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 18px; font-size: .9rem; cursor: pointer; transition: background .15s; }
   .btn-secondary:hover { background: var(--border); }
 
-  /* MODAL EDIT */
   #editModalOverlay { z-index: 210; }
   .status-row { display: flex; gap: 10px; margin-top: 6px; }
-  .status-btn {
-    flex: 1; border: 2px solid var(--border); border-radius: 8px; padding: 9px;
-    font-size: .82rem; font-weight: 700; cursor: pointer; background: var(--surface);
-    color: var(--muted); transition: all .15s; display: flex; align-items: center;
-    justify-content: center; gap: 6px; font-family: inherit;
-  }
+  .status-btn { flex: 1; border: 2px solid var(--border); border-radius: 8px; padding: 9px; font-size: .82rem; font-weight: 700; cursor: pointer; background: var(--surface); color: var(--muted); transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; }
   .status-btn.active-arrived { border-color: #2ecc71; background: #eafaf1; color: #1e8449; }
   .status-btn.active-pending { border-color: var(--amber); background: #fef9e7; color: #9a6a00; }
 
-  /* TOOLTIP */
-  .tooltip {
-    position: fixed; background: var(--steel); color: #fff;
-    font-size: .78rem; padding: 6px 12px; border-radius: 6px;
-    pointer-events: none; z-index: 300; white-space: nowrap;
-    opacity: 0; transition: opacity .15s;
-  }
+  .tooltip { position: fixed; background: var(--steel); color: #fff; font-size: .78rem; padding: 6px 12px; border-radius: 6px; pointer-events: none; z-index: 300; white-space: nowrap; opacity: 0; transition: opacity .15s; }
   .tooltip.show { opacity: 1; }
+
+  /* Curseur resize global pendant le drag */
+  body.resizing-active { cursor: ew-resize !important; }
+  body.resizing-active * { pointer-events: none !important; }
+  body.resizing-active .appt .resize-handle { pointer-events: auto !important; }
 </style>
 </head>
 <body>
@@ -272,7 +185,7 @@
     <input type="text" id="apptName" placeholder="Ex: DUPONT – Peugeot 308">
     <label>Durée (jours)</label>
     <div class="hours-row">
-      <div><input type="number" id="apptDays" value="1" min="1" max="20" placeholder="Jours"></div>
+      <div><input type="number" id="apptDays" value="1" min="1" max="30" placeholder="Jours"></div>
       <div>
         <label style="margin-top:0">Heures de travail</label>
         <input type="number" id="apptHours" value="4" min="0.5" max="999" step="0.5" placeholder="h">
@@ -319,8 +232,7 @@
 
 <script>
 const COLORS = ['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
-
-const DEFAULT_LOAN_VEHICLES  = ['Clio IV','Peugeot 208','C3 Aircross','Toyota Yaris','Polo VI','DS3','Sandero','Mégane IV'];
+const DEFAULT_LOAN_VEHICLES   = ['Clio IV','Peugeot 208','C3 Aircross','Toyota Yaris','Polo VI','DS3','Sandero','Mégane IV'];
 const DEFAULT_NOLOAN_VEHICLES = ['Poste 1','Poste 2','Poste 3','Poste 4','Poste 5','Poste 6','Poste 7','Poste 8'];
 
 let state = loadState();
@@ -329,56 +241,58 @@ function defaultState() {
   return { loanNames:[...DEFAULT_LOAN_VEHICLES], noLoanNames:[...DEFAULT_NOLOAN_VEHICLES], appointments:[], weekOffset:0 };
 }
 function loadState() {
-  try { const s = localStorage.getItem('carrosserie_planning'); if(s) return JSON.parse(s); } catch(e){}
+  try { const s=localStorage.getItem('carrosserie_planning'); if(s) return JSON.parse(s); } catch(e){}
   return defaultState();
 }
 function saveState() { localStorage.setItem('carrosserie_planning', JSON.stringify(state)); }
 
 // ── DATE HELPERS ──
 function getMonday(date) {
-  const d = new Date(date); const day = d.getDay();
-  d.setDate(d.getDate() + (day===0 ? -6 : 1-day)); d.setHours(0,0,0,0); return d;
+  const d = new Date(date), day = d.getDay();
+  d.setDate(d.getDate() + (day===0 ? -6 : 1-day));
+  d.setHours(0,0,0,0); return d;
 }
 function getWeekDays(offset) {
-  const o = (offset !== undefined) ? offset : state.weekOffset;
-  const monday = getMonday(new Date()); monday.setDate(monday.getDate() + o*7);
-  return Array.from({length:5}, (_,i) => { const d=new Date(monday); d.setDate(d.getDate()+i); return d; });
+  const o = offset !== undefined ? offset : state.weekOffset;
+  const m = getMonday(new Date()); m.setDate(m.getDate() + o*7);
+  return Array.from({length:5}, (_,i) => { const d=new Date(m); d.setDate(d.getDate()+i); return d; });
 }
-function isToday(date) { return date.toDateString() === new Date().toDateString(); }
+function isToday(d) { return d.toDateString() === new Date().toDateString(); }
 function getWeekLabel(days) {
   const opts={day:'numeric',month:'long'}, y=days[0].getFullYear();
   return `Semaine du ${days[0].toLocaleDateString('fr-FR',opts)} au ${days[4].toLocaleDateString('fr-FR',opts)} ${y}`;
 }
-// Retourne le lundi d'une semaine à partir du weekOffset
-function mondayOfOffset(offset) {
-  const m = getMonday(new Date()); m.setDate(m.getDate() + offset*7); return m;
-}
 
-// ── SPAN MULTI-SEMAINES ──
-// Un RDV a: weekStart (ISO du lundi), day (0-4), totalDays (nb jours total)
-// On calcule quels morceaux afficher sur la semaine courante
-function getSegmentsForWeek(appt, weekOffset) {
+// Convertit une date en "jour absolu" (nb de jours depuis une époque fixe)
+// On utilise les jours ouvrés : lun=0, mar=1, ..., ven=4, puis lun suivant=5, etc.
+// Plus simple : on stocke juste timestamp/86400000 arrondi
+function dateToAbsDay(date) { return Math.round(new Date(date).getTime() / 86400000); }
+function mondayAbsDay(offset) { return dateToAbsDay(getMonday(new Date())) + offset * 7; }
+
+// Pour un RDV, calcule le segment visible sur la semaine affichée (weekOffset)
+// Retourne null si pas de chevauchement
+function getSegment(appt, weekOffset) {
   // Jour absolu de début du RDV
-  const apptMonday  = new Date(appt.weekStart);
-  const apptAbsStart = apptMonday.getTime() / 86400000 + appt.day; // en jours depuis epoch
-  const apptAbsEnd   = apptAbsStart + (appt.totalDays || appt.span || 1) - 1;
+  const apptMonStart = dateToAbsDay(new Date(appt.weekStart)); // lundi de la semaine du RDV
+  const apptAbsStart = apptMonStart + appt.day;                // jour précis de début
+  const totalDays    = appt.totalDays || 1;
+  const apptAbsEnd   = apptAbsStart + totalDays - 1;           // dernier jour inclus
 
-  // Jours absolus de la semaine affichée
-  const viewMonday  = mondayOfOffset(weekOffset);
-  const viewAbsStart = viewMonday.getTime() / 86400000;
-  const viewAbsEnd   = viewAbsStart + 4;
+  // Jours absolus de la semaine affichée (lun à ven)
+  const viewMonStart = mondayAbsDay(weekOffset);
+  const viewAbsEnd   = viewMonStart + 4;
 
   // Intersection
-  const segStart = Math.max(apptAbsStart, viewAbsStart);
-  const segEnd   = Math.min(apptAbsEnd,   viewAbsEnd);
-  if (segStart > segEnd) return null;
+  const segAbsStart = Math.max(apptAbsStart, viewMonStart);
+  const segAbsEnd   = Math.min(apptAbsEnd,   viewAbsEnd);
+  if (segAbsStart > segAbsEnd) return null;
 
-  const dayInWeek = Math.round(segStart - viewAbsStart); // 0-4
-  const spanDays  = Math.round(segEnd - segStart) + 1;
-  const isContinued = apptAbsStart < viewAbsStart; // vient de la semaine d'avant
-  const continues   = apptAbsEnd   > viewAbsEnd;   // continue semaine d'après
-
-  return { dayInWeek, spanDays, isContinued, continues };
+  return {
+    dayInWeek:   segAbsStart - viewMonStart,   // 0-4 = colonne de début
+    spanDays:    segAbsEnd - segAbsStart + 1,  // nb colonnes à couvrir
+    isContinued: apptAbsStart < viewMonStart,  // vient de semaine précédente
+    continues:   apptAbsEnd   > viewAbsEnd,    // continue semaine suivante
+  };
 }
 
 // ── RENDER ──
@@ -390,28 +304,26 @@ function render() {
   planner.innerHTML = '';
 
   planner.appendChild(makeSectionLabel('🚗 Véhicules de prêt (8 postes)'));
-  const loanContainer = document.createElement('div');
-  loanContainer.className = 'grid-container';
-  loanContainer.appendChild(buildHeader(days));
-  state.loanNames.forEach((name,i) => loanContainer.appendChild(makeRow('loan',i,name,days)));
-  planner.appendChild(loanContainer);
+  const lc = document.createElement('div'); lc.className='grid-container';
+  lc.appendChild(buildHeader(days));
+  state.loanNames.forEach((name,i) => lc.appendChild(makeRow('loan',i,name,days)));
+  planner.appendChild(lc);
 
   planner.appendChild(makeSectionLabel('🔩 Postes sans véhicule de prêt'));
-  const noLoanContainer = document.createElement('div');
-  noLoanContainer.className = 'grid-container';
-  noLoanContainer.appendChild(buildHeader(days));
-  state.noLoanNames.forEach((name,i) => noLoanContainer.appendChild(makeRow('noloan',i,name,days)));
-  planner.appendChild(noLoanContainer);
+  const nc = document.createElement('div'); nc.className='grid-container';
+  nc.appendChild(buildHeader(days));
+  state.noLoanNames.forEach((name,i) => nc.appendChild(makeRow('noloan',i,name,days)));
+  planner.appendChild(nc);
 
-  renderAppointments(days);
+  renderAppointments();
 }
 
 function makeSectionLabel(text) {
-  const el = document.createElement('div'); el.className='section-label'; el.style.margin='14px 0 6px'; el.innerHTML=text; return el;
+  const el=document.createElement('div'); el.className='section-label'; el.style.margin='14px 0 6px'; el.innerHTML=text; return el;
 }
 function buildHeader(days) {
-  const h = document.createElement('div'); h.className='grid-header';
-  h.innerHTML = `<div class="h-corner">VÉHICULE</div>` + days.map(d=>`
+  const h=document.createElement('div'); h.className='grid-header';
+  h.innerHTML=`<div class="h-corner">VÉHICULE</div>`+days.map(d=>`
     <div class="h-day${isToday(d)?' today':''}">
       <span class="day-name">${d.toLocaleDateString('fr-FR',{weekday:'long'}).toUpperCase()}</span>
       <span class="day-date">${d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span>
@@ -419,40 +331,39 @@ function buildHeader(days) {
   return h;
 }
 function makeRow(type, rowIdx, name, days) {
-  const row = document.createElement('div');
-  row.className = `grid-row ${type==='loan'?'has-loan':'no-loan'}`;
+  const row=document.createElement('div');
+  row.className=`grid-row ${type==='loan'?'has-loan':'no-loan'}`;
   row.dataset.type=type; row.dataset.row=rowIdx;
 
-  const label = document.createElement('div'); label.className='row-label';
-  label.innerHTML = `<span class="vehicle-icon">${type==='loan'?'🚗':'🔧'}</span>`;
-  const nameEl = document.createElement('span'); nameEl.className='vehicle-name';
+  const label=document.createElement('div'); label.className='row-label';
+  label.innerHTML=`<span class="vehicle-icon">${type==='loan'?'🚗':'🔧'}</span>`;
+  const nameEl=document.createElement('span'); nameEl.className='vehicle-name';
   nameEl.textContent=name; nameEl.title='Cliquer pour modifier';
-  nameEl.onclick = () => startEditName(nameEl,type,rowIdx);
+  nameEl.onclick=()=>startEditName(nameEl,type,rowIdx);
   label.appendChild(nameEl);
-  if (type==='loan') { const b=document.createElement('span'); b.className='loan-badge'; b.textContent='PRÊT'; label.appendChild(b); }
+  if(type==='loan'){const b=document.createElement('span');b.className='loan-badge';b.textContent='PRÊT';label.appendChild(b);}
   row.appendChild(label);
 
-  days.forEach((d,dayIdx) => {
-    const cell = document.createElement('div');
-    cell.className = `day-cell${isToday(d)?' today-col':''}`;
+  days.forEach((d,dayIdx)=>{
+    const cell=document.createElement('div');
+    cell.className=`day-cell${isToday(d)?' today-col':''}`;
     cell.dataset.type=type; cell.dataset.row=rowIdx; cell.dataset.day=dayIdx;
-    cell.onclick = () => openModal(type,rowIdx,dayIdx);
+    cell.onclick=()=>openModal(type,rowIdx,dayIdx);
     row.appendChild(cell);
   });
   return row;
 }
-
-function startEditName(el, type, rowIdx) {
-  const input = document.createElement('input'); input.className='vehicle-edit'; input.value=el.textContent;
+function startEditName(el,type,rowIdx){
+  const input=document.createElement('input'); input.className='vehicle-edit'; input.value=el.textContent;
   el.replaceWith(input); input.focus(); input.select();
-  const save = () => { const v=input.value.trim()||el.textContent; if(type==='loan') state.loanNames[rowIdx]=v; else state.noLoanNames[rowIdx]=v; saveState(); render(); };
-  input.onblur=save; input.onkeydown=e=>{ if(e.key==='Enter') save(); if(e.key==='Escape') render(); };
+  const save=()=>{const v=input.value.trim()||el.textContent;if(type==='loan')state.loanNames[rowIdx]=v;else state.noLoanNames[rowIdx]=v;saveState();render();};
+  input.onblur=save; input.onkeydown=e=>{if(e.key==='Enter')save();if(e.key==='Escape')render();};
 }
 
-// ── RENDER APPOINTMENTS (multi-semaines) ──
-function renderAppointments(days) {
+// ── RENDER APPOINTMENTS ──
+function renderAppointments() {
   state.appointments.forEach(appt => {
-    const seg = getSegmentsForWeek(appt, state.weekOffset);
+    const seg = getSegment(appt, state.weekOffset);
     if (!seg) return;
 
     const cell = document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${seg.dayInWeek}"]`);
@@ -463,71 +374,117 @@ function renderAppointments(days) {
     apptEl.style.background = appt.color;
     apptEl.style.color = '#fff';
 
+    // Étirement horizontal sur N colonnes
     if (seg.spanDays > 1) {
       apptEl.style.right = `calc(-${(seg.spanDays-1)*100}% - ${(seg.spanDays-1)}px)`;
       apptEl.style.zIndex = 15;
     }
-    // Si ça vient de la semaine d'avant, arrondir à gauche différemment
-    if (seg.isContinued) { apptEl.style.left='0'; apptEl.style.borderRadius='0 6px 6px 0'; apptEl.style.opacity='.9'; }
-    // Si ça continue semaine d'après, arrondir à droite différemment
-    if (seg.continues)   { apptEl.style.right='0'; apptEl.style.borderRadius= seg.isContinued ? '0':'6px 0 0 6px'; }
+    // Arrondi adapté si le RDV déborde des bords
+    if (seg.isContinued) { apptEl.style.left='1px'; apptEl.style.borderTopLeftRadius='0'; apptEl.style.borderBottomLeftRadius='0'; }
+    if (seg.continues)   { apptEl.style.right=seg.spanDays>1?`calc(-${(seg.spanDays-1)*100}% + 1px)`:'1px'; apptEl.style.borderTopRightRadius='0'; apptEl.style.borderBottomRightRadius='0'; }
 
     if (appt.arrived) apptEl.classList.add('arrived');
     if (appt.piece)   apptEl.classList.add('piece-ok');
 
-    const totalDays = appt.totalDays || appt.span || 1;
+    // Affiche poignée resize seulement sur le dernier morceau visible (= fin du RDV)
+    const showHandle = !seg.continues;
 
     apptEl.innerHTML = `
-      <span class="appt-name">${seg.isContinued ? '◀ ':''} ${appt.name}</span>
+      ${seg.isContinued ? '<span class="suite-badge">◀</span>' : ''}
+      <span class="appt-name">${appt.name}</span>
       ${appt.arrived ? '<span class="arrived-badge">✔ ARRIVÉ</span>' : ''}
       ${appt.piece   ? '<span class="piece-badge">📦 PIÈCE OK</span>' : ''}
-      ${seg.continues ? '<span class="suite-badge">▶ suite</span>' : ''}
-      <span class="appt-hours">${appt.hours}h</span>
-      <span class="appt-del" onclick="deleteAppt(event,'${appt.id}')">✕</span>
-      ${!seg.continues ? '<span class="resize-handle" title="Étirer sur plusieurs semaines">⠿</span>' : ''}
+      ${seg.continues ? '<span class="suite-badge">▶</span>' : ''}
+      <span class="appt-hours">${appt.hours}h · ${appt.totalDays}j</span>
+      <span class="appt-del" title="Supprimer">✕</span>
+      ${showHandle ? '<span class="resize-handle" title="Étirer">⠿</span>' : ''}
     `;
 
+    // Supprimer
+    apptEl.querySelector('.appt-del').addEventListener('click', e => { e.stopPropagation(); deleteAppt(appt.id); });
+
+    // Clic = éditer (sauf sur les contrôles)
     apptEl.addEventListener('click', e => {
       if (e.target.classList.contains('appt-del') || e.target.classList.contains('resize-handle')) return;
       e.stopPropagation(); openEditModal(appt.id);
     });
-    apptEl.onmouseenter = e => showTooltip(e, `${appt.name} — ${appt.hours}h — ${totalDays} jour(s) au total`);
+
+    // Tooltip
+    apptEl.onmouseenter = e => showTooltip(e, `${appt.name} — ${appt.hours}h — ${appt.totalDays} jour(s)`);
     apptEl.onmouseleave = hideTooltip;
     apptEl.onmousemove  = e => moveTooltip(e);
 
-    const rh = apptEl.querySelector('.resize-handle');
-    if (rh) rh.addEventListener('mousedown', e => { e.stopPropagation(); startResize(e, appt); });
+    // Resize
+    if (showHandle) {
+      apptEl.querySelector('.resize-handle').addEventListener('mousedown', e => {
+        e.stopPropagation(); e.preventDefault();
+        startResize(e, appt);
+      });
+    }
 
     cell.appendChild(apptEl);
   });
 }
 
-// ── RESIZE MULTI-SEMAINES ──
+// ══════════════════════════════════════════════
+//  RESIZE — basé sur position absolue du curseur dans la grille
+// ══════════════════════════════════════════════
 let resizing = null;
 
 function startResize(e, appt) {
-  e.preventDefault();
-  resizing = { appt, startX: e.clientX, origTotal: appt.totalDays || appt.span || 1 };
+  // Snapshot la largeur d'une cellule au moment du début du drag
+  const cells = document.querySelectorAll(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day]`);
+  const cellW  = cells.length ? cells[0].getBoundingClientRect().width : 100;
+
+  // Jour absolu de début du RDV
+  const apptMonStart = dateToAbsDay(new Date(appt.weekStart));
+  const apptAbsStart = apptMonStart + appt.day;
+
+  // Position X du bord droit du RDV au moment du clic
+  const apptAbsEnd   = apptAbsStart + (appt.totalDays || 1) - 1;
+  // Semaine affichée : on calcule X du bord gauche de la cellule day=0
+  const firstCell = cells[0];
+  const gridLeft  = firstCell ? firstCell.getBoundingClientRect().left : 0;
+
+  resizing = {
+    appt,
+    cellW,
+    apptAbsStart,
+    origTotalDays: appt.totalDays || 1,
+    startX: e.clientX,
+    gridLeft,
+  };
+
+  document.body.classList.add('resizing-active');
   document.addEventListener('mousemove', doResize);
   document.addEventListener('mouseup', endResize);
 }
 
 function doResize(e) {
   if (!resizing) return;
-  const cells = document.querySelectorAll(`[data-type="${resizing.appt.type}"][data-row="${resizing.appt.row}"][data-day]`);
-  if (!cells.length) return;
-  const cellW = cells[0].getBoundingClientRect().width;
-  const extraDays = Math.round((e.clientX - resizing.startX) / cellW);
-  const newTotal = Math.max(1, resizing.origTotal + extraDays);
-  if (newTotal !== resizing.appt.totalDays) {
-    resizing.appt.totalDays = newTotal;
-    resizing.appt.span = newTotal; // compatibilité
-    saveState(); render();
+  const { appt, cellW, apptAbsStart, origTotalDays, startX, gridLeft } = resizing;
+
+  // Combien de pixels le curseur a-t-il bougé depuis le début ?
+  const dx = e.clientX - startX;
+
+  // Convertit en jours supplémentaires (pas d'arrondi abrupte : seuil à 30% d'une cellule)
+  const rawExtra = dx / cellW;
+  const extraDays = rawExtra >= 0
+    ? Math.floor(rawExtra + 0.3)   // étirement : déclenche après 30% d'avance
+    : Math.ceil(rawExtra - 0.3);   // rétrécissement : déclenche après 30% de recul
+
+  const newTotal = Math.max(1, origTotalDays + extraDays);
+
+  if (newTotal !== appt.totalDays) {
+    appt.totalDays = newTotal;
+    saveState();
+    render();
   }
 }
 
 function endResize() {
   resizing = null;
+  document.body.classList.remove('resizing-active');
   document.removeEventListener('mousemove', doResize);
   document.removeEventListener('mouseup', endResize);
 }
@@ -535,73 +492,70 @@ function endResize() {
 // ── MODAL NOUVEAU RDV ──
 let pendingAppt=null, selectedColor=0;
 
-function openModal(type, row, day) {
+function openModal(type,row,day){
   pendingAppt={type,row,day}; selectedColor=0;
   document.getElementById('apptName').value='';
   document.getElementById('apptDays').value=1;
   document.getElementById('apptHours').value=4;
   const cp=document.getElementById('colorPicker'); cp.innerHTML='';
-  COLORS.forEach((c,i) => {
+  COLORS.forEach((c,i)=>{
     const sw=document.createElement('div'); sw.className=`color-swatch${i===0?' selected':''}`;
     sw.style.background=c;
-    sw.onclick=()=>{ cp.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected')); sw.classList.add('selected'); selectedColor=i; };
+    sw.onclick=()=>{cp.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));sw.classList.add('selected');selectedColor=i;};
     cp.appendChild(sw);
   });
   document.getElementById('modalOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('apptName').focus(),50);
 }
-function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); pendingAppt=null; }
-function saveAppt() {
-  if (!pendingAppt) return;
-  const name  = document.getElementById('apptName').value.trim();
-  const days  = parseInt(document.getElementById('apptDays').value)||1;
-  const hours = parseFloat(document.getElementById('apptHours').value)||0;
-  if (!name) { document.getElementById('apptName').focus(); return; }
-  const weekDays = getWeekDays();
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');pendingAppt=null;}
+function saveAppt(){
+  if(!pendingAppt) return;
+  const name=document.getElementById('apptName').value.trim();
+  const totalDays=parseInt(document.getElementById('apptDays').value)||1;
+  const hours=parseFloat(document.getElementById('apptHours').value)||0;
+  if(!name){document.getElementById('apptName').focus();return;}
+  const weekDays=getWeekDays();
   state.appointments.push({
     id: Date.now().toString(36)+Math.random().toString(36).slice(2),
     type:pendingAppt.type, row:pendingAppt.row, day:pendingAppt.day,
-    totalDays:days, span:days, name, hours, color:COLORS[selectedColor],
+    totalDays, name, hours, color:COLORS[selectedColor],
     weekStart: weekDays[0].toISOString()
   });
   saveState(); closeModal(); render();
 }
-function deleteAppt(e, id) {
-  e.stopPropagation();
+function deleteAppt(id){
   state.appointments=state.appointments.filter(a=>a.id!==id);
   saveState(); render();
 }
 
 // ── STATS ──
-function updateStats() {
-  const days = getWeekDays();
-  // Compter tous les RDV qui touchent cette semaine
-  const weekAppts = state.appointments.filter(a => getSegmentsForWeek(a, state.weekOffset) !== null);
-  document.getElementById('totalHours').textContent = weekAppts.reduce((s,a)=>s+(a.hours||0),0)+'h';
-  document.getElementById('totalAppts').textContent = weekAppts.length;
+function updateStats(){
+  const days=getWeekDays();
+  const weekAppts=state.appointments.filter(a=>getSegment(a,state.weekOffset)!==null);
+  document.getElementById('totalHours').textContent=weekAppts.reduce((s,a)=>s+(a.hours||0),0)+'h';
+  document.getElementById('totalAppts').textContent=weekAppts.length;
 }
 
-// ── NAVIGATION ──
-function changeWeek(delta) { state.weekOffset+=delta; saveState(); render(); }
-function goToday()         { state.weekOffset=0;      saveState(); render(); }
+function changeWeek(d){state.weekOffset+=d;saveState();render();}
+function goToday(){state.weekOffset=0;saveState();render();}
 
 // ── TOOLTIP ──
-function showTooltip(e,text) { const t=document.getElementById('tooltip'); t.textContent=text; t.classList.add('show'); moveTooltip(e); }
-function moveTooltip(e)      { const t=document.getElementById('tooltip'); t.style.left=(e.clientX+12)+'px'; t.style.top=(e.clientY-32)+'px'; }
-function hideTooltip()       { document.getElementById('tooltip').classList.remove('show'); }
+function showTooltip(e,t){const el=document.getElementById('tooltip');el.textContent=t;el.classList.add('show');moveTooltip(e);}
+function moveTooltip(e){const el=document.getElementById('tooltip');el.style.left=(e.clientX+12)+'px';el.style.top=(e.clientY-32)+'px';}
+function hideTooltip(){document.getElementById('tooltip').classList.remove('show');}
 
 // ── CLAVIER ──
-document.addEventListener('keydown', e => {
-  if (e.key==='Escape') { closeModal(); closeEditModal(); }
-  if (e.key==='Enter' && document.getElementById('modalOverlay').classList.contains('open')) saveAppt();
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closeEditModal();}
+  if(e.key==='Enter'&&document.getElementById('modalOverlay').classList.contains('open'))saveAppt();
 });
-document.getElementById('modalOverlay').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
 // ── EDIT MODAL ──
-let editingApptId=null, editSelectedColor=0, editStatus='pending', editPiece=false;
+let editingApptId=null,editSelectedColor=0,editStatus='pending',editPiece=false;
 
-function openEditModal(id) {
-  const appt=state.appointments.find(a=>a.id===id); if(!appt) return;
+function openEditModal(id){
+  const appt=state.appointments.find(a=>a.id===id); if(!appt)return;
   editingApptId=id;
   editStatus=appt.arrived?'arrived':'pending';
   editPiece=appt.piece||false;
@@ -610,37 +564,37 @@ function openEditModal(id) {
   document.getElementById('editApptHours').value=appt.hours;
   setEditStatus(editStatus); setEditPiece(editPiece);
   const cp=document.getElementById('editColorPicker'); cp.innerHTML='';
-  COLORS.forEach((c,i) => {
+  COLORS.forEach((c,i)=>{
     const sw=document.createElement('div'); sw.className=`color-swatch${i===editSelectedColor?' selected':''}`;
     sw.style.background=c;
-    sw.onclick=()=>{ cp.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected')); sw.classList.add('selected'); editSelectedColor=i; };
+    sw.onclick=()=>{cp.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));sw.classList.add('selected');editSelectedColor=i;};
     cp.appendChild(sw);
   });
   document.getElementById('editModalOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('editApptName').focus(),50);
 }
-function setEditStatus(s) {
+function setEditStatus(s){
   editStatus=s;
   document.getElementById('btnPending').className='status-btn'+(s==='pending'?' active-pending':'');
   document.getElementById('btnArrived').className='status-btn'+(s==='arrived'?' active-arrived':'');
 }
-function setEditPiece(val) {
+function setEditPiece(val){
   editPiece=val;
   document.getElementById('btnPieceNon').className='status-btn'+(!val?' active-pending':'');
   document.getElementById('btnPieceOui').className='status-btn'+(val?' active-arrived':'');
 }
-function closeEditModal() { document.getElementById('editModalOverlay').classList.remove('open'); editingApptId=null; }
-function saveEditAppt() {
-  if(!editingApptId) return;
+function closeEditModal(){document.getElementById('editModalOverlay').classList.remove('open');editingApptId=null;}
+function saveEditAppt(){
+  if(!editingApptId)return;
   const name=document.getElementById('editApptName').value.trim();
   const hours=parseFloat(document.getElementById('editApptHours').value)||0;
-  if(!name){ document.getElementById('editApptName').focus(); return; }
-  const appt=state.appointments.find(a=>a.id===editingApptId); if(!appt) return;
+  if(!name){document.getElementById('editApptName').focus();return;}
+  const appt=state.appointments.find(a=>a.id===editingApptId); if(!appt)return;
   appt.name=name; appt.hours=hours; appt.color=COLORS[editSelectedColor];
   appt.arrived=(editStatus==='arrived'); appt.piece=editPiece;
   saveState(); closeEditModal(); render();
 }
-document.getElementById('editModalOverlay').addEventListener('click', function(e){ if(e.target===this) closeEditModal(); });
+document.getElementById('editModalOverlay').addEventListener('click',function(e){if(e.target===this)closeEditModal();});
 
 render();
 </script>
