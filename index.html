@@ -34,7 +34,6 @@
     min-height: 100vh;
   }
 
-  /* ─── TOP BAR ─── */
   .topbar {
     background: var(--steel);
     color: #fff;
@@ -99,14 +98,12 @@
   }
   .stat-box .lbl { font-size: .68rem; opacity: .7; }
 
-  /* ─── WRAPPER ─── */
   .planner-wrap {
     padding: 16px;
     max-width: 1600px;
     margin: 0 auto;
   }
 
-  /* ─── SECTION LABELS ─── */
   .section-label {
     display: flex;
     align-items: center;
@@ -125,7 +122,6 @@
     background: var(--border);
   }
 
-  /* ─── GRID CONTAINER ─── */
   .grid-container {
     background: var(--card);
     border-radius: 12px;
@@ -134,7 +130,6 @@
     box-shadow: 0 2px 8px rgba(0,0,0,.06);
   }
 
-  /* ─── HEADER ROW ─── */
   .grid-header {
     display: grid;
     grid-template-columns: var(--col-label) repeat(5, var(--col-day));
@@ -176,7 +171,6 @@
     background: var(--accent);
   }
 
-  /* ─── ROWS ─── */
   .grid-row {
     display: grid;
     grid-template-columns: var(--col-label) repeat(5, var(--col-day));
@@ -233,7 +227,6 @@
     background: #fff;
   }
 
-  /* loan badge */
   .loan-badge {
     font-size: .6rem;
     background: var(--loan-hd);
@@ -245,15 +238,11 @@
     flex-shrink: 0;
   }
 
-  /* ─── LOAN rows tint ─── */
   .grid-row.has-loan .row-label { background: var(--loan-bg); }
   .grid-row.has-loan .day-cell  { background: rgba(26,82,118,.03); }
+  .grid-row.no-loan .row-label  { background: var(--noloan-bg); }
+  .grid-row.no-loan .day-cell   { background: rgba(125,78,27,.02); }
 
-  /* ─── NO-LOAN rows tint ─── */
-  .grid-row.no-loan .row-label { background: var(--noloan-bg); }
-  .grid-row.no-loan .day-cell  { background: rgba(125,78,27,.02); }
-
-  /* ─── DAY CELLS ─── */
   .day-cell {
     border-right: 1px solid var(--border);
     position: relative;
@@ -265,13 +254,11 @@
   .day-cell.today-col { background: rgba(232,76,30,.04) !important; }
   .day-cell.today-col:hover { background: rgba(232,76,30,.1) !important; }
 
-  /* ─── SEPARATOR ─── */
   .grid-separator {
     height: 6px;
     background: linear-gradient(180deg, var(--border), transparent);
   }
 
-  /* ─── APPOINTMENTS ─── */
   .appt {
     position: absolute;
     top: 4px; bottom: 4px;
@@ -289,7 +276,6 @@
     box-shadow: 0 2px 6px rgba(0,0,0,.15);
     user-select: none;
     z-index: 10;
-    /* Multi-day: overrides via JS */
   }
   .appt .appt-name {
     flex: 1;
@@ -314,7 +300,6 @@
   }
   .appt:hover .appt-del { opacity: 1; }
 
-  /* resize handle */
   .appt .resize-handle {
     position: absolute;
     right: 0; top: 0; bottom: 0;
@@ -329,7 +314,6 @@
     color: rgba(255,255,255,.6);
   }
 
-  /* Appointment colors */
   .appt-color-0 { background: #2980b9; color: #fff; }
   .appt-color-1 { background: #27ae60; color: #fff; }
   .appt-color-2 { background: #8e44ad; color: #fff; }
@@ -339,7 +323,6 @@
   .appt-color-6 { background: #7f8c8d; color: #fff; }
   .appt-color-7 { background: #2c3e50; color: #fff; }
 
-  /* ─── MODAL ─── */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -451,8 +434,20 @@
   }
   .btn-secondary:hover { background: var(--border); }
 
+  /* PIÈCE COMMANDÉE */
+  .appt.piece-ok .piece-badge {
+    font-size: .58rem;
+    font-weight: 800;
+    letter-spacing: .05em;
+    color: #fff;
+    background: #e67e22;
+    border-radius: 3px;
+    padding: 1px 5px;
+    flex-shrink: 0;
+  }
+  .appt:not(.piece-ok) .piece-badge { display: none; }
 
-  /* ─── STATUT ARRIVÉ ─── */
+  /* STATUT ARRIVÉ */
   .appt.arrived {
     outline: 3px solid #2ecc71;
     outline-offset: -2px;
@@ -467,7 +462,8 @@
     padding: 1px 5px;
     flex-shrink: 0;
   }
-  /* ─── MODAL EDIT ─── */
+
+  /* MODAL EDIT */
   #editModalOverlay { z-index: 210; }
   .status-row { display: flex; gap: 10px; margin-top: 6px; }
   .status-btn {
@@ -490,7 +486,7 @@
   .status-btn.active-arrived { border-color: #2ecc71; background: #eafaf1; color: #1e8449; }
   .status-btn.active-pending { border-color: var(--amber); background: #fef9e7; color: #9a6a00; }
 
-  /* ─── TOOLTIP ─── */
+  /* TOOLTIP */
   .tooltip {
     position: fixed;
     background: var(--steel);
@@ -509,7 +505,6 @@
 </head>
 <body>
 
-<!-- TOP BAR -->
 <div class="topbar">
   <div class="logo">🔧 <span>AUTO</span>PLANNING</div>
   <div class="week-nav">
@@ -530,12 +525,11 @@
   </div>
 </div>
 
-<!-- PLANNER -->
 <div class="planner-wrap">
   <div id="planner"></div>
 </div>
 
-<!-- MODAL -->
+<!-- MODAL NOUVEAU RDV -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <h2>Nouveau rendez-vous</h2>
@@ -561,16 +555,20 @@
   </div>
 </div>
 
-
 <!-- MODAL ÉDITION RDV -->
 <div class="modal-overlay" id="editModalOverlay">
   <div class="modal">
-    <h2 class="edit-modal-title" style="gap:8px;">Modifier le rendez-vous</h2>
+    <h2 style="gap:8px;">✏️ Modifier le rendez-vous</h2>
     <label>Client / Véhicule</label>
     <input type="text" id="editApptName" placeholder="Nom client">
     <label>Heures de travail</label>
     <input type="number" id="editApptHours" value="4" min="0.5" max="99" step="0.5">
-    <label>Statut</label>
+    <label>Pièce commandée</label>
+    <div class="status-row">
+      <button class="status-btn" id="btnPieceNon" onclick="setEditPiece(false)">📦 Non commandée</button>
+      <button class="status-btn" id="btnPieceOui" onclick="setEditPiece(true)">✅ Commandée</button>
+    </div>
+    <label>Statut client</label>
     <div class="status-row">
       <button class="status-btn active-pending" id="btnPending" onclick="setEditStatus('pending')">⏳ En attente</button>
       <button class="status-btn" id="btnArrived" onclick="setEditStatus('arrived')">✅ Client arrivé</button>
@@ -584,13 +582,9 @@
   </div>
 </div>
 
-<!-- TOOLTIP -->
 <div class="tooltip" id="tooltip"></div>
 
 <script>
-// ══════════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════════
 const COLORS = ['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
 
 const DEFAULT_LOAN_VEHICLES = [
@@ -608,7 +602,7 @@ function defaultState() {
   return {
     loanNames: [...DEFAULT_LOAN_VEHICLES],
     noLoanNames: [...DEFAULT_NOLOAN_VEHICLES],
-    appointments: [],   // { id, row, type, day, span, name, hours, color }
+    appointments: [],
     weekOffset: 0
   };
 }
@@ -625,9 +619,6 @@ function saveState() {
   localStorage.setItem('carrosserie_planning', JSON.stringify(state));
 }
 
-// ══════════════════════════════════════════════
-//  DATE HELPERS
-// ══════════════════════════════════════════════
 function getMonday(date) {
   const d = new Date(date);
   const day = d.getDay();
@@ -648,12 +639,7 @@ function getWeekDays() {
 }
 
 function isToday(date) {
-  const now = new Date();
-  return date.toDateString() === now.toDateString();
-}
-
-function formatDay(d) {
-  return d.toLocaleDateString('fr-FR', {weekday:'short', day:'numeric', month:'short'});
+  return date.toDateString() === new Date().toDateString();
 }
 
 function getWeekLabel(days) {
@@ -662,68 +648,36 @@ function getWeekLabel(days) {
   return `Semaine du ${days[0].toLocaleDateString('fr-FR',opts)} au ${days[4].toLocaleDateString('fr-FR',opts)} ${y}`;
 }
 
-// ══════════════════════════════════════════════
-//  RENDER
-// ══════════════════════════════════════════════
 function render() {
   const days = getWeekDays();
   document.getElementById('weekLabel').textContent = getWeekLabel(days);
   updateStats();
-
   const planner = document.getElementById('planner');
   planner.innerHTML = '';
 
-  // Header grid
-  const container = document.createElement('div');
-  container.className = 'grid-container';
-
-  // HEADER
   const header = document.createElement('div');
   header.className = 'grid-header';
   header.innerHTML = `<div class="h-corner">VÉHICULE</div>` +
-    days.map((d,i) => `
+    days.map(d => `
       <div class="h-day${isToday(d) ? ' today' : ''}">
         <span class="day-name">${d.toLocaleDateString('fr-FR',{weekday:'long'}).toUpperCase()}</span>
         <span class="day-date">${d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span>
       </div>`).join('');
-  container.appendChild(header);
 
-  // LOAN ROWS
-  const lblLoan = document.createElement('div');
-  lblLoan.className = 'section-label';
-  lblLoan.style = 'padding:0 8px;background:var(--card);';
-  // We'll add section labels outside the container
   planner.appendChild(makeSectionLabel('🚗 Véhicules de prêt (8 postes)'));
-
   const loanContainer = document.createElement('div');
   loanContainer.className = 'grid-container';
-  loanContainer.style = 'margin-bottom:0;border-radius:12px 12px 0 0;';
-
-  // header again inside
   loanContainer.appendChild(header.cloneNode(true));
-
-  state.loanNames.forEach((name, rowIdx) => {
-    loanContainer.appendChild(makeRow('loan', rowIdx, name, days));
-  });
+  state.loanNames.forEach((name, i) => loanContainer.appendChild(makeRow('loan', i, name, days)));
   planner.appendChild(loanContainer);
 
-  // SEPARATOR
   planner.appendChild(makeSectionLabel('🔩 Postes sans véhicule de prêt'));
-
   const noLoanContainer = document.createElement('div');
   noLoanContainer.className = 'grid-container';
-  noLoanContainer.style = 'border-radius: 0 0 12px 12px;';
-
-  // header inside
-  const h2 = buildHeader(days);
-  noLoanContainer.appendChild(h2);
-
-  state.noLoanNames.forEach((name, rowIdx) => {
-    noLoanContainer.appendChild(makeRow('noloan', rowIdx, name, days));
-  });
+  noLoanContainer.appendChild(buildHeader(days));
+  state.noLoanNames.forEach((name, i) => noLoanContainer.appendChild(makeRow('noloan', i, name, days)));
   planner.appendChild(noLoanContainer);
 
-  // Render appointments
   renderAppointments(days);
 }
 
@@ -739,7 +693,7 @@ function buildHeader(days) {
   const header = document.createElement('div');
   header.className = 'grid-header';
   header.innerHTML = `<div class="h-corner">VÉHICULE</div>` +
-    days.map((d,i) => `
+    days.map(d => `
       <div class="h-day${isToday(d) ? ' today' : ''}">
         <span class="day-name">${d.toLocaleDateString('fr-FR',{weekday:'long'}).toUpperCase()}</span>
         <span class="day-date">${d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span>
@@ -753,7 +707,6 @@ function makeRow(type, rowIdx, name, days) {
   row.dataset.type = type;
   row.dataset.row = rowIdx;
 
-  // Label
   const label = document.createElement('div');
   label.className = 'row-label';
   label.innerHTML = `<span class="vehicle-icon">${type === 'loan' ? '🚗' : '🔧'}</span>`;
@@ -773,7 +726,6 @@ function makeRow(type, rowIdx, name, days) {
   }
   row.appendChild(label);
 
-  // Day cells
   days.forEach((d, dayIdx) => {
     const cell = document.createElement('div');
     cell.className = `day-cell${isToday(d) ? ' today-col' : ''}`;
@@ -787,9 +739,6 @@ function makeRow(type, rowIdx, name, days) {
   return row;
 }
 
-// ══════════════════════════════════════════════
-//  INLINE NAME EDIT
-// ══════════════════════════════════════════════
 function startEditName(el, type, rowIdx) {
   const input = document.createElement('input');
   input.className = 'vehicle-edit';
@@ -808,112 +757,77 @@ function startEditName(el, type, rowIdx) {
   input.onkeydown = e => { if(e.key === 'Enter') save(); if(e.key === 'Escape') render(); };
 }
 
-// ══════════════════════════════════════════════
-//  APPOINTMENTS RENDERING
-// ══════════════════════════════════════════════
 function renderAppointments(days) {
-  const todayStr = new Date().toDateString();
-
   state.appointments.forEach(appt => {
-    // Find cells for this appointment's week
-    // We need to check if this appointment belongs to current week
-    const weekStart = days[0];
-    const weekEnd   = days[4];
-    const apptDate  = new Date(appt.weekStart);
-    if (apptDate.toDateString() !== weekStart.toDateString()) return;
+    const apptDate = new Date(appt.weekStart);
+    if (apptDate.toDateString() !== days[0].toDateString()) return;
 
-    const selector = `[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`;
-    const cell = document.querySelector(selector);
+    const cell = document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`);
     if (!cell) return;
 
     const span = Math.min(appt.span || 1, 5 - appt.day);
-
-    // Calculate width spanning multiple cells
-    const cellW = cell.getBoundingClientRect().width;
-
     const apptEl = document.createElement('div');
-    apptEl.className = `appt`;
+    apptEl.className = 'appt';
     apptEl.style.background = appt.color;
     apptEl.style.color = '#fff';
-    // span width = N cells - small gap
-    // We'll use right offset trick by stretching
     if (span > 1) {
       apptEl.style.right = `calc(-${(span-1) * 100}% - ${(span-1)}px)`;
       apptEl.style.zIndex = 15;
     }
 
     if (appt.arrived) apptEl.classList.add('arrived');
+    if (appt.piece)   apptEl.classList.add('piece-ok');
 
     apptEl.innerHTML = `
       <span class="appt-name">${appt.name}</span>
       ${appt.arrived ? '<span class="arrived-badge">✔ ARRIVÉ</span>' : ''}
+      ${appt.piece   ? '<span class="piece-badge">📦 PIÈCE OK</span>' : ''}
       <span class="appt-hours">${appt.hours}h</span>
       <span class="appt-del" onclick="deleteAppt(event,'${appt.id}')">✕</span>
       <span class="resize-handle" title="Étirer">⠿</span>
     `;
 
-    // Clic sur le RDV = ouvrir modale édition (pas sur delete/resize)
-    apptEl.addEventListener('click', (e) => {
+    apptEl.addEventListener('click', e => {
       if (e.target.classList.contains('appt-del') || e.target.classList.contains('resize-handle')) return;
       e.stopPropagation();
       openEditModal(appt.id);
     });
 
-    // Tooltip
-    apptEl.onmouseenter = (e) => showTooltip(e, `${appt.name} — ${appt.hours}h de travail — ${span} jour(s)`);
+    apptEl.onmouseenter = e => showTooltip(e, `${appt.name} — ${appt.hours}h — ${span} jour(s)`);
     apptEl.onmouseleave = hideTooltip;
-    apptEl.onmousemove = (e) => moveTooltip(e);
+    apptEl.onmousemove  = e => moveTooltip(e);
 
-    // Resize drag
-    const resizeHandle = apptEl.querySelector('.resize-handle');
-    resizeHandle.addEventListener('mousedown', (e) => {
+    apptEl.querySelector('.resize-handle').addEventListener('mousedown', e => {
       e.stopPropagation();
-      startResize(e, appt, days);
+      startResize(e, appt);
     });
 
     cell.appendChild(apptEl);
   });
 }
 
-// ══════════════════════════════════════════════
-//  RESIZE
-// ══════════════════════════════════════════════
 let resizing = null;
-
-function startResize(e, appt, days) {
+function startResize(e, appt) {
   e.preventDefault();
   resizing = { appt, startX: e.clientX, origSpan: appt.span || 1 };
   document.addEventListener('mousemove', doResize);
   document.addEventListener('mouseup', endResize);
 }
-
 function doResize(e) {
   if (!resizing) return;
-  const dx = e.clientX - resizing.startX;
-  // Estimate cell width from grid
   const cells = document.querySelectorAll(`[data-type="${resizing.appt.type}"][data-row="${resizing.appt.row}"][data-day]`);
   if (!cells.length) return;
   const cellW = cells[0].getBoundingClientRect().width;
-  const extraDays = Math.round(dx / cellW);
-  const newSpan = Math.max(1, Math.min(5 - resizing.appt.day, resizing.origSpan + extraDays));
-  if (newSpan !== resizing.appt.span) {
-    resizing.appt.span = newSpan;
-    saveState();
-    render();
-  }
+  const newSpan = Math.max(1, Math.min(5 - resizing.appt.day, resizing.origSpan + Math.round((e.clientX - resizing.startX) / cellW)));
+  if (newSpan !== resizing.appt.span) { resizing.appt.span = newSpan; saveState(); render(); }
 }
-
 function endResize() {
   resizing = null;
   document.removeEventListener('mousemove', doResize);
   document.removeEventListener('mouseup', endResize);
 }
 
-// ══════════════════════════════════════════════
-//  MODAL
-// ══════════════════════════════════════════════
-let pendingAppt = null;
-let selectedColor = 0;
+let pendingAppt = null, selectedColor = 0;
 
 function openModal(type, row, day) {
   pendingAppt = { type, row, day };
@@ -921,179 +835,103 @@ function openModal(type, row, day) {
   document.getElementById('apptName').value = '';
   document.getElementById('apptDays').value = 1;
   document.getElementById('apptHours').value = 4;
-
-  // Build color picker
   const cp = document.getElementById('colorPicker');
   cp.innerHTML = '';
   COLORS.forEach((c, i) => {
     const sw = document.createElement('div');
     sw.className = `color-swatch${i === 0 ? ' selected' : ''}`;
     sw.style.background = c;
-    sw.onclick = () => {
-      cp.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
-      sw.classList.add('selected');
-      selectedColor = i;
-    };
+    sw.onclick = () => { cp.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected')); sw.classList.add('selected'); selectedColor = i; };
     cp.appendChild(sw);
   });
-
   document.getElementById('modalOverlay').classList.add('open');
   setTimeout(() => document.getElementById('apptName').focus(), 50);
 }
-
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
   pendingAppt = null;
 }
-
 function saveAppt() {
   if (!pendingAppt) return;
   const name  = document.getElementById('apptName').value.trim();
   const days  = parseInt(document.getElementById('apptDays').value) || 1;
   const hours = parseFloat(document.getElementById('apptHours').value) || 0;
   if (!name) { document.getElementById('apptName').focus(); return; }
-
   const weekDays = getWeekDays();
-
   state.appointments.push({
     id: Date.now().toString(36) + Math.random().toString(36).slice(2),
-    type:      pendingAppt.type,
-    row:       pendingAppt.row,
-    day:       pendingAppt.day,
-    span:      Math.min(days, 5 - pendingAppt.day),
-    name,
-    hours,
-    color:     COLORS[selectedColor],
+    type: pendingAppt.type, row: pendingAppt.row, day: pendingAppt.day,
+    span: Math.min(days, 5 - pendingAppt.day),
+    name, hours, color: COLORS[selectedColor],
     weekStart: weekDays[0].toISOString()
   });
-
-  saveState();
-  closeModal();
-  render();
+  saveState(); closeModal(); render();
 }
-
 function deleteAppt(e, id) {
   e.stopPropagation();
   state.appointments = state.appointments.filter(a => a.id !== id);
-  saveState();
-  render();
+  saveState(); render();
 }
 
-// ══════════════════════════════════════════════
-//  STATS
-// ══════════════════════════════════════════════
 function updateStats() {
   const days = getWeekDays();
-  const weekStartStr = days[0].toISOString();
-  const weekAppts = state.appointments.filter(a => {
-    const d = new Date(a.weekStart);
-    return d.toDateString() === days[0].toDateString();
-  });
-  const totalH = weekAppts.reduce((s, a) => s + (a.hours || 0), 0);
-  document.getElementById('totalHours').textContent = totalH % 1 === 0 ? totalH + 'h' : totalH + 'h';
+  const weekAppts = state.appointments.filter(a => new Date(a.weekStart).toDateString() === days[0].toDateString());
+  document.getElementById('totalHours').textContent = weekAppts.reduce((s,a) => s + (a.hours||0), 0) + 'h';
   document.getElementById('totalAppts').textContent = weekAppts.length;
 }
 
-// ══════════════════════════════════════════════
-//  WEEK NAVIGATION
-// ══════════════════════════════════════════════
-function changeWeek(delta) {
-  state.weekOffset += delta;
-  saveState();
-  render();
-}
+function changeWeek(delta) { state.weekOffset += delta; saveState(); render(); }
+function goToday()         { state.weekOffset = 0;      saveState(); render(); }
 
-function goToday() {
-  state.weekOffset = 0;
-  saveState();
-  render();
-}
+function showTooltip(e, text) { const t = document.getElementById('tooltip'); t.textContent = text; t.classList.add('show'); moveTooltip(e); }
+function moveTooltip(e)       { const t = document.getElementById('tooltip'); t.style.left = (e.clientX+12)+'px'; t.style.top = (e.clientY-32)+'px'; }
+function hideTooltip()        { document.getElementById('tooltip').classList.remove('show'); }
 
-// ══════════════════════════════════════════════
-//  TOOLTIP
-// ══════════════════════════════════════════════
-function showTooltip(e, text) {
-  const t = document.getElementById('tooltip');
-  t.textContent = text;
-  t.classList.add('show');
-  moveTooltip(e);
-}
-function moveTooltip(e) {
-  const t = document.getElementById('tooltip');
-  t.style.left = (e.clientX + 12) + 'px';
-  t.style.top  = (e.clientY - 32) + 'px';
-}
-function hideTooltip() {
-  document.getElementById('tooltip').classList.remove('show');
-}
-
-// ══════════════════════════════════════════════
-//  KEYBOARD
-// ══════════════════════════════════════════════
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeModal(); closeEditModal(); }
-  if (e.key === 'Enter' && document.getElementById('modalOverlay').classList.contains('open')) {
-    saveAppt();
-  }
+  if (e.key === 'Enter' && document.getElementById('modalOverlay').classList.contains('open')) saveAppt();
 });
+document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 
-// Close modal on overlay click
-document.getElementById('modalOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
-
-
-// ══════════════════════════════════════════════
-//  EDIT MODAL
-// ══════════════════════════════════════════════
-let editingApptId = null;
-let editSelectedColor = 0;
-let editStatus = 'pending';
+let editingApptId = null, editSelectedColor = 0, editStatus = 'pending', editPiece = false;
 
 function openEditModal(id) {
   const appt = state.appointments.find(a => a.id === id);
   if (!appt) return;
   editingApptId = id;
   editStatus = appt.arrived ? 'arrived' : 'pending';
-  editSelectedColor = COLORS.indexOf(appt.color);
-  if (editSelectedColor < 0) editSelectedColor = 0;
-
-  document.getElementById('editApptName').value = appt.name;
+  editPiece  = appt.piece || false;
+  editSelectedColor = Math.max(0, COLORS.indexOf(appt.color));
+  document.getElementById('editApptName').value  = appt.name;
   document.getElementById('editApptHours').value = appt.hours;
-
-  // Statut buttons
   setEditStatus(editStatus);
-
-  // Color picker
+  setEditPiece(editPiece);
   const cp = document.getElementById('editColorPicker');
   cp.innerHTML = '';
   COLORS.forEach((c, i) => {
     const sw = document.createElement('div');
     sw.className = `color-swatch${i === editSelectedColor ? ' selected' : ''}`;
     sw.style.background = c;
-    sw.onclick = () => {
-      cp.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
-      sw.classList.add('selected');
-      editSelectedColor = i;
-    };
+    sw.onclick = () => { cp.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected')); sw.classList.add('selected'); editSelectedColor = i; };
     cp.appendChild(sw);
   });
-
   document.getElementById('editModalOverlay').classList.add('open');
   setTimeout(() => document.getElementById('editApptName').focus(), 50);
 }
-
-function setEditStatus(status) {
-  editStatus = status;
-  document.getElementById('btnPending').className = 'status-btn' + (status === 'pending' ? ' active-pending' : '');
-  document.getElementById('btnArrived').className = 'status-btn' + (status === 'arrived' ? ' active-arrived' : '');
+function setEditStatus(s) {
+  editStatus = s;
+  document.getElementById('btnPending').className = 'status-btn' + (s === 'pending' ? ' active-pending' : '');
+  document.getElementById('btnArrived').className = 'status-btn' + (s === 'arrived' ? ' active-arrived' : '');
 }
-
+function setEditPiece(val) {
+  editPiece = val;
+  document.getElementById('btnPieceNon').className = 'status-btn' + (!val ? ' active-pending' : '');
+  document.getElementById('btnPieceOui').className = 'status-btn' + ( val ? ' active-arrived' : '');
+}
 function closeEditModal() {
   document.getElementById('editModalOverlay').classList.remove('open');
   editingApptId = null;
 }
-
 function saveEditAppt() {
   if (!editingApptId) return;
   const name  = document.getElementById('editApptName').value.trim();
@@ -1105,19 +943,11 @@ function saveEditAppt() {
   appt.hours   = hours;
   appt.color   = COLORS[editSelectedColor];
   appt.arrived = (editStatus === 'arrived');
-  saveState();
-  closeEditModal();
-  render();
+  appt.piece   = editPiece;
+  saveState(); closeEditModal(); render();
 }
+document.getElementById('editModalOverlay').addEventListener('click', function(e) { if (e.target === this) closeEditModal(); });
 
-// Close edit modal on overlay click
-document.getElementById('editModalOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeEditModal();
-});
-
-// ══════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════
 render();
 </script>
 </body>
