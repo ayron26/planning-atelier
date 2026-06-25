@@ -38,40 +38,40 @@
   .topbar .week-nav button { background: var(--steel-mid); border: none; color: #fff; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: background .15s; }
   .topbar .week-nav button:hover { background: var(--accent); }
   .week-label { font-size: .9rem; font-weight: 600; min-width: 200px; text-align: center; }
-  .topbar .stats { display: flex; gap: 18px; font-size: .82rem; }
+  .topbar .stats { display: flex; gap: 12px; font-size: .82rem; align-items: center; }
   .stat-box { background: var(--steel-mid); border-radius: 8px; padding: 4px 12px; display: flex; flex-direction: column; align-items: center; }
   .stat-box .val { font-size: 1.15rem; font-weight: 700; color: var(--amber); }
   .stat-box .lbl { font-size: .68rem; opacity: .7; }
+  .tech-box { background: var(--steel-mid); border-radius: 8px; padding: 4px 12px; display: flex; align-items: center; gap: 10px; }
+  .tech-box .tech-btn { background: rgba(255,255,255,.15); border: none; color: #fff; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-size: 1rem; line-height: 1; display: flex; align-items: center; justify-content: center; transition: background .15s; }
+  .tech-box .tech-btn:hover { background: var(--accent); }
+  .tech-block { display: flex; flex-direction: column; align-items: center; }
+  .tech-block .val { font-size: 1.15rem; font-weight: 700; color: var(--amber); }
+  .tech-block .lbl { font-size: .68rem; opacity: .7; }
+  .tech-sep { width: 1px; height: 28px; background: rgba(255,255,255,.15); }
 
   .planner-wrap { padding: 16px; max-width: 1600px; margin: 0 auto; }
-
   .section-label { display: flex; align-items: center; gap: 10px; margin: 12px 0 6px; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
   .grid-container { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
-
   .grid-header { display: grid; grid-template-columns: var(--col-label) repeat(5, var(--col-day)); background: var(--steel); height: var(--header-h); position: sticky; top: 56px; z-index: 50; }
   .grid-header .h-corner { display: flex; align-items: center; padding: 0 12px; color: rgba(255,255,255,.5); font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-right: 1px solid rgba(255,255,255,.08); }
   .grid-header .h-day { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; border-right: 1px solid rgba(255,255,255,.08); font-size: .82rem; }
   .grid-header .h-day .day-name { font-weight: 700; font-size: .9rem; }
   .grid-header .h-day .day-date { font-size: .72rem; opacity: .6; }
   .grid-header .h-day.today { background: var(--accent); }
-
   .grid-row { display: grid; grid-template-columns: var(--col-label) repeat(5, var(--col-day)); height: var(--slot-h); border-bottom: 1px solid var(--border); position: relative; }
   .grid-row:last-child { border-bottom: none; }
-
   .row-label { display: flex; align-items: center; padding: 0 10px; border-right: 2px solid var(--border); gap: 7px; font-size: .83rem; font-weight: 600; white-space: nowrap; overflow: hidden; cursor: default; position: relative; z-index: 2; background: var(--card); }
   .row-label .vehicle-icon { font-size: 1rem; flex-shrink: 0; }
   .row-label .vehicle-name { flex: 1; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-bottom: 1px dashed transparent; transition: border-color .15s; padding: 2px 4px; border-radius: 3px; }
   .row-label .vehicle-name:hover { border-color: var(--accent); background: rgba(232,76,30,.05); }
   .row-label input.vehicle-edit { flex: 1; border: 1.5px solid var(--accent); border-radius: 4px; padding: 2px 6px; font-size: .83rem; font-weight: 600; font-family: inherit; color: var(--text); outline: none; background: #fff; }
   .loan-badge { font-size: .6rem; background: var(--loan-hd); color: #fff; border-radius: 3px; padding: 1px 5px; font-weight: 700; letter-spacing: .04em; flex-shrink: 0; }
-
   .grid-row.has-loan .row-label { background: var(--loan-bg); }
   .grid-row.has-loan .day-cell  { background: rgba(26,82,118,.03); }
   .grid-row.no-loan .row-label  { background: var(--noloan-bg); }
   .grid-row.no-loan .day-cell   { background: rgba(125,78,27,.02); }
-
   .day-cell { border-right: 1px solid var(--border); position: relative; cursor: pointer; transition: background .1s; }
   .day-cell:last-child { border-right: none; }
   .day-cell:hover { background: rgba(232,76,30,.06) !important; }
@@ -79,7 +79,6 @@
   .day-cell.today-col:hover { background: rgba(232,76,30,.1) !important; }
   .day-cell.drag-over { background: rgba(232,76,30,.18) !important; outline: 2px dashed var(--accent); outline-offset: -2px; }
 
-  /* ── APPOINTMENTS ── */
   .appt {
     position: absolute; top: 4px; bottom: 4px; left: 3px; right: 3px;
     border-radius: 6px; display: flex; align-items: center; padding: 0 7px;
@@ -91,34 +90,18 @@
   .appt.dragging { opacity: .45; box-shadow: none; }
   .appt .appt-name { flex: 1; overflow: hidden; text-overflow: ellipsis; }
   .appt .appt-hours { font-size: .68rem; opacity: .85; background: rgba(255,255,255,.25); border-radius: 4px; padding: 1px 4px; flex-shrink: 0; }
-
-  /* boutons action — visibles au survol */
   .appt .appt-actions { display: flex; gap: 3px; opacity: 0; transition: opacity .15s; flex-shrink: 0; }
   .appt:hover .appt-actions { opacity: 1; }
-  .appt .btn-action {
-    font-size: .78rem; line-height: 1; padding: 2px 5px; border-radius: 4px;
-    background: rgba(255,255,255,.22); color: #fff; cursor: pointer; border: none;
-    font-family: inherit; transition: background .12s; white-space: nowrap;
-  }
+  .appt .btn-action { font-size: .78rem; line-height: 1; padding: 2px 5px; border-radius: 4px; background: rgba(255,255,255,.22); color: #fff; cursor: pointer; border: none; font-family: inherit; transition: background .12s; white-space: nowrap; }
   .appt .btn-action:hover { background: rgba(255,255,255,.42); }
   .appt .btn-del { font-size: .82rem; }
-
-  /* badges */
   .badge { font-size: .58rem; font-weight: 800; letter-spacing: .05em; color: #fff; border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
-  .badge-green   { background: #2ecc71; }
-  .badge-orange  { background: #e67e22; }
-
+  .badge-green  { background: #2ecc71; }
+  .badge-orange { background: #e67e22; }
   .appt.arrived { outline: 3px solid #2ecc71; outline-offset: -2px; }
 
-  /* drag ghost */
-  #dragGhost {
-    position: fixed; pointer-events: none; z-index: 999;
-    border-radius: 6px; padding: 4px 10px; font-size: .78rem; font-weight: 700;
-    color: #fff; white-space: nowrap; box-shadow: 0 6px 20px rgba(0,0,0,.3);
-    opacity: .88; transform: translate(-50%, -50%);
-  }
+  #dragGhost { position: fixed; pointer-events: none; z-index: 999; border-radius: 6px; padding: 4px 10px; font-size: .78rem; font-weight: 700; color: #fff; white-space: nowrap; box-shadow: 0 6px 20px rgba(0,0,0,.3); opacity: .88; transform: translate(-50%,-50%); }
 
-  /* MODAL */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 200; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
   .modal { background: #fff; border-radius: 14px; padding: 28px 30px; width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
@@ -144,7 +127,6 @@
   .status-btn { flex: 1; border: 2px solid var(--border); border-radius: 8px; padding: 9px; font-size: .82rem; font-weight: 700; cursor: pointer; background: var(--surface); color: var(--muted); transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; }
   .status-btn.active-arrived { border-color: #2ecc71; background: #eafaf1; color: #1e8449; }
   .status-btn.active-pending { border-color: var(--amber); background: #fef9e7; color: #9a6a00; }
-
   .tooltip { position: fixed; background: var(--steel); color: #fff; font-size: .78rem; padding: 6px 12px; border-radius: 6px; pointer-events: none; z-index: 300; white-space: nowrap; opacity: 0; transition: opacity .15s; }
   .tooltip.show { opacity: 1; }
 </style>
@@ -160,8 +142,37 @@
     <button onclick="goToday()" style="width:auto;padding:0 10px;font-size:.78rem;">Auj.</button>
   </div>
   <div class="stats">
-    <div class="stat-box"><div class="val" id="totalHours">0h</div><div class="lbl">Heures semaine</div></div>
-    <div class="stat-box"><div class="val" id="totalAppts">0</div><div class="lbl">Rendez-vous</div></div>
+    <!-- Heures semaine -->
+    <div class="stat-box">
+      <div class="val" id="totalHours">0h</div>
+      <div class="lbl">Heures saisies</div>
+    </div>
+    <!-- Nb RDV -->
+    <div class="stat-box">
+      <div class="val" id="totalAppts">0</div>
+      <div class="lbl">Rendez-vous</div>
+    </div>
+    <!-- Techniciens + capacité + remplissage -->
+    <div class="tech-box">
+      <div class="tech-block">
+        <div class="val" id="totalCapacity">117h</div>
+        <div class="lbl">Capacité</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+        <div style="display:flex;align-items:center;gap:5px;">
+          <button class="tech-btn" onclick="changeTech(-1)">−</button>
+          <span class="val" id="techCount">3</span>
+          <button class="tech-btn" onclick="changeTech(1)">+</button>
+        </div>
+        <div class="lbl">Techniciens</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-block">
+        <div class="val" id="fillRate" style="color:#2ecc71;">0%</div>
+        <div class="lbl">Remplissage</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -229,6 +240,8 @@ const DEFAULT_LOAN   = ['Clio IV','Peugeot 208','C3 Aircross','Toyota Yaris','Po
 const DEFAULT_NOLOAN = ['Poste 1','Poste 2','Poste 3','Poste 4','Poste 5','Poste 6','Poste 7','Poste 8'];
 
 let state = loadState();
+let nbTech = parseInt(localStorage.getItem('carrosserie_tech') || '3');
+
 function defaultState(){ return { loanNames:[...DEFAULT_LOAN], noLoanNames:[...DEFAULT_NOLOAN], appointments:[], weekOffset:0 }; }
 function loadState(){ try{ const s=localStorage.getItem('carrosserie_planning'); if(s) return JSON.parse(s); }catch(e){} return defaultState(); }
 function saveState(){ localStorage.setItem('carrosserie_planning', JSON.stringify(state)); }
@@ -247,6 +260,26 @@ function isToday(d){ return d.toDateString()===new Date().toDateString(); }
 function getWeekLabel(days){
   const o={day:'numeric',month:'long'}, y=days[0].getFullYear();
   return `Semaine du ${days[0].toLocaleDateString('fr-FR',o)} au ${days[4].toLocaleDateString('fr-FR',o)} ${y}`;
+}
+
+// ── TECHNICIENS ──
+function changeTech(delta){
+  nbTech = Math.max(1, Math.min(20, nbTech + delta));
+  localStorage.setItem('carrosserie_tech', nbTech);
+  updateTech();
+}
+function updateTech(){
+  const capacity = nbTech * 39;
+  document.getElementById('techCount').textContent = nbTech;
+  document.getElementById('totalCapacity').textContent = capacity + 'h';
+  const days = getWeekDays();
+  const ws = days[0].toDateString();
+  const wa = state.appointments.filter(a => new Date(a.weekStart).toDateString() === ws);
+  const used = wa.reduce((s,a) => s + (a.hours||0), 0);
+  const pct = capacity > 0 ? Math.round((used / capacity) * 100) : 0;
+  const fillEl = document.getElementById('fillRate');
+  fillEl.textContent = pct + '%';
+  fillEl.style.color = pct >= 100 ? '#e74c3c' : pct >= 80 ? '#f5a623' : '#2ecc71';
 }
 
 // ── RENDER ──
@@ -302,9 +335,7 @@ function makeRow(type,rowIdx,name,days){
     const cell=document.createElement('div');
     cell.className=`day-cell${isToday(d)?' today-col':''}`;
     cell.dataset.type=type; cell.dataset.row=rowIdx; cell.dataset.day=dayIdx;
-    // Clic sur cellule vide = nouveau RDV
     cell.addEventListener('click', ()=>openModal(type,rowIdx,dayIdx));
-    // Drop target
     cell.addEventListener('dragover', e=>{ e.preventDefault(); cell.classList.add('drag-over'); });
     cell.addEventListener('dragleave', ()=>cell.classList.remove('drag-over'));
     cell.addEventListener('drop', e=>{ e.preventDefault(); cell.classList.remove('drag-over'); handleDrop(type,rowIdx,dayIdx); });
@@ -346,30 +377,23 @@ function renderAppts(days){
       </div>
     `;
 
-    // Bouton copier semaine suivante
     el.querySelector('.btn-action:first-child').addEventListener('click', e=>{ e.stopPropagation(); copyToNextWeek(appt); });
-    // Bouton supprimer
     el.querySelector('.btn-del').addEventListener('click', e=>{ e.stopPropagation(); deleteAppt(appt.id); });
-    // Clic = éditer
     el.addEventListener('click', e=>{ if(e.target.closest('.appt-actions')) return; openEditModal(appt.id); });
-
-    // Tooltip
     el.onmouseenter=e=>showTooltip(e,`${appt.name} — ${appt.hours}h — ${span} jour(s)`);
     el.onmouseleave=hideTooltip;
     el.onmousemove=e=>moveTooltip(e);
 
-    // ── DRAG ──
     el.setAttribute('draggable','true');
     el.addEventListener('dragstart', e=>{
       if(e.target.closest('.appt-actions')){ e.preventDefault(); return; }
       dragApptId=appt.id;
       el.classList.add('dragging');
-      // Ghost
       const ghost=document.getElementById('dragGhost');
       ghost.style.display='block';
       ghost.style.background=appt.color;
       ghost.textContent=appt.name;
-      e.dataTransfer.setDragImage(ghost, -999, -999); // cache le ghost natif
+      e.dataTransfer.setDragImage(ghost,-999,-999);
     });
     el.addEventListener('dragend', ()=>{
       el.classList.remove('dragging');
@@ -383,25 +407,16 @@ function renderAppts(days){
 
 // ── DRAG & DROP ──
 let dragApptId=null;
-
-// Ghost suit le curseur
 document.addEventListener('dragover', e=>{
   const ghost=document.getElementById('dragGhost');
-  if(ghost.style.display==='block'){
-    ghost.style.left=e.clientX+'px';
-    ghost.style.top=(e.clientY-20)+'px';
-  }
+  if(ghost.style.display==='block'){ ghost.style.left=e.clientX+'px'; ghost.style.top=(e.clientY-20)+'px'; }
 });
-
 function handleDrop(type,row,day){
   if(!dragApptId) return;
   const appt=state.appointments.find(a=>a.id===dragApptId);
   if(!appt) return;
   const days=getWeekDays();
-  appt.type=type;
-  appt.row=row;
-  appt.day=day;
-  // Ajuste span si déborde
+  appt.type=type; appt.row=row; appt.day=day;
   appt.span=Math.min(appt.span||1, 5-day);
   appt.weekStart=days[0].toISOString();
   saveState(); render();
@@ -409,29 +424,19 @@ function handleDrop(type,row,day){
 
 // ── COPIER SEMAINE SUIVANTE ──
 function copyToNextWeek(appt){
-  const nextWeekDays=getWeekDays(
-    // Calcule l'offset de la semaine du RDV + 1
-    (()=>{
-      const apptMon=getMonday(new Date(appt.weekStart));
-      const nowMon=getMonday(new Date());
-      const diff=Math.round((apptMon-nowMon)/(7*86400000));
-      return diff+1;
-    })()
-  );
+  const apptMon=getMonday(new Date(appt.weekStart));
+  const nowMon=getMonday(new Date());
+  const apptOffset=Math.round((apptMon-nowMon)/(7*86400000));
+  const nextOffset=apptOffset+1;
+  const nextWeekDays=getWeekDays(nextOffset);
   state.appointments.push({
-    id: Date.now().toString(36)+Math.random().toString(36).slice(2),
+    id:Date.now().toString(36)+Math.random().toString(36).slice(2),
     type:appt.type, row:appt.row, day:appt.day,
     span:appt.span, name:appt.name, hours:appt.hours,
     color:appt.color, arrived:false, piece:appt.piece||false,
-    weekStart: nextWeekDays[0].toISOString()
+    weekStart:nextWeekDays[0].toISOString()
   });
-  saveState();
-  // Navigation vers la semaine suivante pour voir le résultat
-  state.weekOffset = (() => {
-    const apptMon=getMonday(new Date(appt.weekStart));
-    const nowMon=getMonday(new Date());
-    return Math.round((apptMon-nowMon)/(7*86400000))+1;
-  })();
+  state.weekOffset=nextOffset;
   saveState(); render();
 }
 
@@ -442,7 +447,7 @@ function openModal(type,row,day){
   document.getElementById('apptName').value='';
   document.getElementById('apptDays').value=1;
   document.getElementById('apptHours').value=4;
-  buildColorPicker('colorPicker',()=>{}); // reset
+  buildColorPicker('colorPicker', i=>selectedColor=i);
   document.getElementById('modalOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('apptName').focus(),50);
 }
@@ -481,6 +486,7 @@ function updateStats(){
   const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
   document.getElementById('totalHours').textContent=wa.reduce((s,a)=>s+(a.hours||0),0)+'h';
   document.getElementById('totalAppts').textContent=wa.length;
+  updateTech();
 }
 function changeWeek(d){ state.weekOffset+=d; saveState(); render(); }
 function goToday(){ state.weekOffset=0; saveState(); render(); }
@@ -532,11 +538,8 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape'){closeModal();close
 document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
 document.getElementById('editModalOverlay').addEventListener('click',function(e){if(e.target===this)closeEditModal();});
 
-// Init color picker nouveau RDV
-(()=>{
-  buildColorPicker('colorPicker', i=>selectedColor=i);
-})();
-
+buildColorPicker('colorPicker', i=>selectedColor=i);
+updateTech();
 render();
 </script>
 </body>
