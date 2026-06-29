@@ -50,6 +50,12 @@
   .tech-block .lbl { font-size: .68rem; opacity: .7; }
   .tech-sep { width: 1px; height: 28px; background: rgba(255,255,255,.15); }
 
+  /* Indicateur sync */
+  .sync-indicator { font-size: .68rem; padding: 2px 8px; border-radius: 10px; font-weight: 700; letter-spacing: .04em; }
+  .sync-ok   { background: rgba(46,204,113,.25); color: #2ecc71; }
+  .sync-wait { background: rgba(245,166,35,.25);  color: var(--amber); }
+  .sync-err  { background: rgba(231,76,60,.25);   color: #e74c3c; }
+
   .planner-wrap { padding: 16px; max-width: 1600px; margin: 0 auto; }
   .section-label { display: flex; align-items: center; gap: 10px; margin: 12px 0 6px; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
@@ -79,13 +85,7 @@
   .day-cell.today-col:hover { background: rgba(232,76,30,.1) !important; }
   .day-cell.drag-over { background: rgba(232,76,30,.18) !important; outline: 2px dashed var(--accent); outline-offset: -2px; }
 
-  .appt {
-    position: absolute; top: 4px; bottom: 4px; left: 3px; right: 3px;
-    border-radius: 6px; display: flex; align-items: center; padding: 0 7px;
-    font-size: .76rem; font-weight: 600; gap: 4px; overflow: hidden; white-space: nowrap;
-    cursor: grab; box-shadow: 0 2px 6px rgba(0,0,0,.15); user-select: none; z-index: 10;
-    transition: box-shadow .15s, opacity .15s;
-  }
+  .appt { position: absolute; top: 4px; bottom: 4px; left: 3px; right: 3px; border-radius: 6px; display: flex; align-items: center; padding: 0 7px; font-size: .76rem; font-weight: 600; gap: 4px; overflow: hidden; white-space: nowrap; cursor: grab; box-shadow: 0 2px 6px rgba(0,0,0,.15); user-select: none; z-index: 10; transition: box-shadow .15s, opacity .15s; }
   .appt:active { cursor: grabbing; }
   .appt.dragging { opacity: .45; box-shadow: none; }
   .appt .appt-name { flex: 1; overflow: hidden; text-overflow: ellipsis; }
@@ -129,6 +129,11 @@
   .status-btn.active-pending { border-color: var(--amber); background: #fef9e7; color: #9a6a00; }
   .tooltip { position: fixed; background: var(--steel); color: #fff; font-size: .78rem; padding: 6px 12px; border-radius: 6px; pointer-events: none; z-index: 300; white-space: nowrap; opacity: 0; transition: opacity .15s; }
   .tooltip.show { opacity: 1; }
+
+  /* Loader */
+  .loader { display: flex; align-items: center; justify-content: center; height: 200px; color: var(--muted); font-size: .9rem; gap: 10px; }
+  .loader::before { content: ''; width: 20px; height: 20px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -142,17 +147,15 @@
     <button onclick="goToday()" style="width:auto;padding:0 10px;font-size:.78rem;">Auj.</button>
   </div>
   <div class="stats">
-    <!-- Heures semaine -->
+    <span class="sync-indicator sync-wait" id="syncStatus">⏳ Connexion…</span>
     <div class="stat-box">
       <div class="val" id="totalHours">0h</div>
       <div class="lbl">Heures saisies</div>
     </div>
-    <!-- Nb RDV -->
     <div class="stat-box">
       <div class="val" id="totalAppts">0</div>
       <div class="lbl">Rendez-vous</div>
     </div>
-    <!-- Techniciens + capacité + remplissage -->
     <div class="tech-box">
       <div class="tech-block">
         <div class="val" id="totalCapacity">117h</div>
@@ -176,7 +179,7 @@
   </div>
 </div>
 
-<div class="planner-wrap"><div id="planner"></div></div>
+<div class="planner-wrap"><div id="planner"><div class="loader">Chargement du planning…</div></div></div>
 
 <!-- MODAL NOUVEAU RDV -->
 <div class="modal-overlay" id="modalOverlay">
@@ -234,17 +237,72 @@
 <div class="tooltip" id="tooltip"></div>
 <div id="dragGhost" style="display:none"></div>
 
-<script>
+<!-- FIREBASE SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA472wEsqwdcO6rf6fRybUA3Zy2vHR0z3I",
+  authDomain: "planning-carrosserie-48819.firebaseapp.com",
+  projectId: "planning-carrosserie-48819",
+  storageBucket: "planning-carrosserie-48819.firebasestorage.app",
+  messagingSenderId: "72223690252",
+  appId: "1:72223690252:web:1bdb17a61caa960c08a829"
+};
+
+const app     = initializeApp(firebaseConfig);
+const db      = getFirestore(app);
+const docRef  = doc(db, "planning", "main");
+
 const COLORS = ['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
 const DEFAULT_LOAN   = ['Clio IV','Peugeot 208','C3 Aircross','Toyota Yaris','Polo VI','DS3','Sandero','Mégane IV'];
 const DEFAULT_NOLOAN = ['Poste 1','Poste 2','Poste 3','Poste 4','Poste 5','Poste 6','Poste 7','Poste 8'];
 
-let state = loadState();
+let state = { loanNames:[...DEFAULT_LOAN], noLoanNames:[...DEFAULT_NOLOAN], appointments:[], weekOffset:0 };
 let nbTech = parseInt(localStorage.getItem('carrosserie_tech') || '3');
+let isSaving = false; // évite les boucles save→snapshot→save
 
-function defaultState(){ return { loanNames:[...DEFAULT_LOAN], noLoanNames:[...DEFAULT_NOLOAN], appointments:[], weekOffset:0 }; }
-function loadState(){ try{ const s=localStorage.getItem('carrosserie_planning'); if(s) return JSON.parse(s); }catch(e){} return defaultState(); }
-function saveState(){ localStorage.setItem('carrosserie_planning', JSON.stringify(state)); }
+// ── SYNC FIREBASE ──
+function setSyncStatus(status) {
+  const el = document.getElementById('syncStatus');
+  if (status === 'ok')   { el.textContent = '✅ Synchronisé';   el.className = 'sync-indicator sync-ok'; }
+  if (status === 'wait') { el.textContent = '⏳ Connexion…';    el.className = 'sync-indicator sync-wait'; }
+  if (status === 'save') { el.textContent = '💾 Sauvegarde…';  el.className = 'sync-indicator sync-wait'; }
+  if (status === 'err')  { el.textContent = '❌ Hors ligne';    el.className = 'sync-indicator sync-err'; }
+}
+
+async function saveToFirebase() {
+  isSaving = true;
+  setSyncStatus('save');
+  try {
+    await setDoc(docRef, { ...state, updatedAt: Date.now() });
+    setSyncStatus('ok');
+  } catch(e) {
+    console.error(e);
+    setSyncStatus('err');
+  }
+  setTimeout(() => isSaving = false, 500);
+}
+
+// Écoute les changements en temps réel (tous les PC se mettent à jour automatiquement)
+onSnapshot(docRef, (snap) => {
+  if (isSaving) return; // ignore si c'est nous qui venons de sauvegarder
+  if (snap.exists()) {
+    const data = snap.data();
+    const offset = state.weekOffset; // conserve la semaine affichée localement
+    state = { ...data };
+    state.weekOffset = offset;
+    setSyncStatus('ok');
+  } else {
+    setSyncStatus('ok');
+  }
+  render();
+}, (err) => {
+  console.error(err);
+  setSyncStatus('err');
+  render();
+});
 
 // ── DATES ──
 function getMonday(date){
@@ -321,7 +379,6 @@ function makeRow(type,rowIdx,name,days){
   const row=document.createElement('div');
   row.className=`grid-row ${type==='loan'?'has-loan':'no-loan'}`;
   row.dataset.type=type; row.dataset.row=rowIdx;
-
   const label=document.createElement('div'); label.className='row-label';
   label.innerHTML=`<span class="vehicle-icon">${type==='loan'?'🚗':'🔧'}</span>`;
   const nameEl=document.createElement('span'); nameEl.className='vehicle-name';
@@ -330,7 +387,6 @@ function makeRow(type,rowIdx,name,days){
   label.appendChild(nameEl);
   if(type==='loan'){ const b=document.createElement('span'); b.className='loan-badge'; b.textContent='PRÊT'; label.appendChild(b); }
   row.appendChild(label);
-
   days.forEach((d,dayIdx)=>{
     const cell=document.createElement('div');
     cell.className=`day-cell${isToday(d)?' today-col':''}`;
@@ -347,11 +403,10 @@ function makeRow(type,rowIdx,name,days){
 function startEditName(el,type,rowIdx){
   const input=document.createElement('input'); input.className='vehicle-edit'; input.value=el.textContent;
   el.replaceWith(input); input.focus(); input.select();
-  const save=()=>{ const v=input.value.trim()||el.textContent; if(type==='loan') state.loanNames[rowIdx]=v; else state.noLoanNames[rowIdx]=v; saveState(); render(); };
+  const save=()=>{ const v=input.value.trim()||el.textContent; if(type==='loan') state.loanNames[rowIdx]=v; else state.noLoanNames[rowIdx]=v; saveToFirebase(); render(); };
   input.onblur=save; input.onkeydown=e=>{ if(e.key==='Enter') save(); if(e.key==='Escape') render(); };
 }
 
-// ── RENDER APPOINTMENTS ──
 function renderAppts(days){
   const weekStart=days[0].toDateString();
   state.appointments.forEach(appt=>{
@@ -359,13 +414,10 @@ function renderAppts(days){
     const span=Math.min(appt.span||1, 5-appt.day);
     const cell=document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`);
     if(!cell) return;
-
     const el=document.createElement('div');
-    el.className='appt';
-    el.style.background=appt.color;
+    el.className='appt'; el.style.background=appt.color;
     if(span>1){ el.style.right=`calc(-${(span-1)*100}% - ${span-1}px)`; el.style.zIndex=15; }
     if(appt.arrived) el.classList.add('arrived');
-
     el.innerHTML=`
       <span class="appt-name">${appt.name}</span>
       ${appt.arrived?'<span class="badge badge-green">✔ ARRIVÉ</span>':''}
@@ -376,50 +428,36 @@ function renderAppts(days){
         <button class="btn-action btn-del" title="Supprimer">✕</button>
       </div>
     `;
-
     el.querySelector('.btn-action:first-child').addEventListener('click', e=>{ e.stopPropagation(); copyToNextWeek(appt); });
     el.querySelector('.btn-del').addEventListener('click', e=>{ e.stopPropagation(); deleteAppt(appt.id); });
     el.addEventListener('click', e=>{ if(e.target.closest('.appt-actions')) return; openEditModal(appt.id); });
     el.onmouseenter=e=>showTooltip(e,`${appt.name} — ${appt.hours}h — ${span} jour(s)`);
     el.onmouseleave=hideTooltip;
     el.onmousemove=e=>moveTooltip(e);
-
     el.setAttribute('draggable','true');
     el.addEventListener('dragstart', e=>{
       if(e.target.closest('.appt-actions')){ e.preventDefault(); return; }
-      dragApptId=appt.id;
-      el.classList.add('dragging');
+      dragApptId=appt.id; el.classList.add('dragging');
       const ghost=document.getElementById('dragGhost');
-      ghost.style.display='block';
-      ghost.style.background=appt.color;
-      ghost.textContent=appt.name;
+      ghost.style.display='block'; ghost.style.background=appt.color; ghost.textContent=appt.name;
       e.dataTransfer.setDragImage(ghost,-999,-999);
     });
-    el.addEventListener('dragend', ()=>{
-      el.classList.remove('dragging');
-      document.getElementById('dragGhost').style.display='none';
-      dragApptId=null;
-    });
-
+    el.addEventListener('dragend', ()=>{ el.classList.remove('dragging'); document.getElementById('dragGhost').style.display='none'; dragApptId=null; });
     cell.appendChild(el);
   });
 }
 
-// ── DRAG & DROP ──
+// ── DRAG ──
 let dragApptId=null;
-document.addEventListener('dragover', e=>{
-  const ghost=document.getElementById('dragGhost');
-  if(ghost.style.display==='block'){ ghost.style.left=e.clientX+'px'; ghost.style.top=(e.clientY-20)+'px'; }
-});
+document.addEventListener('dragover', e=>{ const g=document.getElementById('dragGhost'); if(g.style.display==='block'){g.style.left=e.clientX+'px';g.style.top=(e.clientY-20)+'px';} });
 function handleDrop(type,row,day){
   if(!dragApptId) return;
-  const appt=state.appointments.find(a=>a.id===dragApptId);
-  if(!appt) return;
+  const appt=state.appointments.find(a=>a.id===dragApptId); if(!appt) return;
   const days=getWeekDays();
   appt.type=type; appt.row=row; appt.day=day;
-  appt.span=Math.min(appt.span||1, 5-day);
+  appt.span=Math.min(appt.span||1,5-day);
   appt.weekStart=days[0].toISOString();
-  saveState(); render();
+  saveToFirebase(); render();
 }
 
 // ── COPIER SEMAINE SUIVANTE ──
@@ -431,16 +469,16 @@ function copyToNextWeek(appt){
   const nextWeekDays=getWeekDays(nextOffset);
   state.appointments.push({
     id:Date.now().toString(36)+Math.random().toString(36).slice(2),
-    type:appt.type, row:appt.row, day:appt.day,
-    span:appt.span, name:appt.name, hours:appt.hours,
-    color:appt.color, arrived:false, piece:appt.piece||false,
+    type:appt.type, row:appt.row, day:appt.day, span:appt.span,
+    name:appt.name, hours:appt.hours, color:appt.color,
+    arrived:false, piece:appt.piece||false,
     weekStart:nextWeekDays[0].toISOString()
   });
   state.weekOffset=nextOffset;
-  saveState(); render();
+  saveToFirebase(); render();
 }
 
-// ── MODAL NOUVEAU RDV ──
+// ── MODAL NOUVEAU ──
 let pendingAppt=null, selectedColor=0;
 function openModal(type,row,day){
   pendingAppt={type,row,day}; selectedColor=0;
@@ -465,9 +503,9 @@ function saveAppt(){
     span:Math.min(days,5-pendingAppt.day), name, hours,
     color:COLORS[selectedColor], weekStart:weekDays[0].toISOString()
   });
-  saveState(); closeModal(); render();
+  saveToFirebase(); closeModal(); render();
 }
-function deleteAppt(id){ state.appointments=state.appointments.filter(a=>a.id!==id); saveState(); render(); }
+function deleteAppt(id){ state.appointments=state.appointments.filter(a=>a.id!==id); saveToFirebase(); render(); }
 
 function buildColorPicker(elId, onPick){
   const cp=document.getElementById(elId); cp.innerHTML='';
@@ -488,8 +526,8 @@ function updateStats(){
   document.getElementById('totalAppts').textContent=wa.length;
   updateTech();
 }
-function changeWeek(d){ state.weekOffset+=d; saveState(); render(); }
-function goToday(){ state.weekOffset=0; saveState(); render(); }
+function changeWeek(d){ state.weekOffset+=d; render(); }
+function goToday(){ state.weekOffset=0; render(); }
 
 // ── TOOLTIP ──
 function showTooltip(e,t){ const el=document.getElementById('tooltip'); el.textContent=t; el.classList.add('show'); moveTooltip(e); }
@@ -500,9 +538,7 @@ function hideTooltip(){ document.getElementById('tooltip').classList.remove('sho
 let editingApptId=null, editSelectedColor=0, editStatus='pending', editPiece=false;
 function openEditModal(id){
   const appt=state.appointments.find(a=>a.id===id); if(!appt) return;
-  editingApptId=id;
-  editStatus=appt.arrived?'arrived':'pending';
-  editPiece=appt.piece||false;
+  editingApptId=id; editStatus=appt.arrived?'arrived':'pending'; editPiece=appt.piece||false;
   editSelectedColor=Math.max(0,COLORS.indexOf(appt.color));
   document.getElementById('editApptName').value=appt.name;
   document.getElementById('editApptHours').value=appt.hours;
@@ -531,7 +567,7 @@ function saveEditAppt(){
   appt.name=name; appt.hours=hours; appt.color=COLORS[editSelectedColor];
   appt.arrived=(editStatus==='arrived'); appt.piece=editPiece;
   appt.span=Math.min(days,5-appt.day);
-  saveState(); closeEditModal(); render();
+  saveToFirebase(); closeEditModal(); render();
 }
 
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){closeModal();closeEditModal();} if(e.key==='Enter'&&document.getElementById('modalOverlay').classList.contains('open')) saveAppt(); });
@@ -540,7 +576,7 @@ document.getElementById('editModalOverlay').addEventListener('click',function(e)
 
 buildColorPicker('colorPicker', i=>selectedColor=i);
 updateTech();
-render();
+
 </script>
 </body>
 </html>
