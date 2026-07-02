@@ -88,19 +88,22 @@
   .appt .btn-action { font-size: .78rem; line-height: 1; padding: 2px 5px; border-radius: 4px; background: rgba(255,255,255,.22); color: #fff; cursor: pointer; border: none; font-family: inherit; transition: background .12s; white-space: nowrap; }
   .appt .btn-action:hover { background: rgba(255,255,255,.42); }
   .badge { font-size: .58rem; font-weight: 800; letter-spacing: .05em; color: #fff; border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
-  .badge-green  { background: #2ecc71; }
-  .badge-orange { background: #e67e22; }
-  .appt.arrived { outline: 3px solid #2ecc71; outline-offset: -2px; }
+  .badge-green   { background: #2ecc71; }
+  .badge-orange  { background: #e67e22; }
+  .badge-blue    { background: #2980b9; }
+  .appt.arrived  { outline: 3px solid #2ecc71; outline-offset: -2px; }
+
   #dragGhost { position: fixed; pointer-events: none; z-index: 999; border-radius: 6px; padding: 4px 10px; font-size: .78rem; font-weight: 700; color: #fff; white-space: nowrap; box-shadow: 0 6px 20px rgba(0,0,0,.3); opacity: .88; transform: translate(-50%,-50%); }
 
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 200; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
-  .modal { background: #fff; border-radius: 14px; padding: 28px 30px; width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+  .modal { background: #fff; border-radius: 14px; padding: 28px 30px; width: 420px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
   .modal h2 { font-size: 1.1rem; font-weight: 700; color: var(--steel); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
   .modal h2::before { content: '🔧'; font-size: 1.2rem; }
   .modal label { display: block; font-size: .78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; margin-top: 14px; }
-  .modal input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 12px; font-size: .88rem; font-family: inherit; color: var(--text); outline: none; transition: border-color .15s; }
-  .modal input:focus { border-color: var(--accent); }
+  .modal input, .modal textarea { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 12px; font-size: .88rem; font-family: inherit; color: var(--text); outline: none; transition: border-color .15s; }
+  .modal textarea { resize: vertical; min-height: 60px; }
+  .modal input:focus, .modal textarea:focus { border-color: var(--accent); }
   .modal .hours-row { display: flex; gap: 10px; }
   .modal .hours-row > div { flex: 1; }
   .modal .duration-note { font-size: .75rem; color: var(--muted); margin-top: 6px; }
@@ -114,10 +117,18 @@
   .btn-secondary { background: var(--surface); color: var(--muted); border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 18px; font-size: .9rem; cursor: pointer; }
   .btn-secondary:hover { background: var(--border); }
   #editModalOverlay { z-index: 210; }
-  .status-row { display: flex; gap: 10px; margin-top: 6px; }
-  .status-btn { flex: 1; border: 2px solid var(--border); border-radius: 8px; padding: 9px; font-size: .82rem; font-weight: 700; cursor: pointer; background: var(--surface); color: var(--muted); transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; }
-  .status-btn.active-arrived { border-color: #2ecc71; background: #eafaf1; color: #1e8449; }
-  .status-btn.active-pending { border-color: var(--amber); background: #fef9e7; color: #9a6a00; }
+  .status-row { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+  .status-btn { flex: 1; min-width: 100px; border: 2px solid var(--border); border-radius: 8px; padding: 8px 6px; font-size: .78rem; font-weight: 700; cursor: pointer; background: var(--surface); color: var(--muted); transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 5px; font-family: inherit; }
+  .status-btn.active-arrived  { border-color: #2ecc71; background: #eafaf1; color: #1e8449; }
+  .status-btn.active-pending  { border-color: var(--amber); background: #fef9e7; color: #9a6a00; }
+  .status-btn.active-ordered  { border-color: #e67e22; background: #fef0e7; color: #a04000; }
+  .status-btn.active-delivered{ border-color: #2980b9; background: #e8f4fd; color: #1a5276; }
+
+  /* Section pièce dans la modale */
+  .piece-section { background: #f8f9fa; border-radius: 10px; padding: 12px 14px; margin-top: 14px; border: 1px solid var(--border); }
+  .piece-section-title { font-size: .78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+  .piece-fournisseur { margin-top: 10px; }
+
   .tooltip { position: fixed; background: var(--steel); color: #fff; font-size: .78rem; padding: 6px 12px; border-radius: 6px; pointer-events: none; z-index: 300; white-space: nowrap; opacity: 0; transition: opacity .15s; }
   .tooltip.show { opacity: 1; }
   .loader { display: flex; align-items: center; justify-content: center; height: 200px; color: var(--muted); font-size: .9rem; gap: 10px; }
@@ -204,16 +215,29 @@
     <input type="number" id="editApptHours" min="0.5" max="999" step="0.5">
     <label>Durée (jours)</label>
     <input type="number" id="editApptDays" min="1" max="5">
-    <label>Pièce commandée</label>
-    <div class="status-row">
-      <button class="status-btn" id="btnPieceNon">📦 Non commandée</button>
-      <button class="status-btn" id="btnPieceOui">✅ Commandée</button>
+
+    <!-- SECTION PIÈCE -->
+    <div class="piece-section">
+      <div class="piece-section-title">📦 Pièce</div>
+      <div class="status-row">
+        <button class="status-btn active-pending" id="btnPieceNon">❌ Non commandée</button>
+        <button class="status-btn" id="btnPieceOui">📦 Commandée</button>
+        <button class="status-btn" id="btnPieceLivree">✅ Livrée</button>
+      </div>
+      <div class="piece-fournisseur">
+        <label style="margin-top:8px;">Commandée chez</label>
+        <input type="text" id="editPieceFournisseur" placeholder="Ex: AD Carrosserie, LKQ, Feu Vert…">
+        <label style="margin-top:8px;">Notes / Référence</label>
+        <textarea id="editPieceNote" placeholder="Référence, délai, remarques…"></textarea>
+      </div>
     </div>
+
     <label>Statut client</label>
     <div class="status-row">
       <button class="status-btn active-pending" id="btnPending">⏳ En attente</button>
       <button class="status-btn" id="btnArrived">✅ Client arrivé</button>
     </div>
+
     <label>Couleur</label>
     <div class="color-picker" id="editColorPicker"></div>
     <div class="btn-row">
@@ -230,7 +254,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ── FIREBASE ──
 const firebaseConfig = {
   apiKey: "AIzaSyA472wEsqwdcO6rf6fRybUA3Zy2vHR0z3I",
   authDomain: "planning-carrosserie-48819.firebaseapp.com",
@@ -243,19 +266,17 @@ const fbApp  = initializeApp(firebaseConfig);
 const db     = getFirestore(fbApp);
 const docRef = doc(db, "planning", "main");
 
-// ── CONSTANTES ──
 const COLORS       = ['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
 const DEFAULT_LOAN   = ['Clio IV','Peugeot 208','C3 Aircross','Toyota Yaris','Polo VI','DS3','Sandero','Mégane IV'];
 const DEFAULT_NOLOAN = ['Poste 1','Poste 2','Poste 3','Poste 4','Poste 5','Poste 6','Poste 7','Poste 8'];
 
-// ── STATE ──
-let state   = { loanNames:[...DEFAULT_LOAN], noLoanNames:[...DEFAULT_NOLOAN], appointments:[], weekOffset:0 };
-let nbTech  = parseInt(localStorage.getItem('carrosserie_tech') || '3');
+let state    = { loanNames:[...DEFAULT_LOAN], noLoanNames:[...DEFAULT_NOLOAN], appointments:[], weekOffset:0 };
+let nbTech   = parseInt(localStorage.getItem('carrosserie_tech') || '3');
 let isSaving = false;
 
 // ── SYNC ──
 function setSyncStatus(s) {
-  const el = document.getElementById('syncStatus');
+  const el  = document.getElementById('syncStatus');
   const map = { ok:['✅ Synchronisé','sync-ok'], wait:['⏳ Connexion…','sync-wait'], save:['💾 Sauvegarde…','sync-wait'], err:['❌ Hors ligne','sync-err'] };
   el.textContent = map[s][0]; el.className = 'sync-indicator ' + map[s][1];
 }
@@ -267,69 +288,48 @@ async function saveToFirebase() {
 }
 onSnapshot(docRef, snap => {
   if (isSaving) return;
-  if (snap.exists()) {
-    const offset = state.weekOffset;
-    state = { ...snap.data() };
-    state.weekOffset = offset;
-    setSyncStatus('ok');
-  } else { setSyncStatus('ok'); }
+  if (snap.exists()) { const off=state.weekOffset; state={...snap.data()}; state.weekOffset=off; setSyncStatus('ok'); }
+  else { setSyncStatus('ok'); }
   render();
 }, err => { console.error(err); setSyncStatus('err'); render(); });
 
 // ── DATES ──
-function getMonday(date) {
-  const d=new Date(date), day=d.getDay();
-  d.setDate(d.getDate()+(day===0?-6:1-day)); d.setHours(0,0,0,0); return d;
-}
-function getWeekDays(offset) {
-  const o = offset !== undefined ? offset : state.weekOffset;
-  const m = getMonday(new Date()); m.setDate(m.getDate()+o*7);
-  return Array.from({length:5},(_,i)=>{ const d=new Date(m); d.setDate(d.getDate()+i); return d; });
-}
+function getMonday(date) { const d=new Date(date),day=d.getDay(); d.setDate(d.getDate()+(day===0?-6:1-day)); d.setHours(0,0,0,0); return d; }
+function getWeekDays(offset) { const o=offset!==undefined?offset:state.weekOffset; const m=getMonday(new Date()); m.setDate(m.getDate()+o*7); return Array.from({length:5},(_,i)=>{ const d=new Date(m); d.setDate(d.getDate()+i); return d; }); }
 function isToday(d) { return d.toDateString()===new Date().toDateString(); }
-function getWeekLabel(days) {
-  const o={day:'numeric',month:'long'}, y=days[0].getFullYear();
-  return `Semaine du ${days[0].toLocaleDateString('fr-FR',o)} au ${days[4].toLocaleDateString('fr-FR',o)} ${y}`;
-}
+function getWeekLabel(days) { const o={day:'numeric',month:'long'},y=days[0].getFullYear(); return `Semaine du ${days[0].toLocaleDateString('fr-FR',o)} au ${days[4].toLocaleDateString('fr-FR',o)} ${y}`; }
 
-// ── TECHNICIENS ──
-function changeTech(delta) {
-  nbTech = Math.max(1, Math.min(20, nbTech+delta));
-  localStorage.setItem('carrosserie_tech', nbTech);
-  updateTech();
-}
+// ── TECH ──
+function changeTech(delta) { nbTech=Math.max(1,Math.min(20,nbTech+delta)); localStorage.setItem('carrosserie_tech',nbTech); updateTech(); }
 function updateTech() {
-  const capacity = nbTech * 39;
-  document.getElementById('techCount').textContent = nbTech;
-  document.getElementById('totalCapacity').textContent = capacity+'h';
-  const days = getWeekDays();
-  const ws   = days[0].toDateString();
-  const wa   = state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
-  const used = wa.reduce((s,a)=>s+(a.hours||0),0);
-  const pct  = capacity>0 ? Math.round((used/capacity)*100) : 0;
-  const el   = document.getElementById('fillRate');
-  el.textContent = pct+'%';
-  el.style.color = pct>=100?'#e74c3c':pct>=80?'#f5a623':'#2ecc71';
+  const capacity=nbTech*39;
+  document.getElementById('techCount').textContent=nbTech;
+  document.getElementById('totalCapacity').textContent=capacity+'h';
+  const days=getWeekDays(), ws=days[0].toDateString();
+  const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
+  const used=wa.reduce((s,a)=>s+(a.hours||0),0);
+  const pct=capacity>0?Math.round((used/capacity)*100):0;
+  const el=document.getElementById('fillRate');
+  el.textContent=pct+'%'; el.style.color=pct>=100?'#e74c3c':pct>=80?'#f5a623':'#2ecc71';
 }
 
 // ── RENDER ──
 function render() {
-  const days = getWeekDays();
-  document.getElementById('weekLabel').textContent = getWeekLabel(days);
+  const days=getWeekDays();
+  document.getElementById('weekLabel').textContent=getWeekLabel(days);
   updateStats();
-  const planner = document.getElementById('planner');
-  planner.innerHTML = '';
+  const planner=document.getElementById('planner'); planner.innerHTML='';
 
   planner.appendChild(mksec('🚗 Véhicules de prêt (8 postes)'));
-  const lc = document.createElement('div'); lc.className='grid-container';
+  const lc=document.createElement('div'); lc.className='grid-container';
   lc.appendChild(buildHeader(days));
-  state.loanNames.forEach((n,i) => lc.appendChild(makeRow('loan',i,n,days)));
+  state.loanNames.forEach((n,i)=>lc.appendChild(makeRow('loan',i,n,days)));
   planner.appendChild(lc);
 
   planner.appendChild(mksec('🔩 Postes sans véhicule de prêt'));
-  const nc = document.createElement('div'); nc.className='grid-container';
+  const nc=document.createElement('div'); nc.className='grid-container';
   nc.appendChild(buildHeader(days));
-  state.noLoanNames.forEach((n,i) => nc.appendChild(makeRow('noloan',i,n,days)));
+  state.noLoanNames.forEach((n,i)=>nc.appendChild(makeRow('noloan',i,n,days)));
   planner.appendChild(nc);
 
   renderAppts(days);
@@ -338,8 +338,8 @@ function render() {
 function mksec(t) { const e=document.createElement('div'); e.className='section-label'; e.style.margin='14px 0 6px'; e.innerHTML=t; return e; }
 
 function buildHeader(days) {
-  const h = document.createElement('div'); h.className='grid-header';
-  h.innerHTML = `<div class="h-corner">VÉHICULE</div>`+days.map(d=>`
+  const h=document.createElement('div'); h.className='grid-header';
+  h.innerHTML=`<div class="h-corner">VÉHICULE</div>`+days.map(d=>`
     <div class="h-day${isToday(d)?' today':''}">
       <span class="day-name">${d.toLocaleDateString('fr-FR',{weekday:'long'}).toUpperCase()}</span>
       <span class="day-date">${d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span>
@@ -347,248 +347,257 @@ function buildHeader(days) {
   return h;
 }
 
-function makeRow(type, rowIdx, name, days) {
-  const row = document.createElement('div');
-  row.className = `grid-row ${type==='loan'?'has-loan':'no-loan'}`;
+function makeRow(type,rowIdx,name,days) {
+  const row=document.createElement('div');
+  row.className=`grid-row ${type==='loan'?'has-loan':'no-loan'}`;
   row.dataset.type=type; row.dataset.row=rowIdx;
-
-  const label = document.createElement('div'); label.className='row-label';
-  label.innerHTML = `<span class="vehicle-icon">${type==='loan'?'🚗':'🔧'}</span>`;
-  const nameEl = document.createElement('span'); nameEl.className='vehicle-name';
+  const label=document.createElement('div'); label.className='row-label';
+  label.innerHTML=`<span class="vehicle-icon">${type==='loan'?'🚗':'🔧'}</span>`;
+  const nameEl=document.createElement('span'); nameEl.className='vehicle-name';
   nameEl.textContent=name; nameEl.title='Cliquer pour modifier';
-  nameEl.addEventListener('click', ()=>startEditName(nameEl,type,rowIdx));
+  nameEl.addEventListener('click',()=>startEditName(nameEl,type,rowIdx));
   label.appendChild(nameEl);
-  if(type==='loan'){ const b=document.createElement('span'); b.className='loan-badge'; b.textContent='PRÊT'; label.appendChild(b); }
+  if(type==='loan'){const b=document.createElement('span');b.className='loan-badge';b.textContent='PRÊT';label.appendChild(b);}
   row.appendChild(label);
-
-  days.forEach((d,dayIdx) => {
-    const cell = document.createElement('div');
-    cell.className = `day-cell${isToday(d)?' today-col':''}`;
+  days.forEach((d,dayIdx)=>{
+    const cell=document.createElement('div');
+    cell.className=`day-cell${isToday(d)?' today-col':''}`;
     cell.dataset.type=type; cell.dataset.row=rowIdx; cell.dataset.day=dayIdx;
-    cell.addEventListener('click', () => openModal(type, rowIdx, dayIdx));
-    cell.addEventListener('dragover',  e => { e.preventDefault(); cell.classList.add('drag-over'); });
-    cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
-    cell.addEventListener('drop',      e => { e.preventDefault(); cell.classList.remove('drag-over'); handleDrop(type,rowIdx,dayIdx); });
+    cell.addEventListener('click',()=>openModal(type,rowIdx,dayIdx));
+    cell.addEventListener('dragover',e=>{e.preventDefault();cell.classList.add('drag-over');});
+    cell.addEventListener('dragleave',()=>cell.classList.remove('drag-over'));
+    cell.addEventListener('drop',e=>{e.preventDefault();cell.classList.remove('drag-over');handleDrop(type,rowIdx,dayIdx);});
     row.appendChild(cell);
   });
   return row;
 }
 
-function startEditName(el, type, rowIdx) {
-  const input = document.createElement('input'); input.className='vehicle-edit'; input.value=el.textContent;
+function startEditName(el,type,rowIdx) {
+  const input=document.createElement('input'); input.className='vehicle-edit'; input.value=el.textContent;
   el.replaceWith(input); input.focus(); input.select();
-  const save = () => {
-    const v = input.value.trim()||el.textContent;
-    if(type==='loan') state.loanNames[rowIdx]=v; else state.noLoanNames[rowIdx]=v;
-    saveToFirebase(); render();
-  };
-  input.addEventListener('blur', save);
-  input.addEventListener('keydown', e => { if(e.key==='Enter') save(); if(e.key==='Escape') render(); });
+  const save=()=>{ const v=input.value.trim()||el.textContent; if(type==='loan') state.loanNames[rowIdx]=v; else state.noLoanNames[rowIdx]=v; saveToFirebase(); render(); };
+  input.addEventListener('blur',save);
+  input.addEventListener('keydown',e=>{if(e.key==='Enter')save();if(e.key==='Escape')render();});
 }
 
-// ── APPOINTMENTS ──
-function renderAppts(days) {
-  const weekStart = days[0].toDateString();
-  state.appointments.forEach(appt => {
-    if(new Date(appt.weekStart).toDateString() !== weekStart) return;
-    const span = Math.min(appt.span||1, 5-appt.day);
-    const cell = document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`);
-    if(!cell) return;
+// ── BADGE PIÈCE ──
+function getPieceBadge(appt) {
+  if (appt.pieceStatus === 'delivered') return '<span class="badge badge-blue">✅ LIVRÉ</span>';
+  if (appt.pieceStatus === 'ordered')   return '<span class="badge badge-orange">📦 COMMANDÉ</span>';
+  return '';
+}
 
-    const el = document.createElement('div');
+function renderAppts(days) {
+  const weekStart=days[0].toDateString();
+  state.appointments.forEach(appt=>{
+    if(new Date(appt.weekStart).toDateString()!==weekStart) return;
+    const span=Math.min(appt.span||1,5-appt.day);
+    const cell=document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`);
+    if(!cell) return;
+    const el=document.createElement('div');
     el.className='appt'; el.style.background=appt.color;
-    if(span>1){ el.style.right=`calc(-${(span-1)*100}% - ${span-1}px)`; el.style.zIndex=15; }
+    if(span>1){el.style.right=`calc(-${(span-1)*100}% - ${span-1}px)`;el.style.zIndex=15;}
     if(appt.arrived) el.classList.add('arrived');
 
-    el.innerHTML = `
+    // Tooltip détaillé avec infos pièce
+    let tooltipTxt = `${appt.name} — ${appt.hours}h — ${span} jour(s)`;
+    if(appt.pieceStatus==='ordered' && appt.pieceFournisseur) tooltipTxt += ` | Commandé chez : ${appt.pieceFournisseur}`;
+    if(appt.pieceStatus==='delivered') tooltipTxt += ' | ✅ Pièce livrée';
+    if(appt.pieceNote) tooltipTxt += ` | ${appt.pieceNote}`;
+
+    el.innerHTML=`
       <span class="appt-name">${appt.name}</span>
       ${appt.arrived?'<span class="badge badge-green">✔ ARRIVÉ</span>':''}
-      ${appt.piece?'<span class="badge badge-orange">📦 PIÈCE OK</span>':''}
+      ${getPieceBadge(appt)}
       <span class="appt-hours">${appt.hours}h</span>
       <div class="appt-actions">
         <button class="btn-action btn-copy" title="Copier semaine suivante">📋+1</button>
         <button class="btn-action btn-del" title="Supprimer">✕</button>
       </div>
     `;
-
-    el.querySelector('.btn-copy').addEventListener('click', e => { e.stopPropagation(); copyToNextWeek(appt); });
-    el.querySelector('.btn-del').addEventListener('click',  e => { e.stopPropagation(); deleteAppt(appt.id); });
-    el.addEventListener('click', e => { if(e.target.closest('.appt-actions')) return; openEditModal(appt.id); });
-    el.addEventListener('mouseenter', e => showTooltip(e,`${appt.name} — ${appt.hours}h — ${span} jour(s)`));
-    el.addEventListener('mouseleave', hideTooltip);
-    el.addEventListener('mousemove',  e => moveTooltip(e));
-
+    el.querySelector('.btn-copy').addEventListener('click',e=>{e.stopPropagation();copyToNextWeek(appt);});
+    el.querySelector('.btn-del').addEventListener('click',e=>{e.stopPropagation();deleteAppt(appt.id);});
+    el.addEventListener('click',e=>{if(e.target.closest('.appt-actions'))return;openEditModal(appt.id);});
+    el.addEventListener('mouseenter',e=>showTooltip(e,tooltipTxt));
+    el.addEventListener('mouseleave',hideTooltip);
+    el.addEventListener('mousemove',e=>moveTooltip(e));
     el.setAttribute('draggable','true');
-    el.addEventListener('dragstart', e => {
-      if(e.target.closest('.appt-actions')){ e.preventDefault(); return; }
-      dragApptId = appt.id; el.classList.add('dragging');
-      const ghost = document.getElementById('dragGhost');
+    el.addEventListener('dragstart',e=>{
+      if(e.target.closest('.appt-actions')){e.preventDefault();return;}
+      dragApptId=appt.id; el.classList.add('dragging');
+      const ghost=document.getElementById('dragGhost');
       ghost.style.display='block'; ghost.style.background=appt.color; ghost.textContent=appt.name;
       e.dataTransfer.setDragImage(ghost,-999,-999);
     });
-    el.addEventListener('dragend', () => {
-      el.classList.remove('dragging');
-      document.getElementById('dragGhost').style.display='none';
-      dragApptId=null;
-    });
-
+    el.addEventListener('dragend',()=>{el.classList.remove('dragging');document.getElementById('dragGhost').style.display='none';dragApptId=null;});
     cell.appendChild(el);
   });
 }
 
 // ── DRAG ──
-let dragApptId = null;
-document.addEventListener('dragover', e => {
-  const g = document.getElementById('dragGhost');
-  if(g.style.display==='block'){ g.style.left=e.clientX+'px'; g.style.top=(e.clientY-20)+'px'; }
-});
-function handleDrop(type, row, day) {
-  if(!dragApptId) return;
-  const appt = state.appointments.find(a=>a.id===dragApptId); if(!appt) return;
-  const days = getWeekDays();
-  appt.type=type; appt.row=row; appt.day=day;
-  appt.span=Math.min(appt.span||1, 5-day);
-  appt.weekStart=days[0].toISOString();
-  saveToFirebase(); render();
+let dragApptId=null;
+document.addEventListener('dragover',e=>{const g=document.getElementById('dragGhost');if(g.style.display==='block'){g.style.left=e.clientX+'px';g.style.top=(e.clientY-20)+'px';}});
+function handleDrop(type,row,day){
+  if(!dragApptId)return;
+  const appt=state.appointments.find(a=>a.id===dragApptId);if(!appt)return;
+  const days=getWeekDays();
+  appt.type=type;appt.row=row;appt.day=day;appt.span=Math.min(appt.span||1,5-day);appt.weekStart=days[0].toISOString();
+  saveToFirebase();render();
 }
 
-// ── COPIER SEMAINE SUIVANTE ──
-function copyToNextWeek(appt) {
-  const apptMon   = getMonday(new Date(appt.weekStart));
-  const nowMon    = getMonday(new Date());
-  const nextOffset = Math.round((apptMon-nowMon)/(7*86400000))+1;
-  const nextDays  = getWeekDays(nextOffset);
+// ── COPIER ──
+function copyToNextWeek(appt){
+  const apptMon=getMonday(new Date(appt.weekStart));
+  const nowMon=getMonday(new Date());
+  const nextOffset=Math.round((apptMon-nowMon)/(7*86400000))+1;
+  const nextDays=getWeekDays(nextOffset);
   state.appointments.push({
-    id: Date.now().toString(36)+Math.random().toString(36).slice(2),
-    type:appt.type, row:appt.row, day:appt.day, span:appt.span,
-    name:appt.name, hours:appt.hours, color:appt.color,
-    arrived:false, piece:appt.piece||false,
+    id:Date.now().toString(36)+Math.random().toString(36).slice(2),
+    type:appt.type,row:appt.row,day:appt.day,span:appt.span,
+    name:appt.name,hours:appt.hours,color:appt.color,
+    arrived:false,
+    pieceStatus:appt.pieceStatus||'none',
+    pieceFournisseur:appt.pieceFournisseur||'',
+    pieceNote:appt.pieceNote||'',
     weekStart:nextDays[0].toISOString()
   });
-  state.weekOffset = nextOffset;
-  saveToFirebase(); render();
+  state.weekOffset=nextOffset;
+  saveToFirebase();render();
 }
 
-// ── MODAL NOUVEAU RDV ──
-let pendingAppt=null, selectedColor=0;
-function openModal(type, row, day) {
-  pendingAppt={type,row,day}; selectedColor=0;
+// ── MODAL NOUVEAU ──
+let pendingAppt=null,selectedColor=0;
+function openModal(type,row,day){
+  pendingAppt={type,row,day};selectedColor=0;
   document.getElementById('apptName').value='';
   document.getElementById('apptDays').value=1;
   document.getElementById('apptHours').value=4;
-  buildColorPicker('colorPicker', i=>selectedColor=i);
+  buildColorPicker('colorPicker',i=>selectedColor=i);
   document.getElementById('modalOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('apptName').focus(),50);
 }
-function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); pendingAppt=null; }
-function saveAppt() {
-  if(!pendingAppt) return;
-  const name  = document.getElementById('apptName').value.trim();
-  const days  = parseInt(document.getElementById('apptDays').value)||1;
-  const hours = parseFloat(document.getElementById('apptHours').value)||0;
-  if(!name){ document.getElementById('apptName').focus(); return; }
-  const weekDays = getWeekDays();
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');pendingAppt=null;}
+function saveAppt(){
+  if(!pendingAppt)return;
+  const name=document.getElementById('apptName').value.trim();
+  const days=parseInt(document.getElementById('apptDays').value)||1;
+  const hours=parseFloat(document.getElementById('apptHours').value)||0;
+  if(!name){document.getElementById('apptName').focus();return;}
+  const weekDays=getWeekDays();
   state.appointments.push({
-    id: Date.now().toString(36)+Math.random().toString(36).slice(2),
-    type:pendingAppt.type, row:pendingAppt.row, day:pendingAppt.day,
-    span:Math.min(days,5-pendingAppt.day), name, hours,
-    color:COLORS[selectedColor], weekStart:weekDays[0].toISOString()
+    id:Date.now().toString(36)+Math.random().toString(36).slice(2),
+    type:pendingAppt.type,row:pendingAppt.row,day:pendingAppt.day,
+    span:Math.min(days,5-pendingAppt.day),name,hours,
+    color:COLORS[selectedColor],weekStart:weekDays[0].toISOString(),
+    arrived:false,pieceStatus:'none',pieceFournisseur:'',pieceNote:''
   });
-  saveToFirebase(); closeModal(); render();
+  saveToFirebase();closeModal();render();
 }
-function deleteAppt(id) { state.appointments=state.appointments.filter(a=>a.id!==id); saveToFirebase(); render(); }
+function deleteAppt(id){state.appointments=state.appointments.filter(a=>a.id!==id);saveToFirebase();render();}
 
-function buildColorPicker(elId, onPick) {
-  const cp = document.getElementById(elId); cp.innerHTML='';
-  COLORS.forEach((c,i) => {
-    const sw = document.createElement('div'); sw.className=`color-swatch${i===0?' selected':''}`;
-    sw.style.background=c;
-    sw.addEventListener('click', ()=>{ cp.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected')); sw.classList.add('selected'); onPick(i); });
+function buildColorPicker(elId,onPick){
+  const cp=document.getElementById(elId);cp.innerHTML='';
+  COLORS.forEach((c,i)=>{
+    const sw=document.createElement('div');sw.className=`color-swatch${i===0?' selected':''}`;sw.style.background=c;
+    sw.addEventListener('click',()=>{cp.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));sw.classList.add('selected');onPick(i);});
     cp.appendChild(sw);
   });
 }
 
 // ── STATS ──
-function updateStats() {
-  const days = getWeekDays();
-  const ws   = days[0].toDateString();
-  const wa   = state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
-  document.getElementById('totalHours').textContent = wa.reduce((s,a)=>s+(a.hours||0),0)+'h';
-  document.getElementById('totalAppts').textContent = wa.length;
+function updateStats(){
+  const days=getWeekDays(),ws=days[0].toDateString();
+  const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
+  document.getElementById('totalHours').textContent=wa.reduce((s,a)=>s+(a.hours||0),0)+'h';
+  document.getElementById('totalAppts').textContent=wa.length;
   updateTech();
 }
-function changeWeek(d) { state.weekOffset+=d; render(); }
-function goToday()     { state.weekOffset=0;  render(); }
+function changeWeek(d){state.weekOffset+=d;render();}
+function goToday(){state.weekOffset=0;render();}
 
 // ── TOOLTIP ──
-function showTooltip(e,t){ const el=document.getElementById('tooltip'); el.textContent=t; el.classList.add('show'); moveTooltip(e); }
-function moveTooltip(e){ const el=document.getElementById('tooltip'); el.style.left=(e.clientX+12)+'px'; el.style.top=(e.clientY-32)+'px'; }
-function hideTooltip(){ document.getElementById('tooltip').classList.remove('show'); }
+function showTooltip(e,t){const el=document.getElementById('tooltip');el.textContent=t;el.classList.add('show');moveTooltip(e);}
+function moveTooltip(e){const el=document.getElementById('tooltip');el.style.left=(e.clientX+12)+'px';el.style.top=(e.clientY-32)+'px';}
+function hideTooltip(){document.getElementById('tooltip').classList.remove('show');}
 
 // ── EDIT MODAL ──
-let editingApptId=null, editSelectedColor=0, editStatus='pending', editPiece=false;
-function openEditModal(id) {
-  const appt = state.appointments.find(a=>a.id===id); if(!appt) return;
-  editingApptId=id; editStatus=appt.arrived?'arrived':'pending'; editPiece=appt.piece||false;
+let editingApptId=null,editSelectedColor=0,editStatus='pending',editPieceStatus='none';
+
+function openEditModal(id){
+  const appt=state.appointments.find(a=>a.id===id);if(!appt)return;
+  editingApptId=id;
+  editStatus=appt.arrived?'arrived':'pending';
+  editPieceStatus=appt.pieceStatus||'none';
   editSelectedColor=Math.max(0,COLORS.indexOf(appt.color));
-  document.getElementById('editApptName').value  = appt.name;
-  document.getElementById('editApptHours').value = appt.hours;
-  document.getElementById('editApptDays').value  = appt.span||1;
-  setEditStatus(editStatus); setEditPiece(editPiece);
-  buildColorPicker('editColorPicker', i=>editSelectedColor=i);
-  // re-sélectionne la bonne couleur
-  const swatches = document.querySelectorAll('#editColorPicker .color-swatch');
-  swatches.forEach((s,i)=>s.classList.toggle('selected', i===editSelectedColor));
+  document.getElementById('editApptName').value=appt.name;
+  document.getElementById('editApptHours').value=appt.hours;
+  document.getElementById('editApptDays').value=appt.span||1;
+  document.getElementById('editPieceFournisseur').value=appt.pieceFournisseur||'';
+  document.getElementById('editPieceNote').value=appt.pieceNote||'';
+  setEditStatus(editStatus);
+  setEditPieceStatus(editPieceStatus);
+  buildColorPicker('editColorPicker',i=>editSelectedColor=i);
+  document.querySelectorAll('#editColorPicker .color-swatch').forEach((s,i)=>s.classList.toggle('selected',i===editSelectedColor));
   document.getElementById('editModalOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('editApptName').focus(),50);
 }
-function setEditStatus(s) {
+
+function setEditStatus(s){
   editStatus=s;
   document.getElementById('btnPending').className='status-btn'+(s==='pending'?' active-pending':'');
   document.getElementById('btnArrived').className='status-btn'+(s==='arrived'?' active-arrived':'');
 }
-function setEditPiece(v) {
-  editPiece=v;
-  document.getElementById('btnPieceNon').className='status-btn'+(!v?' active-pending':'');
-  document.getElementById('btnPieceOui').className='status-btn'+(v?' active-arrived':'');
-}
-function closeEditModal() { document.getElementById('editModalOverlay').classList.remove('open'); editingApptId=null; }
-function saveEditAppt() {
-  if(!editingApptId) return;
-  const name  = document.getElementById('editApptName').value.trim();
-  const hours = parseFloat(document.getElementById('editApptHours').value)||0;
-  const days  = parseInt(document.getElementById('editApptDays').value)||1;
-  if(!name){ document.getElementById('editApptName').focus(); return; }
-  const appt = state.appointments.find(a=>a.id===editingApptId); if(!appt) return;
-  appt.name=name; appt.hours=hours; appt.color=COLORS[editSelectedColor];
-  appt.arrived=(editStatus==='arrived'); appt.piece=editPiece;
-  appt.span=Math.min(days,5-appt.day);
-  saveToFirebase(); closeEditModal(); render();
+
+function setEditPieceStatus(s){
+  editPieceStatus=s;
+  document.getElementById('btnPieceNon').className   ='status-btn'+(s==='none'     ?' active-pending':'');
+  document.getElementById('btnPieceOui').className   ='status-btn'+(s==='ordered'  ?' active-ordered':'');
+  document.getElementById('btnPieceLivree').className='status-btn'+(s==='delivered'?' active-delivered':'');
+  // Affiche/masque le champ fournisseur selon statut
+  document.querySelector('.piece-fournisseur').style.display=(s==='none'?'none':'block');
 }
 
-// ── EVENT LISTENERS (tous via addEventListener, pas de onclick) ──
-document.getElementById('btnPrevWeek').addEventListener('click', ()=>changeWeek(-1));
-document.getElementById('btnNextWeek').addEventListener('click', ()=>changeWeek(1));
-document.getElementById('btnToday').addEventListener('click',    ()=>goToday());
-document.getElementById('btnTechMinus').addEventListener('click', ()=>changeTech(-1));
-document.getElementById('btnTechPlus').addEventListener('click',  ()=>changeTech(1));
-document.getElementById('btnCloseModal').addEventListener('click',     ()=>closeModal());
-document.getElementById('btnSaveAppt').addEventListener('click',       ()=>saveAppt());
-document.getElementById('btnCloseEditModal').addEventListener('click', ()=>closeEditModal());
-document.getElementById('btnSaveEditAppt').addEventListener('click',   ()=>saveEditAppt());
-document.getElementById('btnPieceNon').addEventListener('click', ()=>setEditPiece(false));
-document.getElementById('btnPieceOui').addEventListener('click', ()=>setEditPiece(true));
-document.getElementById('btnPending').addEventListener('click',  ()=>setEditStatus('pending'));
-document.getElementById('btnArrived').addEventListener('click',  ()=>setEditStatus('arrived'));
-document.getElementById('modalOverlay').addEventListener('click',     function(e){ if(e.target===this) closeModal(); });
-document.getElementById('editModalOverlay').addEventListener('click', function(e){ if(e.target===this) closeEditModal(); });
-document.addEventListener('keydown', e => {
-  if(e.key==='Escape'){ closeModal(); closeEditModal(); }
-  if(e.key==='Enter' && document.getElementById('modalOverlay').classList.contains('open')) saveAppt();
+function closeEditModal(){document.getElementById('editModalOverlay').classList.remove('open');editingApptId=null;}
+
+function saveEditAppt(){
+  if(!editingApptId)return;
+  const name=document.getElementById('editApptName').value.trim();
+  const hours=parseFloat(document.getElementById('editApptHours').value)||0;
+  const days=parseInt(document.getElementById('editApptDays').value)||1;
+  if(!name){document.getElementById('editApptName').focus();return;}
+  const appt=state.appointments.find(a=>a.id===editingApptId);if(!appt)return;
+  appt.name=name; appt.hours=hours; appt.color=COLORS[editSelectedColor];
+  appt.arrived=(editStatus==='arrived');
+  appt.pieceStatus=editPieceStatus;
+  appt.pieceFournisseur=document.getElementById('editPieceFournisseur').value.trim();
+  appt.pieceNote=document.getElementById('editPieceNote').value.trim();
+  appt.span=Math.min(days,5-appt.day);
+  saveToFirebase();closeEditModal();render();
+}
+
+// ── EVENTS ──
+document.getElementById('btnPrevWeek').addEventListener('click',()=>changeWeek(-1));
+document.getElementById('btnNextWeek').addEventListener('click',()=>changeWeek(1));
+document.getElementById('btnToday').addEventListener('click',()=>goToday());
+document.getElementById('btnTechMinus').addEventListener('click',()=>changeTech(-1));
+document.getElementById('btnTechPlus').addEventListener('click',()=>changeTech(1));
+document.getElementById('btnCloseModal').addEventListener('click',()=>closeModal());
+document.getElementById('btnSaveAppt').addEventListener('click',()=>saveAppt());
+document.getElementById('btnCloseEditModal').addEventListener('click',()=>closeEditModal());
+document.getElementById('btnSaveEditAppt').addEventListener('click',()=>saveEditAppt());
+document.getElementById('btnPieceNon').addEventListener('click',()=>setEditPieceStatus('none'));
+document.getElementById('btnPieceOui').addEventListener('click',()=>setEditPieceStatus('ordered'));
+document.getElementById('btnPieceLivree').addEventListener('click',()=>setEditPieceStatus('delivered'));
+document.getElementById('btnPending').addEventListener('click',()=>setEditStatus('pending'));
+document.getElementById('btnArrived').addEventListener('click',()=>setEditStatus('arrived'));
+document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.getElementById('editModalOverlay').addEventListener('click',function(e){if(e.target===this)closeEditModal();});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closeEditModal();}
+  if(e.key==='Enter'&&document.getElementById('modalOverlay').classList.contains('open'))saveAppt();
 });
 
-// ── INIT ──
-buildColorPicker('colorPicker', i=>selectedColor=i);
+buildColorPicker('colorPicker',i=>selectedColor=i);
 updateTech();
 </script>
 </body>
