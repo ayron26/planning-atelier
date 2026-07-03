@@ -51,12 +51,11 @@
   .toolbar-btn { background: var(--steel-mid); border: none; color: #fff; border-radius: 6px; padding: 0 10px; height: 32px; cursor: pointer; font-size: .78rem; font-weight: 600; display: flex; align-items: center; gap: 5px; transition: background .15s; white-space: nowrap; }
   .toolbar-btn:hover { background: var(--accent); }
 
-  /* ── SEARCH ── */
   .search-bar { padding: 8px 16px; background: var(--card); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; position: sticky; top: 56px; z-index: 90; }
   .search-bar input { flex: 1; max-width: 320px; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: .88rem; font-family: inherit; outline: none; transition: border-color .15s; }
   .search-bar input:focus { border-color: var(--accent); }
   .search-wrap { position: relative; }
-  .search-results { background: #fff; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.12); position: absolute; top: 38px; left: 0; width: 360px; z-index: 200; max-height: 300px; overflow-y: auto; display: none; }
+  .search-results { background: #fff; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.12); position: absolute; top: 38px; left: 0; width: 380px; z-index: 200; max-height: 300px; overflow-y: auto; display: none; }
   .search-results.open { display: block; }
   .search-result-item { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 2px; }
   .search-result-item:last-child { border-bottom: none; }
@@ -65,12 +64,10 @@
   .search-result-item .sri-meta { font-size: .75rem; color: var(--muted); }
   .search-no-result { padding: 14px; color: var(--muted); font-size: .85rem; text-align: center; }
 
-  /* ── PLANNER ── */
   .planner-wrap { padding: 16px; max-width: 1600px; margin: 0 auto; }
   .section-label { display: flex; align-items: center; gap: 10px; margin: 12px 0 6px; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-  /* ── GRID ── correctif : pas de sticky sur le header pour éviter le bug visuel ── */
   .grid-container { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.06); margin-bottom: 4px; }
   .grid-header { display: grid; grid-template-columns: var(--col-label) repeat(5, var(--col-day)); background: var(--steel); height: var(--header-h); }
   .grid-header .h-corner { display: flex; align-items: center; padding: 0 12px; color: rgba(255,255,255,.5); font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-right: 1px solid rgba(255,255,255,.08); }
@@ -101,14 +98,12 @@
   .day-cell.today-col:hover { background: rgba(232,76,30,.1) !important; }
   .day-cell.drag-over { background: rgba(232,76,30,.18) !important; outline: 2px dashed var(--accent); outline-offset: -2px; }
 
-  /* Absence */
   .absence-block { position: absolute; inset: 2px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 700; z-index: 5; cursor: default; }
   .absence-block.conge   { background: repeating-linear-gradient(45deg,#e8f5e9,#e8f5e9 4px,#c8e6c9 4px,#c8e6c9 8px); color: #2e7d32; border: 1.5px solid #a5d6a7; }
   .absence-block.absence { background: repeating-linear-gradient(45deg,#fff3e0,#fff3e0 4px,#ffe0b2 4px,#ffe0b2 8px); color: #e65100; border: 1.5px solid #ffcc80; }
   .absence-block .abs-del { opacity: 0; margin-left: 4px; font-size: .8rem; cursor: pointer; }
   .absence-block:hover .abs-del { opacity: 1; }
 
-  /* ── APPOINTMENTS ── */
   .appt { position: absolute; top: 4px; bottom: 4px; left: 3px; right: 3px; border-radius: 6px; display: flex; align-items: center; padding: 0 7px 0 11px; font-size: .76rem; font-weight: 600; gap: 4px; overflow: hidden; white-space: nowrap; cursor: grab; box-shadow: 0 2px 6px rgba(0,0,0,.15); user-select: none; z-index: 10; transition: box-shadow .15s, opacity .15s; }
   .appt:active { cursor: grabbing; }
   .appt.dragging { opacity: .45; box-shadow: none; }
@@ -121,10 +116,9 @@
   .appt .btn-action { font-size: .78rem; line-height: 1; padding: 2px 5px; border-radius: 4px; background: rgba(255,255,255,.22); color: #fff; cursor: pointer; border: none; font-family: inherit; transition: background .12s; white-space: nowrap; }
   .appt .btn-action:hover { background: rgba(255,255,255,.42); }
 
-  /* Bande de priorité à gauche */
-  .prio-strip { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; border-radius: 6px 0 0 6px; flex-shrink: 0; }
+  .prio-strip { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; border-radius: 6px 0 0 6px; }
   .prio-haute   .prio-strip { background: #e74c3c; }
-  .prio-moyenne .prio-strip { background: rgba(255,255,255,.3); }
+  .prio-moyenne .prio-strip { background: rgba(255,255,255,.2); }
   .prio-basse   .prio-strip { background: #2ecc71; }
 
   .badge { font-size: .58rem; font-weight: 800; letter-spacing: .05em; color: #fff; border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
@@ -136,7 +130,6 @@
 
   #dragGhost { position: fixed; pointer-events: none; z-index: 999; border-radius: 6px; padding: 4px 10px; font-size: .78rem; font-weight: 700; color: #fff; white-space: nowrap; box-shadow: 0 6px 20px rgba(0,0,0,.3); opacity: .88; transform: translate(-50%,-50%); }
 
-  /* ── MODALS ── */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 200; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
   .modal { background: #fff; border-radius: 14px; padding: 28px 30px; width: 440px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
@@ -174,7 +167,6 @@
   .piece-section-title { font-size: .78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
   .piece-fournisseur { margin-top: 10px; }
 
-  /* Historique */
   .history-week { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
   .history-week-header { background: var(--steel); color: #fff; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: .85rem; font-weight: 700; cursor: pointer; }
   .history-week-header:hover { background: var(--steel-mid); }
@@ -239,7 +231,6 @@
   </div>
 </div>
 
-<!-- SEARCH -->
 <div class="search-bar">
   <div class="search-wrap">
     <input type="text" id="searchInput" placeholder="🔍 Rechercher un client, véhicule…">
@@ -379,12 +370,27 @@ const db     = getFirestore(fbApp);
 const docRef = doc(db, "planning", "main");
 
 const COLORS = ['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
-const DEFAULT_LOAN   = ['Clio IV','Peugeot 208','C3 Aircross','Toyota Yaris','Polo VI','DS3','Sandero','Mégane IV'];
+const DEFAULT_LOAN   = ['Clio IV','01','02','03','04','05','06','07'];
 const DEFAULT_NOLOAN = ['Poste 1','Poste 2','Poste 3','Poste 4','Poste 5','Poste 6','Poste 7','Poste 8'];
 
-let state = { loanNames:[...DEFAULT_LOAN], noLoanNames:[...DEFAULT_NOLOAN], appointments:[], absences:[], weekOffset:0 };
+let state    = { loanNames:[...DEFAULT_LOAN], noLoanNames:[...DEFAULT_NOLOAN], appointments:[], absences:[], weekOffset:0 };
 let nbTech   = parseInt(localStorage.getItem('carrosserie_tech') || '3');
 let isSaving = false;
+
+// ── COMPATIBILITÉ ANCIEN FORMAT ──
+// Convertit piece:true/false → pieceStatus si nécessaire
+function normalizeAppt(a) {
+  if (!a.pieceStatus) {
+    if (a.piece === true)       a.pieceStatus = 'ordered';
+    else if (a.piece === false) a.pieceStatus = 'none';
+    else                        a.pieceStatus = 'none';
+  }
+  if (!a.pieceFournisseur) a.pieceFournisseur = '';
+  if (!a.pieceNote)        a.pieceNote        = '';
+  if (!a.priority)         a.priority         = 'moyenne';
+  if (a.arrived === undefined) a.arrived      = false;
+  return a;
+}
 
 // ── FIREBASE ──
 function setSyncStatus(s) {
@@ -403,8 +409,10 @@ onSnapshot(docRef, snap => {
   if (snap.exists()) {
     const off = state.weekOffset;
     state = { ...snap.data() };
-    if (!state.absences) state.absences = [];
-    if (!state.appointments) state.appointments = [];
+    if (!state.absences)      state.absences = [];
+    if (!state.appointments)  state.appointments = [];
+    // Normalise chaque RDV pour compatibilité ancien format
+    state.appointments = state.appointments.map(normalizeAppt);
     state.weekOffset = off;
     setSyncStatus('ok');
   } else {
@@ -439,8 +447,8 @@ function updateTech() {
   const days = getWeekDays(), ws = days[0].toDateString();
   const wa = state.appointments.filter(a => new Date(a.weekStart).toDateString() === ws);
   const used = wa.reduce((s, a) => s + (a.hours || 0), 0);
-  const pct = capacity > 0 ? Math.round((used / capacity) * 100) : 0;
-  const el = document.getElementById('fillRate');
+  const pct  = capacity > 0 ? Math.round((used / capacity) * 100) : 0;
+  const el   = document.getElementById('fillRate');
   el.textContent = pct + '%';
   el.style.color = pct >= 100 ? '#e74c3c' : pct >= 80 ? '#f5a623' : '#2ecc71';
 }
@@ -454,14 +462,12 @@ function render() {
   const planner = document.getElementById('planner');
   planner.innerHTML = '';
 
-  // Section véhicules de prêt
   planner.appendChild(mksec('🚗 Véhicules de prêt (8 postes)'));
   const lc = document.createElement('div'); lc.className = 'grid-container';
   lc.appendChild(buildHeader(days));
   state.loanNames.forEach((n, i) => lc.appendChild(makeRow('loan', i, n, days)));
   planner.appendChild(lc);
 
-  // Section sans véhicule de prêt
   planner.appendChild(mksec('🔩 Postes sans véhicule de prêt'));
   const nc = document.createElement('div'); nc.className = 'grid-container';
   nc.appendChild(buildHeader(days));
@@ -525,6 +531,10 @@ function renderAppts(days) {
   const ws = days[0].toDateString();
   state.appointments.forEach(appt => {
     if (new Date(appt.weekStart).toDateString() !== ws) return;
+
+    // Sécurité : row et day valides
+    if (appt.row === undefined || appt.day === undefined) return;
+
     const span = Math.min(appt.span || 1, 5 - appt.day);
     const cell = document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`);
     if (!cell) return;
@@ -532,10 +542,11 @@ function renderAppts(days) {
     const prio = appt.priority || 'moyenne';
     const el = document.createElement('div');
     el.className = `appt prio-${prio}`;
-    el.style.background = appt.color;
+    el.style.background = appt.color || '#2980b9';
     if (span > 1) { el.style.right = `calc(-${(span-1)*100}% - ${span-1}px)`; el.style.zIndex = 15; }
     if (appt.arrived) el.classList.add('arrived');
 
+    // Badge pièce — compatible ancien (piece:bool) et nouveau (pieceStatus)
     let pieceBadge = '';
     if (appt.pieceStatus === 'delivered') pieceBadge = '<span class="badge badge-blue">✅ LIVRÉ</span>';
     else if (appt.pieceStatus === 'ordered') pieceBadge = '<span class="badge badge-orange">📦 CMD</span>';
@@ -609,18 +620,18 @@ function handleDrop(type, row, day) {
 
 // ── COPIER ──
 function copyToNextWeek(appt) {
-  const apptMon = getMonday(new Date(appt.weekStart));
-  const nowMon  = getMonday(new Date());
+  const apptMon    = getMonday(new Date(appt.weekStart));
+  const nowMon     = getMonday(new Date());
   const nextOffset = Math.round((apptMon - nowMon) / (7 * 86400000)) + 1;
-  const nextDays = getWeekDays(nextOffset);
+  const nextDays   = getWeekDays(nextOffset);
   state.appointments.push({
     id: Date.now().toString(36) + Math.random().toString(36).slice(2),
     type:appt.type, row:appt.row, day:appt.day, span:appt.span,
     name:appt.name, hours:appt.hours, color:appt.color,
-    priority:appt.priority||'moyenne', arrived:false,
-    pieceStatus:appt.pieceStatus||'none',
-    pieceFournisseur:appt.pieceFournisseur||'',
-    pieceNote:appt.pieceNote||'',
+    priority:appt.priority || 'moyenne', arrived:false,
+    pieceStatus:appt.pieceStatus || 'none',
+    pieceFournisseur:appt.pieceFournisseur || '',
+    pieceNote:appt.pieceNote || '',
     weekStart:nextDays[0].toISOString()
   });
   state.weekOffset = nextOffset;
@@ -655,8 +666,8 @@ function deleteAbsence(id) { state.absences = state.absences.filter(a => a.id !=
 let pendingAppt = null, selectedColor = 0, newPriority = 'moyenne';
 function openModal(type, row, day) {
   pendingAppt = {type, row, day}; selectedColor = 0; newPriority = 'moyenne';
-  document.getElementById('apptName').value = '';
-  document.getElementById('apptDays').value = 1;
+  document.getElementById('apptName').value  = '';
+  document.getElementById('apptDays').value  = 1;
   document.getElementById('apptHours').value = 4;
   setNewPrio('moyenne');
   buildColorPicker('colorPicker', i => selectedColor = i);
@@ -718,10 +729,10 @@ function hideTooltip() { document.getElementById('tooltip').classList.remove('sh
 let editingApptId = null, editSelectedColor = 0, editStatus = 'pending', editPieceStatus = 'none', editPriority = 'moyenne';
 function openEditModal(id) {
   const appt = state.appointments.find(a => a.id === id); if (!appt) return;
-  editingApptId = id;
-  editStatus      = appt.arrived ? 'arrived' : 'pending';
-  editPieceStatus = appt.pieceStatus || 'none';
-  editPriority    = appt.priority || 'moyenne';
+  editingApptId     = id;
+  editStatus        = appt.arrived ? 'arrived' : 'pending';
+  editPieceStatus   = appt.pieceStatus || 'none';
+  editPriority      = appt.priority || 'moyenne';
   editSelectedColor = Math.max(0, COLORS.indexOf(appt.color));
   document.getElementById('editApptName').value         = appt.name;
   document.getElementById('editApptHours').value        = appt.hours;
@@ -765,10 +776,12 @@ function saveEditAppt() {
   appt.name    = name; appt.hours = hours; appt.color = COLORS[editSelectedColor];
   appt.arrived = (editStatus === 'arrived');
   appt.priority = editPriority;
-  appt.pieceStatus = editPieceStatus;
+  appt.pieceStatus      = editPieceStatus;
   appt.pieceFournisseur = document.getElementById('editPieceFournisseur').value.trim();
   appt.pieceNote        = document.getElementById('editPieceNote').value.trim();
   appt.span = Math.min(days, 5 - appt.day);
+  // Supprime l'ancien champ piece pour nettoyer
+  delete appt.piece;
   saveToFirebase(); closeEditModal(); render();
 }
 
@@ -777,13 +790,13 @@ function doSearch(query) {
   const q = query.trim().toLowerCase();
   const results = document.getElementById('searchResults');
   if (!q) { results.classList.remove('open'); return; }
-  const matches = state.appointments.filter(a => a.name.toLowerCase().includes(q));
+  const matches = state.appointments.filter(a => a.name && a.name.toLowerCase().includes(q));
   if (!matches.length) { results.innerHTML = '<div class="search-no-result">Aucun résultat</div>'; results.classList.add('open'); return; }
   results.innerHTML = matches.slice(0, 10).map(a => {
     const apptMon = getMonday(new Date(a.weekStart));
     const nowMon  = getMonday(new Date());
-    const off = Math.round((apptMon - nowMon) / (7 * 86400000));
-    const days = getWeekDays(off);
+    const off     = Math.round((apptMon - nowMon) / (7 * 86400000));
+    const days    = getWeekDays(off);
     const dayName = days[a.day] ? days[a.day].toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'short'}) : '?';
     const rowName = a.type === 'loan' ? (state.loanNames[a.row] || '?') : (state.noLoanNames[a.row] || '?');
     return `<div class="search-result-item" data-id="${a.id}" data-offset="${off}">
@@ -814,7 +827,6 @@ let historyPage = 0;
 function openHistory() { historyPage = 0; document.getElementById('historyModalOverlay').classList.add('open'); renderHistory(); }
 function closeHistory() { document.getElementById('historyModalOverlay').classList.remove('open'); }
 function renderHistory() {
-  const nowMon = getMonday(new Date());
   const startOff = -(historyPage * 4);
   const weeks = [];
   for (let i = 0; i < 4; i++) {
@@ -897,8 +909,8 @@ document.getElementById('absTypeConge').addEventListener('click',   () => { absT
 document.getElementById('absTypeAbsence').addEventListener('click', () => { absType = 'absence'; document.getElementById('absTypeConge').className = 'status-btn'; document.getElementById('absTypeAbsence').className = 'status-btn active-pending'; });
 document.getElementById('searchInput').addEventListener('input', e => doSearch(e.target.value));
 document.getElementById('searchInput').addEventListener('blur',  () => setTimeout(() => document.getElementById('searchResults').classList.remove('open'), 200));
-document.getElementById('modalOverlay').addEventListener('click',     function(e) { if (e.target === this) closeModal(); });
-document.getElementById('editModalOverlay').addEventListener('click', function(e) { if (e.target === this) closeEditModal(); });
+document.getElementById('modalOverlay').addEventListener('click',         function(e) { if (e.target === this) closeModal(); });
+document.getElementById('editModalOverlay').addEventListener('click',     function(e) { if (e.target === this) closeEditModal(); });
 document.getElementById('absenceModalOverlay').addEventListener('click',  function(e) { if (e.target === this) closeAbsModal(); });
 document.getElementById('historyModalOverlay').addEventListener('click',  function(e) { if (e.target === this) closeHistory(); });
 document.addEventListener('keydown', e => {
