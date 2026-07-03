@@ -101,11 +101,9 @@
   .absence-block .abs-del { opacity: 0; margin-left: 4px; cursor: pointer; }
   .absence-block:hover .abs-del { opacity: 1; }
 
-  /* ── APPOINTMENTS ── */
-  .appt { position: absolute; top: 4px; bottom: 4px; left: 3px; right: 3px; border-radius: 6px; display: flex; align-items: center; padding: 0 24px 0 11px; font-size: .76rem; font-weight: 600; gap: 4px; overflow: hidden; white-space: nowrap; cursor: grab; box-shadow: 0 2px 6px rgba(0,0,0,.15); user-select: none; z-index: 10; transition: box-shadow .15s, opacity .15s; }
+  .appt { position: absolute; top: 4px; bottom: 4px; left: 3px; right: 3px; border-radius: 6px; display: flex; align-items: center; padding: 0 20px 0 11px; font-size: .76rem; font-weight: 600; gap: 4px; overflow: hidden; white-space: nowrap; cursor: grab; box-shadow: 0 2px 6px rgba(0,0,0,.15); user-select: none; z-index: 10; transition: box-shadow .15s, opacity .15s; }
   .appt:active { cursor: grabbing; }
   .appt.dragging { opacity: .45; box-shadow: none; }
-  .appt.resizing { cursor: ew-resize !important; opacity: .85; }
   .appt.highlight { outline: 3px solid #f5a623; outline-offset: -2px; animation: pulse 1s ease-in-out 3; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
   .appt .appt-name { flex: 1; overflow: hidden; text-overflow: ellipsis; }
@@ -114,11 +112,8 @@
   .appt:hover .appt-actions { opacity: 1; }
   .appt .btn-action { font-size: .78rem; line-height: 1; padding: 2px 5px; border-radius: 4px; background: rgba(255,255,255,.22); color: #fff; cursor: pointer; border: none; font-family: inherit; transition: background .12s; white-space: nowrap; }
   .appt .btn-action:hover { background: rgba(255,255,255,.42); }
-
-  /* Poignée resize */
-  .resize-handle { position: absolute; right: 0; top: 0; bottom: 0; width: 14px; cursor: ew-resize; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.15); border-radius: 0 6px 6px 0; font-size: .7rem; color: rgba(255,255,255,.8); flex-shrink: 0; transition: background .15s; z-index: 20; }
-  .resize-handle:hover { background: rgba(0,0,0,.35); }
-
+  .resize-handle { position: absolute; right: 0; top: 0; bottom: 0; width: 16px; cursor: ew-resize; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.2); border-radius: 0 6px 6px 0; font-size: .75rem; color: rgba(255,255,255,.9); z-index: 20; transition: background .15s; }
+  .resize-handle:hover { background: rgba(0,0,0,.4); }
   .prio-strip { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; border-radius: 6px 0 0 6px; }
   .prio-haute   .prio-strip { background: #e74c3c; }
   .prio-moyenne .prio-strip { background: rgba(255,255,255,.2); }
@@ -373,7 +368,6 @@ let state    = { loanNames:[...DEFAULT_LOAN], noLoanNames:[...DEFAULT_NOLOAN], a
 let nbTech   = parseInt(localStorage.getItem('carrosserie_tech') || '3');
 let isSaving = false;
 
-// ── NORMALISE ANCIEN FORMAT ──
 function normalizeAppt(a) {
   if (!a.pieceStatus) a.pieceStatus = (a.piece === true) ? 'ordered' : 'none';
   if (!a.pieceFournisseur) a.pieceFournisseur = '';
@@ -383,7 +377,6 @@ function normalizeAppt(a) {
   return a;
 }
 
-// ── FIREBASE ──
 function setSyncStatus(s) {
   const el  = document.getElementById('syncStatus');
   const map = { ok:['✅ Synchronisé','sync-ok'], wait:['⏳ Connexion…','sync-wait'], save:['💾 Sauvegarde…','sync-wait'], err:['❌ Hors ligne','sync-err'] };
@@ -413,7 +406,6 @@ onSnapshot(docRef, snap => {
   render();
 }, err => { console.error(err); setSyncStatus('err'); render(); });
 
-// ── DATES ──
 function getMonday(date) {
   const d = new Date(date), day = d.getDay();
   d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day));
@@ -430,7 +422,6 @@ function getWeekLabel(days) {
   return `Semaine du ${days[0].toLocaleDateString('fr-FR', o)} au ${days[4].toLocaleDateString('fr-FR', o)} ${y}`;
 }
 
-// ── TECH ──
 function changeTech(delta) { nbTech = Math.max(1, Math.min(20, nbTech + delta)); localStorage.setItem('carrosserie_tech', nbTech); updateTech(); }
 function updateTech() {
   const capacity = nbTech * 39;
@@ -445,7 +436,6 @@ function updateTech() {
   el.style.color = pct >= 100 ? '#e74c3c' : pct >= 80 ? '#f5a623' : '#2ecc71';
 }
 
-// ── RENDER ──
 function render() {
   const days = getWeekDays();
   document.getElementById('weekLabel').textContent   = getWeekLabel(days);
@@ -561,12 +551,15 @@ function renderAppts(days) {
 
     el.querySelector('.btn-copy').addEventListener('click', e => { e.stopPropagation(); copyToNextWeek(appt); });
     el.querySelector('.btn-del').addEventListener('click',  e => { e.stopPropagation(); deleteAppt(appt.id); });
-    el.addEventListener('click', e => { if (e.target.closest('.appt-actions') || e.target.classList.contains('resize-handle')) return; openEditModal(appt.id); });
+    el.addEventListener('click', e => {
+      if (e.target.closest('.appt-actions') || e.target.classList.contains('resize-handle')) return;
+      openEditModal(appt.id);
+    });
     el.addEventListener('mouseenter', e => showTooltip(e, tip));
     el.addEventListener('mouseleave', hideTooltip);
     el.addEventListener('mousemove',  e => moveTooltip(e));
 
-    // ── DRAG (déplacement) ──
+    // Drag déplacement
     el.setAttribute('draggable', 'true');
     el.addEventListener('dragstart', e => {
       if (e.target.closest('.appt-actions') || e.target.classList.contains('resize-handle')) { e.preventDefault(); return; }
@@ -577,58 +570,61 @@ function renderAppts(days) {
     });
     el.addEventListener('dragend', () => { el.classList.remove('dragging'); document.getElementById('dragGhost').style.display = 'none'; dragApptId = null; });
 
-    // ── RESIZE (étirement) ──
+    // ── RESIZE : uniquement sur la poignée ──
     const handle = el.querySelector('.resize-handle');
     handle.addEventListener('mousedown', e => {
-      e.preventDefault(); e.stopPropagation();
-      startResize(e, appt, cell, days);
+      e.preventDefault();
+      e.stopPropagation();
+
+      const cellW   = cell.getBoundingClientRect().width;
+      const startX  = e.clientX;
+      const origSpan = appt.span || 1;
+      const maxSpan  = 5 - appt.day;
+      let   currentSpan = origSpan;
+
+      document.body.style.cursor     = 'ew-resize';
+      document.body.style.userSelect = 'none';
+
+      // Désactive le draggable pendant le resize
+      el.setAttribute('draggable', 'false');
+
+      const onMove = mv => {
+        const dx      = mv.clientX - startX;
+        const delta   = Math.round(dx / cellW);
+        const newSpan = Math.max(1, Math.min(maxSpan, origSpan + delta));
+        if (newSpan !== currentSpan) {
+          currentSpan = newSpan;
+          // Mise à jour visuelle uniquement, sans re-render
+          if (currentSpan > 1) {
+            el.style.right = `calc(-${(currentSpan-1)*100}% - ${currentSpan-1}px)`;
+          } else {
+            el.style.right = '3px';
+          }
+          el.style.zIndex = currentSpan > 1 ? '15' : '10';
+        }
+      };
+
+      const onUp = () => {
+        document.body.style.cursor     = '';
+        document.body.style.userSelect = '';
+        el.setAttribute('draggable', 'true');
+
+        if (currentSpan !== origSpan) {
+          appt.span = currentSpan;
+          saveToFirebase();
+          render();
+        }
+
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup',   onUp);
+      };
+
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup',   onUp);
     });
 
     cell.appendChild(el);
   });
-}
-
-// ── RESIZE LOGIC ──
-let resizeState = null;
-
-function startResize(e, appt, startCell, days) {
-  // Snapshot largeur d'une cellule
-  const cellW = startCell.getBoundingClientRect().width;
-  resizeState = {
-    appt,
-    startX:    e.clientX,
-    origSpan:  appt.span || 1,
-    cellW,
-    maxSpan:   5 - appt.day
-  };
-  document.body.style.cursor = 'ew-resize';
-  document.body.style.userSelect = 'none';
-
-  const onMove = e => {
-    if (!resizeState) return;
-    const dx      = e.clientX - resizeState.startX;
-    const delta   = Math.round(dx / resizeState.cellW);
-    const newSpan = Math.max(1, Math.min(resizeState.maxSpan, resizeState.origSpan + delta));
-    if (newSpan !== resizeState.appt.span) {
-      resizeState.appt.span = newSpan;
-      // Redraw sans sauvegarder pour fluidité
-      render();
-    }
-  };
-
-  const onUp = () => {
-    if (!resizeState) return;
-    document.body.style.cursor = '';
-    document.body.style.userSelect = '';
-    // Sauvegarde finale
-    saveToFirebase();
-    resizeState = null;
-    document.removeEventListener('mousemove', onMove);
-    document.removeEventListener('mouseup',   onUp);
-  };
-
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('mouseup',   onUp);
 }
 
 // ── ABSENCES ──
@@ -647,7 +643,7 @@ function renderAbsences(days) {
   });
 }
 
-// ── DRAG & DROP ──
+// ── DRAG DÉPLACEMENT ──
 let dragApptId = null;
 document.addEventListener('dragover', e => { const g = document.getElementById('dragGhost'); if (g.style.display === 'block') { g.style.left = e.clientX + 'px'; g.style.top = (e.clientY - 20) + 'px'; } });
 function handleDrop(type, row, day) {
@@ -660,7 +656,7 @@ function handleDrop(type, row, day) {
   saveToFirebase(); render();
 }
 
-// ── COPIER SEMAINE SUIVANTE (toutes les infos conservées) ──
+// ── COPIER SEMAINE SUIVANTE ──
 function copyToNextWeek(appt) {
   const apptMon    = getMonday(new Date(appt.weekStart));
   const nowMon     = getMonday(new Date());
@@ -668,19 +664,13 @@ function copyToNextWeek(appt) {
   const nextDays   = getWeekDays(nextOffset);
   state.appointments.push({
     id: Date.now().toString(36) + Math.random().toString(36).slice(2),
-    type:             appt.type,
-    row:              appt.row,
-    day:              appt.day,
-    span:             appt.span,
-    name:             appt.name,
-    hours:            appt.hours,
-    color:            appt.color,
-    priority:         appt.priority         || 'moyenne',
-    arrived:          false,
-    pieceStatus:      appt.pieceStatus      || 'none',
-    pieceFournisseur: appt.pieceFournisseur || '',
-    pieceNote:        appt.pieceNote        || '',
-    weekStart:        nextDays[0].toISOString()
+    type:appt.type, row:appt.row, day:appt.day, span:appt.span,
+    name:appt.name, hours:appt.hours, color:appt.color,
+    priority:appt.priority || 'moyenne', arrived:false,
+    pieceStatus:appt.pieceStatus || 'none',
+    pieceFournisseur:appt.pieceFournisseur || '',
+    pieceNote:appt.pieceNote || '',
+    weekStart:nextDays[0].toISOString()
   });
   state.weekOffset = nextOffset;
   saveToFirebase(); render();
@@ -757,7 +747,6 @@ function buildColorPicker(elId, onPick) {
   });
 }
 
-// ── STATS ──
 function updateStats() {
   const days = getWeekDays(), ws = days[0].toDateString();
   const wa = state.appointments.filter(a => new Date(a.weekStart).toDateString() === ws);
@@ -768,12 +757,10 @@ function updateStats() {
 function changeWeek(d) { state.weekOffset += d; render(); }
 function goToday()     { state.weekOffset = 0;  render(); }
 
-// ── TOOLTIP ──
 function showTooltip(e, t) { const el = document.getElementById('tooltip'); el.textContent = t; el.classList.add('show'); moveTooltip(e); }
 function moveTooltip(e)    { const el = document.getElementById('tooltip'); el.style.left = (e.clientX + 12) + 'px'; el.style.top = (e.clientY - 32) + 'px'; }
 function hideTooltip()     { document.getElementById('tooltip').classList.remove('show'); }
 
-// ── EDIT MODAL ──
 let editingApptId = null, editSelectedColor = 0, editStatus = 'pending', editPieceStatus = 'none', editPriority = 'moyenne';
 function openEditModal(id) {
   const appt = state.appointments.find(a => a.id === id); if (!appt) return;
@@ -819,20 +806,16 @@ function saveEditAppt() {
   const days  = parseInt(document.getElementById('editApptDays').value)    || 1;
   if (!name) { document.getElementById('editApptName').focus(); return; }
   const appt = state.appointments.find(a => a.id === editingApptId); if (!appt) return;
-  appt.name             = name;
-  appt.hours            = hours;
-  appt.color            = COLORS[editSelectedColor];
-  appt.arrived          = (editStatus === 'arrived');
-  appt.priority         = editPriority;
-  appt.pieceStatus      = editPieceStatus;
+  appt.name = name; appt.hours = hours; appt.color = COLORS[editSelectedColor];
+  appt.arrived = (editStatus === 'arrived'); appt.priority = editPriority;
+  appt.pieceStatus = editPieceStatus;
   appt.pieceFournisseur = document.getElementById('editPieceFournisseur').value.trim();
   appt.pieceNote        = document.getElementById('editPieceNote').value.trim();
-  appt.span             = Math.min(days, 5 - appt.day);
+  appt.span = Math.min(days, 5 - appt.day);
   delete appt.piece;
   saveToFirebase(); closeEditModal(); render();
 }
 
-// ── RECHERCHE ──
 function doSearch(query) {
   const q = query.trim().toLowerCase();
   const results = document.getElementById('searchResults');
@@ -869,7 +852,6 @@ function doSearch(query) {
   });
 }
 
-// ── HISTORIQUE ──
 let historyPage = 0;
 function openHistory()  { historyPage = 0; document.getElementById('historyModalOverlay').classList.add('open'); renderHistory(); }
 function closeHistory() { document.getElementById('historyModalOverlay').classList.remove('open'); }
@@ -923,7 +905,6 @@ function renderHistory() {
   });
 }
 
-// ── EVENTS ──
 document.getElementById('btnPrevWeek').addEventListener('click',  () => changeWeek(-1));
 document.getElementById('btnNextWeek').addEventListener('click',  () => changeWeek(1));
 document.getElementById('btnToday').addEventListener('click',     () => goToday());
