@@ -112,6 +112,11 @@
   .appt:hover .appt-actions { opacity: 1; }
   .appt .btn-action { font-size: .78rem; line-height: 1; padding: 2px 5px; border-radius: 4px; background: rgba(255,255,255,.22); color: #fff; cursor: pointer; border: none; font-family: inherit; transition: background .12s; white-space: nowrap; }
   .appt .btn-action:hover { background: rgba(255,255,255,.42); }
+
+  /* ── BADGES SUITE / ORIGINE ── */
+  .badge-suite   { font-size: .6rem; font-weight: 800; background: #f39c12; color: #fff; border-radius: 4px; padding: 1px 6px; flex-shrink: 0; letter-spacing: .03em; }
+  .badge-origine { font-size: .6rem; font-weight: 800; background: #8e44ad; color: #fff; border-radius: 4px; padding: 1px 6px; flex-shrink: 0; letter-spacing: .03em; }
+
   .resize-handle { position: absolute; right: 0; top: 0; bottom: 0; width: 16px; cursor: ew-resize; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.2); border-radius: 0 6px 6px 0; font-size: .75rem; color: rgba(255,255,255,.9); z-index: 20; transition: background .15s; }
   .resize-handle:hover { background: rgba(0,0,0,.4); }
   .prio-strip { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; border-radius: 6px 0 0 6px; }
@@ -377,6 +382,56 @@ function normalizeAppt(a) {
   return a;
 }
 
+// ── DÉTECTE SI UN RDV A UNE SUITE OU UNE ORIGINE ──
+// Calcule le lundi absolu d'un weekStart
+function getMondayISO(weekStart) {
+  const d = new Date(weekStart);
+  const day = d.getDay();
+  d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day));
+  d.setHours(0,0,0,0);
+  return d.toDateString();
+}
+
+function hasNextWeek(appt) {
+  // Cherche un RDV sur la même ligne, même jour de la semaine suivante
+  const apptMon = getMondayISO(appt.weekStart);
+  const nextMon = (() => {
+    const d = new Date(appt.weekStart);
+    const day = d.getDay();
+    d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day));
+    d.setDate(d.getDate() + 7);
+    d.setHours(0,0,0,0);
+    return d.toDateString();
+  })();
+  return state.appointments.some(a =>
+    a.type === appt.type &&
+    a.row  === appt.row  &&
+    a.day  === appt.day  &&
+    a.name === appt.name &&
+    getMondayISO(a.weekStart) === nextMon
+  );
+}
+
+function hasPrevWeek(appt) {
+  // Cherche un RDV sur la même ligne, même jour de la semaine précédente
+  const prevMon = (() => {
+    const d = new Date(appt.weekStart);
+    const day = d.getDay();
+    d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day));
+    d.setDate(d.getDate() - 7);
+    d.setHours(0,0,0,0);
+    return d.toDateString();
+  })();
+  return state.appointments.some(a =>
+    a.type === appt.type &&
+    a.row  === appt.row  &&
+    a.day  === appt.day  &&
+    a.name === appt.name &&
+    getMondayISO(a.weekStart) === prevMon
+  );
+}
+
+// ── FIREBASE ──
 function setSyncStatus(s) {
   const el  = document.getElementById('syncStatus');
   const map = { ok:['✅ Synchronisé','sync-ok'], wait:['⏳ Connexion…','sync-wait'], save:['💾 Sauvegarde…','sync-wait'], err:['❌ Hors ligne','sync-err'] };
@@ -508,7 +563,6 @@ function startEditName(el, type, rowIdx) {
   input.addEventListener('keydown', e => { if (e.key === 'Enter') save(); if (e.key === 'Escape') render(); });
 }
 
-// ── RENDER APPOINTMENTS ──
 function renderAppts(days) {
   const ws = days[0].toDateString();
   state.appointments.forEach(appt => {
@@ -517,6 +571,10 @@ function renderAppts(days) {
     const span = Math.min(appt.span || 1, 5 - appt.day);
     const cell = document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`);
     if (!cell) return;
+
+    // Détecte suite / origine
+    const hasSuite   = hasNextWeek(appt);
+    const hasOrigine = hasPrevWeek(appt);
 
     const prio = appt.priority || 'moyenne';
     const el   = document.createElement('div');
@@ -531,11 +589,13 @@ function renderAppts(days) {
 
     el.innerHTML = `
       <div class="prio-strip"></div>
+      ${hasOrigine ? '<span class="badge-origine">◀ S-1</span>' : ''}
       <span class="appt-name">${appt.name}</span>
       ${prio === 'haute' ? '<span class="badge badge-red">🔴</span>' : ''}
       ${appt.arrived ? '<span class="badge badge-green">✔</span>' : ''}
       ${pieceBadge}
       <span class="appt-hours">${appt.hours}h</span>
+      ${hasSuite ? '<span class="badge-suite">▶ S+1</span>' : ''}
       <div class="appt-actions">
         <button class="btn-action btn-copy" title="Copier semaine suivante">📋+1</button>
         <button class="btn-action btn-del" title="Supprimer">✕</button>
@@ -544,6 +604,8 @@ function renderAppts(days) {
     `;
 
     let tip = `${appt.name} — ${appt.hours}h — ${span} jour(s)`;
+    if (hasSuite)   tip += ' — ▶ Suite semaine suivante';
+    if (hasOrigine) tip += ' — ◀ Vient de la semaine précédente';
     if (prio === 'haute') tip += ' — 🔴 URGENT';
     if (appt.pieceStatus === 'ordered' && appt.pieceFournisseur) tip += ` — 📦 ${appt.pieceFournisseur}`;
     if (appt.pieceStatus === 'delivered') tip += ' — ✅ Pièce livrée';
@@ -559,7 +621,6 @@ function renderAppts(days) {
     el.addEventListener('mouseleave', hideTooltip);
     el.addEventListener('mousemove',  e => moveTooltip(e));
 
-    // Drag déplacement
     el.setAttribute('draggable', 'true');
     el.addEventListener('dragstart', e => {
       if (e.target.closest('.appt-actions') || e.target.classList.contains('resize-handle')) { e.preventDefault(); return; }
@@ -570,22 +631,18 @@ function renderAppts(days) {
     });
     el.addEventListener('dragend', () => { el.classList.remove('dragging'); document.getElementById('dragGhost').style.display = 'none'; dragApptId = null; });
 
-    // ── RESIZE : uniquement sur la poignée ──
+    // ── RESIZE ──
     const handle = el.querySelector('.resize-handle');
     handle.addEventListener('mousedown', e => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      const cellW   = cell.getBoundingClientRect().width;
-      const startX  = e.clientX;
-      const origSpan = appt.span || 1;
-      const maxSpan  = 5 - appt.day;
-      let   currentSpan = origSpan;
+      e.preventDefault(); e.stopPropagation();
+      const cellW      = cell.getBoundingClientRect().width;
+      const startX     = e.clientX;
+      const origSpan   = appt.span || 1;
+      const maxSpan    = 5 - appt.day;
+      let currentSpan  = origSpan;
 
       document.body.style.cursor     = 'ew-resize';
       document.body.style.userSelect = 'none';
-
-      // Désactive le draggable pendant le resize
       el.setAttribute('draggable', 'false');
 
       const onMove = mv => {
@@ -594,31 +651,18 @@ function renderAppts(days) {
         const newSpan = Math.max(1, Math.min(maxSpan, origSpan + delta));
         if (newSpan !== currentSpan) {
           currentSpan = newSpan;
-          // Mise à jour visuelle uniquement, sans re-render
-          if (currentSpan > 1) {
-            el.style.right = `calc(-${(currentSpan-1)*100}% - ${currentSpan-1}px)`;
-          } else {
-            el.style.right = '3px';
-          }
-          el.style.zIndex = currentSpan > 1 ? '15' : '10';
+          el.style.right   = currentSpan > 1 ? `calc(-${(currentSpan-1)*100}% - ${currentSpan-1}px)` : '3px';
+          el.style.zIndex  = currentSpan > 1 ? '15' : '10';
         }
       };
-
       const onUp = () => {
         document.body.style.cursor     = '';
         document.body.style.userSelect = '';
         el.setAttribute('draggable', 'true');
-
-        if (currentSpan !== origSpan) {
-          appt.span = currentSpan;
-          saveToFirebase();
-          render();
-        }
-
+        if (currentSpan !== origSpan) { appt.span = currentSpan; saveToFirebase(); render(); }
         document.removeEventListener('mousemove', onMove);
         document.removeEventListener('mouseup',   onUp);
       };
-
       document.addEventListener('mousemove', onMove);
       document.addEventListener('mouseup',   onUp);
     });
@@ -627,7 +671,6 @@ function renderAppts(days) {
   });
 }
 
-// ── ABSENCES ──
 function renderAbsences(days) {
   if (!state.absences) return;
   const ws = days[0].toDateString();
@@ -643,7 +686,6 @@ function renderAbsences(days) {
   });
 }
 
-// ── DRAG DÉPLACEMENT ──
 let dragApptId = null;
 document.addEventListener('dragover', e => { const g = document.getElementById('dragGhost'); if (g.style.display === 'block') { g.style.left = e.clientX + 'px'; g.style.top = (e.clientY - 20) + 'px'; } });
 function handleDrop(type, row, day) {
@@ -656,7 +698,6 @@ function handleDrop(type, row, day) {
   saveToFirebase(); render();
 }
 
-// ── COPIER SEMAINE SUIVANTE ──
 function copyToNextWeek(appt) {
   const apptMon    = getMonday(new Date(appt.weekStart));
   const nowMon     = getMonday(new Date());
@@ -676,7 +717,6 @@ function copyToNextWeek(appt) {
   saveToFirebase(); render();
 }
 
-// ── ABSENCE MODAL ──
 let pendingAbsence = null, absType = 'conge';
 function openAbsenceModal(type, row, day) {
   pendingAbsence = {type, row, day}; absType = 'conge';
@@ -700,7 +740,6 @@ function saveAbsence() {
 }
 function deleteAbsence(id) { state.absences = state.absences.filter(a => a.id !== id); saveToFirebase(); render(); }
 
-// ── MODAL NOUVEAU RDV ──
 let pendingAppt = null, selectedColor = 0, newPriority = 'moyenne';
 function openModal(type, row, day) {
   pendingAppt = {type, row, day}; selectedColor = 0; newPriority = 'moyenne';
