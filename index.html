@@ -68,7 +68,6 @@
   .section-label { display: flex; align-items: center; gap: 10px; margin: 12px 0 6px; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-  /* ── CORRECTIF CLÉ : grid-container sans overflow hidden et header sans sticky ── */
   .grid-container { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,.06); margin-bottom: 4px; display: flex; flex-direction: column; }
   .grid-header { display: grid; grid-template-columns: var(--col-label) repeat(5, var(--col-day)); background: var(--steel); height: var(--header-h); border-radius: 12px 12px 0 0; flex-shrink: 0; }
   .grid-header .h-corner { display: flex; align-items: center; padding: 0 12px; color: rgba(255,255,255,.5); font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-right: 1px solid rgba(255,255,255,.08); }
@@ -76,23 +75,19 @@
   .grid-header .h-day .day-name { font-weight: 700; font-size: .9rem; }
   .grid-header .h-day .day-date { font-size: .72rem; opacity: .6; }
   .grid-header .h-day.today { background: var(--accent); }
-
   .grid-body { flex: 1; overflow: hidden; border-radius: 0 0 12px 12px; }
   .grid-row { display: grid; grid-template-columns: var(--col-label) repeat(5, var(--col-day)); height: var(--slot-h); border-bottom: 1px solid var(--border); position: relative; }
   .grid-row:last-child { border-bottom: none; }
-
   .row-label { display: flex; align-items: center; padding: 0 10px; border-right: 2px solid var(--border); gap: 7px; font-size: .83rem; font-weight: 600; white-space: nowrap; overflow: hidden; cursor: default; position: relative; z-index: 2; background: var(--card); }
   .row-label .vehicle-icon { font-size: 1rem; flex-shrink: 0; }
   .row-label .vehicle-name { flex: 1; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-bottom: 1px dashed transparent; transition: border-color .15s; padding: 2px 4px; border-radius: 3px; }
   .row-label .vehicle-name:hover { border-color: var(--accent); background: rgba(232,76,30,.05); }
   .row-label input.vehicle-edit { flex: 1; border: 1.5px solid var(--accent); border-radius: 4px; padding: 2px 6px; font-size: .83rem; font-weight: 600; font-family: inherit; color: var(--text); outline: none; background: #fff; }
   .loan-badge { font-size: .6rem; background: var(--loan-hd); color: #fff; border-radius: 3px; padding: 1px 5px; font-weight: 700; letter-spacing: .04em; flex-shrink: 0; }
-
   .grid-row.has-loan .row-label { background: var(--loan-bg); }
   .grid-row.has-loan .day-cell  { background: rgba(26,82,118,.03); }
   .grid-row.no-loan .row-label  { background: var(--noloan-bg); }
   .grid-row.no-loan .day-cell   { background: rgba(125,78,27,.02); }
-
   .day-cell { border-right: 1px solid var(--border); position: relative; cursor: pointer; transition: background .1s; }
   .day-cell:last-child { border-right: none; }
   .day-cell:hover { background: rgba(232,76,30,.06) !important; }
@@ -106,9 +101,11 @@
   .absence-block .abs-del { opacity: 0; margin-left: 4px; cursor: pointer; }
   .absence-block:hover .abs-del { opacity: 1; }
 
-  .appt { position: absolute; top: 4px; bottom: 4px; left: 3px; right: 3px; border-radius: 6px; display: flex; align-items: center; padding: 0 7px 0 11px; font-size: .76rem; font-weight: 600; gap: 4px; overflow: hidden; white-space: nowrap; cursor: grab; box-shadow: 0 2px 6px rgba(0,0,0,.15); user-select: none; z-index: 10; transition: box-shadow .15s, opacity .15s; }
+  /* ── APPOINTMENTS ── */
+  .appt { position: absolute; top: 4px; bottom: 4px; left: 3px; right: 3px; border-radius: 6px; display: flex; align-items: center; padding: 0 24px 0 11px; font-size: .76rem; font-weight: 600; gap: 4px; overflow: hidden; white-space: nowrap; cursor: grab; box-shadow: 0 2px 6px rgba(0,0,0,.15); user-select: none; z-index: 10; transition: box-shadow .15s, opacity .15s; }
   .appt:active { cursor: grabbing; }
   .appt.dragging { opacity: .45; box-shadow: none; }
+  .appt.resizing { cursor: ew-resize !important; opacity: .85; }
   .appt.highlight { outline: 3px solid #f5a623; outline-offset: -2px; animation: pulse 1s ease-in-out 3; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
   .appt .appt-name { flex: 1; overflow: hidden; text-overflow: ellipsis; }
@@ -117,6 +114,11 @@
   .appt:hover .appt-actions { opacity: 1; }
   .appt .btn-action { font-size: .78rem; line-height: 1; padding: 2px 5px; border-radius: 4px; background: rgba(255,255,255,.22); color: #fff; cursor: pointer; border: none; font-family: inherit; transition: background .12s; white-space: nowrap; }
   .appt .btn-action:hover { background: rgba(255,255,255,.42); }
+
+  /* Poignée resize */
+  .resize-handle { position: absolute; right: 0; top: 0; bottom: 0; width: 14px; cursor: ew-resize; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.15); border-radius: 0 6px 6px 0; font-size: .7rem; color: rgba(255,255,255,.8); flex-shrink: 0; transition: background .15s; z-index: 20; }
+  .resize-handle:hover { background: rgba(0,0,0,.35); }
+
   .prio-strip { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; border-radius: 6px 0 0 6px; }
   .prio-haute   .prio-strip { background: #e74c3c; }
   .prio-moyenne .prio-strip { background: rgba(255,255,255,.2); }
@@ -183,7 +185,7 @@
   .loader::before { content: ''; width: 20px; height: 20px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   @media print {
-    .topbar, .search-bar, .appt-actions, .toolbar-btn, .sync-indicator { display: none !important; }
+    .topbar, .search-bar, .appt-actions, .resize-handle, .toolbar-btn, .sync-indicator { display: none !important; }
     body { background: #fff; }
     .planner-wrap { padding: 0; }
     .print-header { display: block !important; text-align: center; padding: 10px 0 20px; font-size: 1.2rem; font-weight: 700; }
@@ -371,11 +373,9 @@ let state    = { loanNames:[...DEFAULT_LOAN], noLoanNames:[...DEFAULT_NOLOAN], a
 let nbTech   = parseInt(localStorage.getItem('carrosserie_tech') || '3');
 let isSaving = false;
 
-// ── NORMALISE ANCIEN FORMAT piece:bool → pieceStatus ──
+// ── NORMALISE ANCIEN FORMAT ──
 function normalizeAppt(a) {
-  if (!a.pieceStatus) {
-    a.pieceStatus = (a.piece === true) ? 'ordered' : 'none';
-  }
+  if (!a.pieceStatus) a.pieceStatus = (a.piece === true) ? 'ordered' : 'none';
   if (!a.pieceFournisseur) a.pieceFournisseur = '';
   if (!a.pieceNote)        a.pieceNote        = '';
   if (!a.priority)         a.priority         = 'moyenne';
@@ -386,45 +386,30 @@ function normalizeAppt(a) {
 // ── FIREBASE ──
 function setSyncStatus(s) {
   const el  = document.getElementById('syncStatus');
-  const map = {
-    ok:   ['✅ Synchronisé', 'sync-ok'],
-    wait: ['⏳ Connexion…',  'sync-wait'],
-    save: ['💾 Sauvegarde…', 'sync-wait'],
-    err:  ['❌ Hors ligne',  'sync-err']
-  };
+  const map = { ok:['✅ Synchronisé','sync-ok'], wait:['⏳ Connexion…','sync-wait'], save:['💾 Sauvegarde…','sync-wait'], err:['❌ Hors ligne','sync-err'] };
   el.textContent = map[s][0]; el.className = 'sync-indicator ' + map[s][1];
 }
-
 async function saveToFirebase() {
   isSaving = true; setSyncStatus('save');
-  try {
-    // On sauvegarde les loanNames tels quels (conserve ce qui est dans Firebase)
-    await setDoc(docRef, { ...state, updatedAt: Date.now() });
-    setSyncStatus('ok');
-  } catch(e) { console.error(e); setSyncStatus('err'); }
+  try { await setDoc(docRef, { ...state, updatedAt: Date.now() }); setSyncStatus('ok'); }
+  catch(e) { console.error(e); setSyncStatus('err'); }
   setTimeout(() => isSaving = false, 600);
 }
-
 onSnapshot(docRef, snap => {
   if (isSaving) return;
   if (snap.exists()) {
     const off = state.weekOffset;
     state = { ...snap.data() };
-    // Garantit les tableaux
     if (!Array.isArray(state.absences))     state.absences     = [];
     if (!Array.isArray(state.appointments)) state.appointments = [];
     if (!Array.isArray(state.loanNames))    state.loanNames    = [...DEFAULT_LOAN];
     if (!Array.isArray(state.noLoanNames))  state.noLoanNames  = [...DEFAULT_NOLOAN];
-    // Complète à 8 si moins
     while (state.loanNames.length < 8)   state.loanNames.push('Poste ' + state.loanNames.length);
     while (state.noLoanNames.length < 8) state.noLoanNames.push('Poste ' + state.noLoanNames.length);
-    // Normalise chaque RDV
     state.appointments = state.appointments.map(normalizeAppt);
     state.weekOffset = off;
     setSyncStatus('ok');
-  } else {
-    setSyncStatus('ok');
-  }
+  } else { setSyncStatus('ok'); }
   render();
 }, err => { console.error(err); setSyncStatus('err'); render(); });
 
@@ -446,15 +431,11 @@ function getWeekLabel(days) {
 }
 
 // ── TECH ──
-function changeTech(delta) {
-  nbTech = Math.max(1, Math.min(20, nbTech + delta));
-  localStorage.setItem('carrosserie_tech', nbTech);
-  updateTech();
-}
+function changeTech(delta) { nbTech = Math.max(1, Math.min(20, nbTech + delta)); localStorage.setItem('carrosserie_tech', nbTech); updateTech(); }
 function updateTech() {
   const capacity = nbTech * 39;
-  document.getElementById('techCount').textContent        = nbTech;
-  document.getElementById('totalCapacity').textContent    = capacity + 'h';
+  document.getElementById('techCount').textContent     = nbTech;
+  document.getElementById('totalCapacity').textContent = capacity + 'h';
   const days = getWeekDays(), ws = days[0].toDateString();
   const wa   = state.appointments.filter(a => new Date(a.weekStart).toDateString() === ws);
   const used = wa.reduce((s, a) => s + (a.hours || 0), 0);
@@ -467,53 +448,34 @@ function updateTech() {
 // ── RENDER ──
 function render() {
   const days = getWeekDays();
-  document.getElementById('weekLabel').textContent      = getWeekLabel(days);
-  document.getElementById('printHeader').textContent    = 'Planning Carrosserie — ' + getWeekLabel(days);
+  document.getElementById('weekLabel').textContent   = getWeekLabel(days);
+  document.getElementById('printHeader').textContent = 'Planning Carrosserie — ' + getWeekLabel(days);
   updateStats();
-
   const planner = document.getElementById('planner');
   planner.innerHTML = '';
 
-  // ── Section véhicules de prêt ──
   planner.appendChild(mksec('🚗 Véhicules de prêt (8 postes)'));
-  const lc = document.createElement('div');
-  lc.className = 'grid-container';
-
-  // HEADER en premier dans le conteneur
+  const lc = document.createElement('div'); lc.className = 'grid-container';
   lc.appendChild(buildHeader(days));
+  const lb = document.createElement('div'); lb.className = 'grid-body';
+  state.loanNames.forEach((n, i) => lb.appendChild(makeRow('loan', i, n, days)));
+  lc.appendChild(lb); planner.appendChild(lc);
 
-  // BODY contenant toutes les lignes
-  const lbody = document.createElement('div');
-  lbody.className = 'grid-body';
-  state.loanNames.forEach((n, i) => lbody.appendChild(makeRow('loan', i, n, days)));
-  lc.appendChild(lbody);
-  planner.appendChild(lc);
-
-  // ── Section sans véhicule de prêt ──
   planner.appendChild(mksec('🔩 Postes sans véhicule de prêt'));
-  const nc = document.createElement('div');
-  nc.className = 'grid-container';
-
+  const nc = document.createElement('div'); nc.className = 'grid-container';
   nc.appendChild(buildHeader(days));
-
-  const nbody = document.createElement('div');
-  nbody.className = 'grid-body';
-  state.noLoanNames.forEach((n, i) => nbody.appendChild(makeRow('noloan', i, n, days)));
-  nc.appendChild(nbody);
-  planner.appendChild(nc);
+  const nb = document.createElement('div'); nb.className = 'grid-body';
+  state.noLoanNames.forEach((n, i) => nb.appendChild(makeRow('noloan', i, n, days)));
+  nc.appendChild(nb); planner.appendChild(nc);
 
   renderAppts(days);
   renderAbsences(days);
 }
 
-function mksec(t) {
-  const e = document.createElement('div');
-  e.className = 'section-label'; e.style.margin = '14px 0 6px'; e.innerHTML = t; return e;
-}
+function mksec(t) { const e = document.createElement('div'); e.className = 'section-label'; e.style.margin = '14px 0 6px'; e.innerHTML = t; return e; }
 
 function buildHeader(days) {
-  const h = document.createElement('div');
-  h.className = 'grid-header';
+  const h = document.createElement('div'); h.className = 'grid-header';
   h.innerHTML = `<div class="h-corner">VÉHICULE</div>` + days.map(d => `
     <div class="h-day${isToday(d) ? ' today' : ''}">
       <span class="day-name">${d.toLocaleDateString('fr-FR', {weekday:'long'}).toUpperCase()}</span>
@@ -526,19 +488,14 @@ function makeRow(type, rowIdx, name, days) {
   const row = document.createElement('div');
   row.className = `grid-row ${type === 'loan' ? 'has-loan' : 'no-loan'}`;
   row.dataset.type = type; row.dataset.row = rowIdx;
-
   const label = document.createElement('div'); label.className = 'row-label';
   label.innerHTML = `<span class="vehicle-icon">${type === 'loan' ? '🚗' : '🔧'}</span>`;
   const nameEl = document.createElement('span'); nameEl.className = 'vehicle-name';
   nameEl.textContent = name; nameEl.title = 'Cliquer pour modifier';
   nameEl.addEventListener('click', () => startEditName(nameEl, type, rowIdx));
   label.appendChild(nameEl);
-  if (type === 'loan') {
-    const b = document.createElement('span'); b.className = 'loan-badge'; b.textContent = 'PRÊT';
-    label.appendChild(b);
-  }
+  if (type === 'loan') { const b = document.createElement('span'); b.className = 'loan-badge'; b.textContent = 'PRÊT'; label.appendChild(b); }
   row.appendChild(label);
-
   days.forEach((d, dayIdx) => {
     const cell = document.createElement('div');
     cell.className = `day-cell${isToday(d) ? ' today-col' : ''}`;
@@ -556,11 +513,7 @@ function makeRow(type, rowIdx, name, days) {
 function startEditName(el, type, rowIdx) {
   const input = document.createElement('input'); input.className = 'vehicle-edit'; input.value = el.textContent;
   el.replaceWith(input); input.focus(); input.select();
-  const save = () => {
-    const v = input.value.trim() || el.textContent;
-    if (type === 'loan') state.loanNames[rowIdx] = v; else state.noLoanNames[rowIdx] = v;
-    saveToFirebase(); render();
-  };
+  const save = () => { const v = input.value.trim() || el.textContent; if (type === 'loan') state.loanNames[rowIdx] = v; else state.noLoanNames[rowIdx] = v; saveToFirebase(); render(); };
   input.addEventListener('blur', save);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') save(); if (e.key === 'Escape') render(); });
 }
@@ -571,7 +524,6 @@ function renderAppts(days) {
   state.appointments.forEach(appt => {
     if (new Date(appt.weekStart).toDateString() !== ws) return;
     if (appt.row === undefined || appt.day === undefined) return;
-
     const span = Math.min(appt.span || 1, 5 - appt.day);
     const cell = document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`);
     if (!cell) return;
@@ -598,6 +550,7 @@ function renderAppts(days) {
         <button class="btn-action btn-copy" title="Copier semaine suivante">📋+1</button>
         <button class="btn-action btn-del" title="Supprimer">✕</button>
       </div>
+      <div class="resize-handle" title="Étirer">⠿</div>
     `;
 
     let tip = `${appt.name} — ${appt.hours}h — ${span} jour(s)`;
@@ -608,25 +561,74 @@ function renderAppts(days) {
 
     el.querySelector('.btn-copy').addEventListener('click', e => { e.stopPropagation(); copyToNextWeek(appt); });
     el.querySelector('.btn-del').addEventListener('click',  e => { e.stopPropagation(); deleteAppt(appt.id); });
-    el.addEventListener('click', e => { if (e.target.closest('.appt-actions')) return; openEditModal(appt.id); });
+    el.addEventListener('click', e => { if (e.target.closest('.appt-actions') || e.target.classList.contains('resize-handle')) return; openEditModal(appt.id); });
     el.addEventListener('mouseenter', e => showTooltip(e, tip));
     el.addEventListener('mouseleave', hideTooltip);
     el.addEventListener('mousemove',  e => moveTooltip(e));
+
+    // ── DRAG (déplacement) ──
     el.setAttribute('draggable', 'true');
     el.addEventListener('dragstart', e => {
-      if (e.target.closest('.appt-actions')) { e.preventDefault(); return; }
+      if (e.target.closest('.appt-actions') || e.target.classList.contains('resize-handle')) { e.preventDefault(); return; }
       dragApptId = appt.id; el.classList.add('dragging');
       const ghost = document.getElementById('dragGhost');
       ghost.style.display = 'block'; ghost.style.background = appt.color; ghost.textContent = appt.name;
       e.dataTransfer.setDragImage(ghost, -999, -999);
     });
-    el.addEventListener('dragend', () => {
-      el.classList.remove('dragging');
-      document.getElementById('dragGhost').style.display = 'none';
-      dragApptId = null;
+    el.addEventListener('dragend', () => { el.classList.remove('dragging'); document.getElementById('dragGhost').style.display = 'none'; dragApptId = null; });
+
+    // ── RESIZE (étirement) ──
+    const handle = el.querySelector('.resize-handle');
+    handle.addEventListener('mousedown', e => {
+      e.preventDefault(); e.stopPropagation();
+      startResize(e, appt, cell, days);
     });
+
     cell.appendChild(el);
   });
+}
+
+// ── RESIZE LOGIC ──
+let resizeState = null;
+
+function startResize(e, appt, startCell, days) {
+  // Snapshot largeur d'une cellule
+  const cellW = startCell.getBoundingClientRect().width;
+  resizeState = {
+    appt,
+    startX:    e.clientX,
+    origSpan:  appt.span || 1,
+    cellW,
+    maxSpan:   5 - appt.day
+  };
+  document.body.style.cursor = 'ew-resize';
+  document.body.style.userSelect = 'none';
+
+  const onMove = e => {
+    if (!resizeState) return;
+    const dx      = e.clientX - resizeState.startX;
+    const delta   = Math.round(dx / resizeState.cellW);
+    const newSpan = Math.max(1, Math.min(resizeState.maxSpan, resizeState.origSpan + delta));
+    if (newSpan !== resizeState.appt.span) {
+      resizeState.appt.span = newSpan;
+      // Redraw sans sauvegarder pour fluidité
+      render();
+    }
+  };
+
+  const onUp = () => {
+    if (!resizeState) return;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    // Sauvegarde finale
+    saveToFirebase();
+    resizeState = null;
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup',   onUp);
+  };
+
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup',   onUp);
 }
 
 // ── ABSENCES ──
@@ -645,12 +647,9 @@ function renderAbsences(days) {
   });
 }
 
-// ── DRAG ──
+// ── DRAG & DROP ──
 let dragApptId = null;
-document.addEventListener('dragover', e => {
-  const g = document.getElementById('dragGhost');
-  if (g.style.display === 'block') { g.style.left = e.clientX + 'px'; g.style.top = (e.clientY - 20) + 'px'; }
-});
+document.addEventListener('dragover', e => { const g = document.getElementById('dragGhost'); if (g.style.display === 'block') { g.style.left = e.clientX + 'px'; g.style.top = (e.clientY - 20) + 'px'; } });
 function handleDrop(type, row, day) {
   if (!dragApptId) return;
   const appt = state.appointments.find(a => a.id === dragApptId); if (!appt) return;
@@ -661,7 +660,7 @@ function handleDrop(type, row, day) {
   saveToFirebase(); render();
 }
 
-// ── COPIER ──
+// ── COPIER SEMAINE SUIVANTE (toutes les infos conservées) ──
 function copyToNextWeek(appt) {
   const apptMon    = getMonday(new Date(appt.weekStart));
   const nowMon     = getMonday(new Date());
@@ -669,13 +668,19 @@ function copyToNextWeek(appt) {
   const nextDays   = getWeekDays(nextOffset);
   state.appointments.push({
     id: Date.now().toString(36) + Math.random().toString(36).slice(2),
-    type:appt.type, row:appt.row, day:appt.day, span:appt.span,
-    name:appt.name, hours:appt.hours, color:appt.color,
-    priority:appt.priority || 'moyenne', arrived:false,
-    pieceStatus:appt.pieceStatus || 'none',
-    pieceFournisseur:appt.pieceFournisseur || '',
-    pieceNote:appt.pieceNote || '',
-    weekStart:nextDays[0].toISOString()
+    type:             appt.type,
+    row:              appt.row,
+    day:              appt.day,
+    span:             appt.span,
+    name:             appt.name,
+    hours:            appt.hours,
+    color:            appt.color,
+    priority:         appt.priority         || 'moyenne',
+    arrived:          false,
+    pieceStatus:      appt.pieceStatus      || 'none',
+    pieceFournisseur: appt.pieceFournisseur || '',
+    pieceNote:        appt.pieceNote        || '',
+    weekStart:        nextDays[0].toISOString()
   });
   state.weekOffset = nextOffset;
   saveToFirebase(); render();
@@ -741,21 +746,13 @@ function saveAppt() {
   });
   saveToFirebase(); closeModal(); render();
 }
-function deleteAppt(id) {
-  state.appointments = state.appointments.filter(a => a.id !== id);
-  saveToFirebase(); render();
-}
+function deleteAppt(id) { state.appointments = state.appointments.filter(a => a.id !== id); saveToFirebase(); render(); }
 
 function buildColorPicker(elId, onPick) {
   const cp = document.getElementById(elId); cp.innerHTML = '';
   COLORS.forEach((c, i) => {
-    const sw = document.createElement('div');
-    sw.className = `color-swatch${i === 0 ? ' selected' : ''}`;
-    sw.style.background = c;
-    sw.addEventListener('click', () => {
-      cp.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
-      sw.classList.add('selected'); onPick(i);
-    });
+    const sw = document.createElement('div'); sw.className = `color-swatch${i === 0 ? ' selected' : ''}`; sw.style.background = c;
+    sw.addEventListener('click', () => { cp.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected')); sw.classList.add('selected'); onPick(i); });
     cp.appendChild(sw);
   });
 }
@@ -790,9 +787,7 @@ function openEditModal(id) {
   document.getElementById('editApptDays').value         = appt.span || 1;
   document.getElementById('editPieceFournisseur').value = appt.pieceFournisseur || '';
   document.getElementById('editPieceNote').value        = appt.pieceNote        || '';
-  setEditStatus(editStatus);
-  setEditPieceStatus(editPieceStatus);
-  setEditPrio(editPriority);
+  setEditStatus(editStatus); setEditPieceStatus(editPieceStatus); setEditPrio(editPriority);
   buildColorPicker('editColorPicker', i => editSelectedColor = i);
   document.querySelectorAll('#editColorPicker .color-swatch').forEach((s, i) => s.classList.toggle('selected', i === editSelectedColor));
   document.getElementById('editModalOverlay').classList.add('open');
@@ -833,7 +828,7 @@ function saveEditAppt() {
   appt.pieceFournisseur = document.getElementById('editPieceFournisseur').value.trim();
   appt.pieceNote        = document.getElementById('editPieceNote').value.trim();
   appt.span             = Math.min(days, 5 - appt.day);
-  delete appt.piece; // nettoie l'ancien champ
+  delete appt.piece;
   saveToFirebase(); closeEditModal(); render();
 }
 
@@ -843,10 +838,7 @@ function doSearch(query) {
   const results = document.getElementById('searchResults');
   if (!q) { results.classList.remove('open'); return; }
   const matches = state.appointments.filter(a => a.name && a.name.toLowerCase().includes(q));
-  if (!matches.length) {
-    results.innerHTML = '<div class="search-no-result">Aucun résultat</div>';
-    results.classList.add('open'); return;
-  }
+  if (!matches.length) { results.innerHTML = '<div class="search-no-result">Aucun résultat</div>'; results.classList.add('open'); return; }
   results.innerHTML = matches.slice(0, 10).map(a => {
     const apptMon = getMonday(new Date(a.weekStart));
     const nowMon  = getMonday(new Date());
@@ -899,7 +891,6 @@ function renderHistory() {
   const last  = weeks[0].days[4];
   document.getElementById('historyRangeLabel').textContent =
     `${first.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} → ${last.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}`;
-
   const content = document.getElementById('historyContent'); content.innerHTML = '';
   weeks.forEach(({off, days, wa, totalH, pct, urgents, capacity}) => {
     const isCurrent = off === state.weekOffset;
@@ -960,16 +951,8 @@ document.getElementById('btnSaveAbsence').addEventListener('click',   () => save
 document.getElementById('btnCloseHistory').addEventListener('click',  () => closeHistory());
 document.getElementById('btnHistoryPrev').addEventListener('click',   () => { historyPage++; renderHistory(); });
 document.getElementById('btnHistoryNext').addEventListener('click',   () => { if (historyPage > 0) { historyPage--; renderHistory(); } });
-document.getElementById('absTypeConge').addEventListener('click',   () => {
-  absType = 'conge';
-  document.getElementById('absTypeConge').className   = 'status-btn active-arrived';
-  document.getElementById('absTypeAbsence').className = 'status-btn';
-});
-document.getElementById('absTypeAbsence').addEventListener('click', () => {
-  absType = 'absence';
-  document.getElementById('absTypeConge').className   = 'status-btn';
-  document.getElementById('absTypeAbsence').className = 'status-btn active-pending';
-});
+document.getElementById('absTypeConge').addEventListener('click',   () => { absType = 'conge';   document.getElementById('absTypeConge').className = 'status-btn active-arrived'; document.getElementById('absTypeAbsence').className = 'status-btn'; });
+document.getElementById('absTypeAbsence').addEventListener('click', () => { absType = 'absence'; document.getElementById('absTypeConge').className = 'status-btn'; document.getElementById('absTypeAbsence').className = 'status-btn active-pending'; });
 document.getElementById('searchInput').addEventListener('input', e => doSearch(e.target.value));
 document.getElementById('searchInput').addEventListener('blur',  () => setTimeout(() => document.getElementById('searchResults').classList.remove('open'), 200));
 document.getElementById('modalOverlay').addEventListener('click',        function(e) { if (e.target === this) closeModal(); });
