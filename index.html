@@ -51,10 +51,10 @@
   .toolbar-btn { background: var(--steel-mid); border: none; color: #fff; border-radius: 6px; padding: 0 10px; height: 32px; cursor: pointer; font-size: .78rem; font-weight: 600; display: flex; align-items: center; gap: 5px; transition: background .15s; white-space: nowrap; }
   .toolbar-btn:hover { background: var(--accent); }
 
-  .search-bar { padding: 8px 16px; background: var(--card); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; position: sticky; top: 56px; z-index: 90; }
-  .search-bar input { flex: 1; max-width: 320px; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: .88rem; font-family: inherit; outline: none; transition: border-color .15s; }
-  .search-bar input:focus { border-color: var(--accent); }
+  .search-bar { padding: 8px 16px; background: var(--card); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
   .search-wrap { position: relative; }
+  .search-bar input { width: 320px; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: .88rem; font-family: inherit; outline: none; transition: border-color .15s; }
+  .search-bar input:focus { border-color: var(--accent); }
   .search-results { background: #fff; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.12); position: absolute; top: 38px; left: 0; width: 380px; z-index: 200; max-height: 300px; overflow-y: auto; display: none; }
   .search-results.open { display: block; }
   .search-result-item { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 2px; }
@@ -68,14 +68,16 @@
   .section-label { display: flex; align-items: center; gap: 10px; margin: 12px 0 6px; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-  .grid-container { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.06); margin-bottom: 4px; }
-  .grid-header { display: grid; grid-template-columns: var(--col-label) repeat(5, var(--col-day)); background: var(--steel); height: var(--header-h); }
+  /* ── CORRECTIF CLÉ : grid-container sans overflow hidden et header sans sticky ── */
+  .grid-container { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,.06); margin-bottom: 4px; display: flex; flex-direction: column; }
+  .grid-header { display: grid; grid-template-columns: var(--col-label) repeat(5, var(--col-day)); background: var(--steel); height: var(--header-h); border-radius: 12px 12px 0 0; flex-shrink: 0; }
   .grid-header .h-corner { display: flex; align-items: center; padding: 0 12px; color: rgba(255,255,255,.5); font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-right: 1px solid rgba(255,255,255,.08); }
   .grid-header .h-day { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; border-right: 1px solid rgba(255,255,255,.08); font-size: .82rem; }
   .grid-header .h-day .day-name { font-weight: 700; font-size: .9rem; }
   .grid-header .h-day .day-date { font-size: .72rem; opacity: .6; }
   .grid-header .h-day.today { background: var(--accent); }
 
+  .grid-body { flex: 1; overflow: hidden; border-radius: 0 0 12px 12px; }
   .grid-row { display: grid; grid-template-columns: var(--col-label) repeat(5, var(--col-day)); height: var(--slot-h); border-bottom: 1px solid var(--border); position: relative; }
   .grid-row:last-child { border-bottom: none; }
 
@@ -101,7 +103,7 @@
   .absence-block { position: absolute; inset: 2px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 700; z-index: 5; cursor: default; }
   .absence-block.conge   { background: repeating-linear-gradient(45deg,#e8f5e9,#e8f5e9 4px,#c8e6c9 4px,#c8e6c9 8px); color: #2e7d32; border: 1.5px solid #a5d6a7; }
   .absence-block.absence { background: repeating-linear-gradient(45deg,#fff3e0,#fff3e0 4px,#ffe0b2 4px,#ffe0b2 8px); color: #e65100; border: 1.5px solid #ffcc80; }
-  .absence-block .abs-del { opacity: 0; margin-left: 4px; font-size: .8rem; cursor: pointer; }
+  .absence-block .abs-del { opacity: 0; margin-left: 4px; cursor: pointer; }
   .absence-block:hover .abs-del { opacity: 1; }
 
   .appt { position: absolute; top: 4px; bottom: 4px; left: 3px; right: 3px; border-radius: 6px; display: flex; align-items: center; padding: 0 7px 0 11px; font-size: .76rem; font-weight: 600; gap: 4px; overflow: hidden; white-space: nowrap; cursor: grab; box-shadow: 0 2px 6px rgba(0,0,0,.15); user-select: none; z-index: 10; transition: box-shadow .15s, opacity .15s; }
@@ -115,12 +117,10 @@
   .appt:hover .appt-actions { opacity: 1; }
   .appt .btn-action { font-size: .78rem; line-height: 1; padding: 2px 5px; border-radius: 4px; background: rgba(255,255,255,.22); color: #fff; cursor: pointer; border: none; font-family: inherit; transition: background .12s; white-space: nowrap; }
   .appt .btn-action:hover { background: rgba(255,255,255,.42); }
-
   .prio-strip { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; border-radius: 6px 0 0 6px; }
   .prio-haute   .prio-strip { background: #e74c3c; }
   .prio-moyenne .prio-strip { background: rgba(255,255,255,.2); }
   .prio-basse   .prio-strip { background: #2ecc71; }
-
   .badge { font-size: .58rem; font-weight: 800; letter-spacing: .05em; color: #fff; border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
   .badge-green  { background: #2ecc71; }
   .badge-orange { background: #e67e22; }
@@ -152,7 +152,6 @@
   .btn-secondary { background: var(--surface); color: var(--muted); border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 18px; font-size: .9rem; cursor: pointer; }
   .btn-secondary:hover { background: var(--border); }
   #editModalOverlay, #absenceModalOverlay, #historyModalOverlay { z-index: 210; }
-
   .status-row { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
   .status-btn { flex: 1; min-width: 90px; border: 2px solid var(--border); border-radius: 8px; padding: 8px 6px; font-size: .78rem; font-weight: 700; cursor: pointer; background: var(--surface); color: var(--muted); transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 5px; font-family: inherit; }
   .status-btn.active-arrived   { border-color: #2ecc71; background: #eafaf1; color: #1e8449; }
@@ -162,11 +161,9 @@
   .status-btn.active-haute     { border-color: #e74c3c; background: #fde8e8; color: #c0392b; }
   .status-btn.active-moyenne   { border-color: var(--amber); background: #fef9e7; color: #9a6a00; }
   .status-btn.active-basse     { border-color: #2ecc71; background: #eafaf1; color: #1e8449; }
-
   .piece-section { background: #f8f9fa; border-radius: 10px; padding: 12px 14px; margin-top: 14px; border: 1px solid var(--border); }
   .piece-section-title { font-size: .78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
   .piece-fournisseur { margin-top: 10px; }
-
   .history-week { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
   .history-week-header { background: var(--steel); color: #fff; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: .85rem; font-weight: 700; cursor: pointer; }
   .history-week-header:hover { background: var(--steel-mid); }
@@ -180,14 +177,11 @@
   .history-appt-item:last-child { border-bottom: none; }
   .history-nav { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
   .history-nav span { flex: 1; text-align: center; font-weight: 600; font-size: .9rem; }
-
   .tooltip { position: fixed; background: var(--steel); color: #fff; font-size: .78rem; padding: 6px 12px; border-radius: 6px; pointer-events: none; z-index: 300; max-width: 320px; white-space: normal; opacity: 0; transition: opacity .15s; }
   .tooltip.show { opacity: 1; }
-
   .loader { display: flex; align-items: center; justify-content: center; height: 200px; color: var(--muted); font-size: .9rem; gap: 10px; }
   .loader::before { content: ''; width: 20px; height: 20px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
   @media print {
     .topbar, .search-bar, .appt-actions, .toolbar-btn, .sync-indicator { display: none !important; }
     body { background: #fff; }
@@ -369,7 +363,7 @@ const fbApp  = initializeApp(firebaseConfig);
 const db     = getFirestore(fbApp);
 const docRef = doc(db, "planning", "main");
 
-const COLORS = ['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
+const COLORS       = ['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
 const DEFAULT_LOAN   = ['Clio IV','01','02','03','04','05','06','07'];
 const DEFAULT_NOLOAN = ['Poste 1','Poste 2','Poste 3','Poste 4','Poste 5','Poste 6','Poste 7','Poste 8'];
 
@@ -377,13 +371,10 @@ let state    = { loanNames:[...DEFAULT_LOAN], noLoanNames:[...DEFAULT_NOLOAN], a
 let nbTech   = parseInt(localStorage.getItem('carrosserie_tech') || '3');
 let isSaving = false;
 
-// ── COMPATIBILITÉ ANCIEN FORMAT ──
-// Convertit piece:true/false → pieceStatus si nécessaire
+// ── NORMALISE ANCIEN FORMAT piece:bool → pieceStatus ──
 function normalizeAppt(a) {
   if (!a.pieceStatus) {
-    if (a.piece === true)       a.pieceStatus = 'ordered';
-    else if (a.piece === false) a.pieceStatus = 'none';
-    else                        a.pieceStatus = 'none';
+    a.pieceStatus = (a.piece === true) ? 'ordered' : 'none';
   }
   if (!a.pieceFournisseur) a.pieceFournisseur = '';
   if (!a.pieceNote)        a.pieceNote        = '';
@@ -395,23 +386,39 @@ function normalizeAppt(a) {
 // ── FIREBASE ──
 function setSyncStatus(s) {
   const el  = document.getElementById('syncStatus');
-  const map = { ok:['✅ Synchronisé','sync-ok'], wait:['⏳ Connexion…','sync-wait'], save:['💾 Sauvegarde…','sync-wait'], err:['❌ Hors ligne','sync-err'] };
+  const map = {
+    ok:   ['✅ Synchronisé', 'sync-ok'],
+    wait: ['⏳ Connexion…',  'sync-wait'],
+    save: ['💾 Sauvegarde…', 'sync-wait'],
+    err:  ['❌ Hors ligne',  'sync-err']
+  };
   el.textContent = map[s][0]; el.className = 'sync-indicator ' + map[s][1];
 }
+
 async function saveToFirebase() {
   isSaving = true; setSyncStatus('save');
-  try { await setDoc(docRef, { ...state, updatedAt: Date.now() }); setSyncStatus('ok'); }
-  catch(e) { console.error(e); setSyncStatus('err'); }
+  try {
+    // On sauvegarde les loanNames tels quels (conserve ce qui est dans Firebase)
+    await setDoc(docRef, { ...state, updatedAt: Date.now() });
+    setSyncStatus('ok');
+  } catch(e) { console.error(e); setSyncStatus('err'); }
   setTimeout(() => isSaving = false, 600);
 }
+
 onSnapshot(docRef, snap => {
   if (isSaving) return;
   if (snap.exists()) {
     const off = state.weekOffset;
     state = { ...snap.data() };
-    if (!state.absences)      state.absences = [];
-    if (!state.appointments)  state.appointments = [];
-    // Normalise chaque RDV pour compatibilité ancien format
+    // Garantit les tableaux
+    if (!Array.isArray(state.absences))     state.absences     = [];
+    if (!Array.isArray(state.appointments)) state.appointments = [];
+    if (!Array.isArray(state.loanNames))    state.loanNames    = [...DEFAULT_LOAN];
+    if (!Array.isArray(state.noLoanNames))  state.noLoanNames  = [...DEFAULT_NOLOAN];
+    // Complète à 8 si moins
+    while (state.loanNames.length < 8)   state.loanNames.push('Poste ' + state.loanNames.length);
+    while (state.noLoanNames.length < 8) state.noLoanNames.push('Poste ' + state.noLoanNames.length);
+    // Normalise chaque RDV
     state.appointments = state.appointments.map(normalizeAppt);
     state.weekOffset = off;
     setSyncStatus('ok');
@@ -439,13 +446,17 @@ function getWeekLabel(days) {
 }
 
 // ── TECH ──
-function changeTech(delta) { nbTech = Math.max(1, Math.min(20, nbTech + delta)); localStorage.setItem('carrosserie_tech', nbTech); updateTech(); }
+function changeTech(delta) {
+  nbTech = Math.max(1, Math.min(20, nbTech + delta));
+  localStorage.setItem('carrosserie_tech', nbTech);
+  updateTech();
+}
 function updateTech() {
   const capacity = nbTech * 39;
-  document.getElementById('techCount').textContent = nbTech;
-  document.getElementById('totalCapacity').textContent = capacity + 'h';
+  document.getElementById('techCount').textContent        = nbTech;
+  document.getElementById('totalCapacity').textContent    = capacity + 'h';
   const days = getWeekDays(), ws = days[0].toDateString();
-  const wa = state.appointments.filter(a => new Date(a.weekStart).toDateString() === ws);
+  const wa   = state.appointments.filter(a => new Date(a.weekStart).toDateString() === ws);
   const used = wa.reduce((s, a) => s + (a.hours || 0), 0);
   const pct  = capacity > 0 ? Math.round((used / capacity) * 100) : 0;
   const el   = document.getElementById('fillRate');
@@ -456,32 +467,53 @@ function updateTech() {
 // ── RENDER ──
 function render() {
   const days = getWeekDays();
-  document.getElementById('weekLabel').textContent = getWeekLabel(days);
-  document.getElementById('printHeader').textContent = 'Planning Carrosserie — ' + getWeekLabel(days);
+  document.getElementById('weekLabel').textContent      = getWeekLabel(days);
+  document.getElementById('printHeader').textContent    = 'Planning Carrosserie — ' + getWeekLabel(days);
   updateStats();
+
   const planner = document.getElementById('planner');
   planner.innerHTML = '';
 
+  // ── Section véhicules de prêt ──
   planner.appendChild(mksec('🚗 Véhicules de prêt (8 postes)'));
-  const lc = document.createElement('div'); lc.className = 'grid-container';
+  const lc = document.createElement('div');
+  lc.className = 'grid-container';
+
+  // HEADER en premier dans le conteneur
   lc.appendChild(buildHeader(days));
-  state.loanNames.forEach((n, i) => lc.appendChild(makeRow('loan', i, n, days)));
+
+  // BODY contenant toutes les lignes
+  const lbody = document.createElement('div');
+  lbody.className = 'grid-body';
+  state.loanNames.forEach((n, i) => lbody.appendChild(makeRow('loan', i, n, days)));
+  lc.appendChild(lbody);
   planner.appendChild(lc);
 
+  // ── Section sans véhicule de prêt ──
   planner.appendChild(mksec('🔩 Postes sans véhicule de prêt'));
-  const nc = document.createElement('div'); nc.className = 'grid-container';
+  const nc = document.createElement('div');
+  nc.className = 'grid-container';
+
   nc.appendChild(buildHeader(days));
-  state.noLoanNames.forEach((n, i) => nc.appendChild(makeRow('noloan', i, n, days)));
+
+  const nbody = document.createElement('div');
+  nbody.className = 'grid-body';
+  state.noLoanNames.forEach((n, i) => nbody.appendChild(makeRow('noloan', i, n, days)));
+  nc.appendChild(nbody);
   planner.appendChild(nc);
 
   renderAppts(days);
   renderAbsences(days);
 }
 
-function mksec(t) { const e = document.createElement('div'); e.className = 'section-label'; e.style.margin = '14px 0 6px'; e.innerHTML = t; return e; }
+function mksec(t) {
+  const e = document.createElement('div');
+  e.className = 'section-label'; e.style.margin = '14px 0 6px'; e.innerHTML = t; return e;
+}
 
 function buildHeader(days) {
-  const h = document.createElement('div'); h.className = 'grid-header';
+  const h = document.createElement('div');
+  h.className = 'grid-header';
   h.innerHTML = `<div class="h-corner">VÉHICULE</div>` + days.map(d => `
     <div class="h-day${isToday(d) ? ' today' : ''}">
       <span class="day-name">${d.toLocaleDateString('fr-FR', {weekday:'long'}).toUpperCase()}</span>
@@ -501,18 +533,21 @@ function makeRow(type, rowIdx, name, days) {
   nameEl.textContent = name; nameEl.title = 'Cliquer pour modifier';
   nameEl.addEventListener('click', () => startEditName(nameEl, type, rowIdx));
   label.appendChild(nameEl);
-  if (type === 'loan') { const b = document.createElement('span'); b.className = 'loan-badge'; b.textContent = 'PRÊT'; label.appendChild(b); }
+  if (type === 'loan') {
+    const b = document.createElement('span'); b.className = 'loan-badge'; b.textContent = 'PRÊT';
+    label.appendChild(b);
+  }
   row.appendChild(label);
 
   days.forEach((d, dayIdx) => {
     const cell = document.createElement('div');
     cell.className = `day-cell${isToday(d) ? ' today-col' : ''}`;
     cell.dataset.type = type; cell.dataset.row = rowIdx; cell.dataset.day = dayIdx;
-    cell.addEventListener('click', () => openModal(type, rowIdx, dayIdx));
-    cell.addEventListener('contextmenu', e => { e.preventDefault(); openAbsenceModal(type, rowIdx, dayIdx); });
-    cell.addEventListener('dragover',  e => { e.preventDefault(); cell.classList.add('drag-over'); });
-    cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
-    cell.addEventListener('drop',      e => { e.preventDefault(); cell.classList.remove('drag-over'); handleDrop(type, rowIdx, dayIdx); });
+    cell.addEventListener('click',       () => openModal(type, rowIdx, dayIdx));
+    cell.addEventListener('contextmenu', e  => { e.preventDefault(); openAbsenceModal(type, rowIdx, dayIdx); });
+    cell.addEventListener('dragover',    e  => { e.preventDefault(); cell.classList.add('drag-over'); });
+    cell.addEventListener('dragleave',   () => cell.classList.remove('drag-over'));
+    cell.addEventListener('drop',        e  => { e.preventDefault(); cell.classList.remove('drag-over'); handleDrop(type, rowIdx, dayIdx); });
     row.appendChild(cell);
   });
   return row;
@@ -521,7 +556,11 @@ function makeRow(type, rowIdx, name, days) {
 function startEditName(el, type, rowIdx) {
   const input = document.createElement('input'); input.className = 'vehicle-edit'; input.value = el.textContent;
   el.replaceWith(input); input.focus(); input.select();
-  const save = () => { const v = input.value.trim() || el.textContent; if (type === 'loan') state.loanNames[rowIdx] = v; else state.noLoanNames[rowIdx] = v; saveToFirebase(); render(); };
+  const save = () => {
+    const v = input.value.trim() || el.textContent;
+    if (type === 'loan') state.loanNames[rowIdx] = v; else state.noLoanNames[rowIdx] = v;
+    saveToFirebase(); render();
+  };
   input.addEventListener('blur', save);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') save(); if (e.key === 'Escape') render(); });
 }
@@ -531,8 +570,6 @@ function renderAppts(days) {
   const ws = days[0].toDateString();
   state.appointments.forEach(appt => {
     if (new Date(appt.weekStart).toDateString() !== ws) return;
-
-    // Sécurité : row et day valides
     if (appt.row === undefined || appt.day === undefined) return;
 
     const span = Math.min(appt.span || 1, 5 - appt.day);
@@ -540,13 +577,12 @@ function renderAppts(days) {
     if (!cell) return;
 
     const prio = appt.priority || 'moyenne';
-    const el = document.createElement('div');
+    const el   = document.createElement('div');
     el.className = `appt prio-${prio}`;
     el.style.background = appt.color || '#2980b9';
     if (span > 1) { el.style.right = `calc(-${(span-1)*100}% - ${span-1}px)`; el.style.zIndex = 15; }
     if (appt.arrived) el.classList.add('arrived');
 
-    // Badge pièce — compatible ancien (piece:bool) et nouveau (pieceStatus)
     let pieceBadge = '';
     if (appt.pieceStatus === 'delivered') pieceBadge = '<span class="badge badge-blue">✅ LIVRÉ</span>';
     else if (appt.pieceStatus === 'ordered') pieceBadge = '<span class="badge badge-orange">📦 CMD</span>';
@@ -584,7 +620,11 @@ function renderAppts(days) {
       ghost.style.display = 'block'; ghost.style.background = appt.color; ghost.textContent = appt.name;
       e.dataTransfer.setDragImage(ghost, -999, -999);
     });
-    el.addEventListener('dragend', () => { el.classList.remove('dragging'); document.getElementById('dragGhost').style.display = 'none'; dragApptId = null; });
+    el.addEventListener('dragend', () => {
+      el.classList.remove('dragging');
+      document.getElementById('dragGhost').style.display = 'none';
+      dragApptId = null;
+    });
     cell.appendChild(el);
   });
 }
@@ -607,7 +647,10 @@ function renderAbsences(days) {
 
 // ── DRAG ──
 let dragApptId = null;
-document.addEventListener('dragover', e => { const g = document.getElementById('dragGhost'); if (g.style.display === 'block') { g.style.left = e.clientX + 'px'; g.style.top = (e.clientY - 20) + 'px'; } });
+document.addEventListener('dragover', e => {
+  const g = document.getElementById('dragGhost');
+  if (g.style.display === 'block') { g.style.left = e.clientX + 'px'; g.style.top = (e.clientY - 20) + 'px'; }
+});
 function handleDrop(type, row, day) {
   if (!dragApptId) return;
   const appt = state.appointments.find(a => a.id === dragApptId); if (!appt) return;
@@ -698,13 +741,21 @@ function saveAppt() {
   });
   saveToFirebase(); closeModal(); render();
 }
-function deleteAppt(id) { state.appointments = state.appointments.filter(a => a.id !== id); saveToFirebase(); render(); }
+function deleteAppt(id) {
+  state.appointments = state.appointments.filter(a => a.id !== id);
+  saveToFirebase(); render();
+}
 
 function buildColorPicker(elId, onPick) {
   const cp = document.getElementById(elId); cp.innerHTML = '';
   COLORS.forEach((c, i) => {
-    const sw = document.createElement('div'); sw.className = `color-swatch${i === 0 ? ' selected' : ''}`; sw.style.background = c;
-    sw.addEventListener('click', () => { cp.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected')); sw.classList.add('selected'); onPick(i); });
+    const sw = document.createElement('div');
+    sw.className = `color-swatch${i === 0 ? ' selected' : ''}`;
+    sw.style.background = c;
+    sw.addEventListener('click', () => {
+      cp.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+      sw.classList.add('selected'); onPick(i);
+    });
     cp.appendChild(sw);
   });
 }
@@ -718,12 +769,12 @@ function updateStats() {
   updateTech();
 }
 function changeWeek(d) { state.weekOffset += d; render(); }
-function goToday() { state.weekOffset = 0; render(); }
+function goToday()     { state.weekOffset = 0;  render(); }
 
 // ── TOOLTIP ──
 function showTooltip(e, t) { const el = document.getElementById('tooltip'); el.textContent = t; el.classList.add('show'); moveTooltip(e); }
-function moveTooltip(e) { const el = document.getElementById('tooltip'); el.style.left = (e.clientX + 12) + 'px'; el.style.top = (e.clientY - 32) + 'px'; }
-function hideTooltip() { document.getElementById('tooltip').classList.remove('show'); }
+function moveTooltip(e)    { const el = document.getElementById('tooltip'); el.style.left = (e.clientX + 12) + 'px'; el.style.top = (e.clientY - 32) + 'px'; }
+function hideTooltip()     { document.getElementById('tooltip').classList.remove('show'); }
 
 // ── EDIT MODAL ──
 let editingApptId = null, editSelectedColor = 0, editStatus = 'pending', editPieceStatus = 'none', editPriority = 'moyenne';
@@ -732,13 +783,13 @@ function openEditModal(id) {
   editingApptId     = id;
   editStatus        = appt.arrived ? 'arrived' : 'pending';
   editPieceStatus   = appt.pieceStatus || 'none';
-  editPriority      = appt.priority || 'moyenne';
+  editPriority      = appt.priority    || 'moyenne';
   editSelectedColor = Math.max(0, COLORS.indexOf(appt.color));
   document.getElementById('editApptName').value         = appt.name;
   document.getElementById('editApptHours').value        = appt.hours;
   document.getElementById('editApptDays').value         = appt.span || 1;
   document.getElementById('editPieceFournisseur').value = appt.pieceFournisseur || '';
-  document.getElementById('editPieceNote').value        = appt.pieceNote || '';
+  document.getElementById('editPieceNote').value        = appt.pieceNote        || '';
   setEditStatus(editStatus);
   setEditPieceStatus(editPieceStatus);
   setEditPrio(editPriority);
@@ -770,18 +821,19 @@ function saveEditAppt() {
   if (!editingApptId) return;
   const name  = document.getElementById('editApptName').value.trim();
   const hours = parseFloat(document.getElementById('editApptHours').value) || 0;
-  const days  = parseInt(document.getElementById('editApptDays').value) || 1;
+  const days  = parseInt(document.getElementById('editApptDays').value)    || 1;
   if (!name) { document.getElementById('editApptName').focus(); return; }
   const appt = state.appointments.find(a => a.id === editingApptId); if (!appt) return;
-  appt.name    = name; appt.hours = hours; appt.color = COLORS[editSelectedColor];
-  appt.arrived = (editStatus === 'arrived');
-  appt.priority = editPriority;
+  appt.name             = name;
+  appt.hours            = hours;
+  appt.color            = COLORS[editSelectedColor];
+  appt.arrived          = (editStatus === 'arrived');
+  appt.priority         = editPriority;
   appt.pieceStatus      = editPieceStatus;
   appt.pieceFournisseur = document.getElementById('editPieceFournisseur').value.trim();
   appt.pieceNote        = document.getElementById('editPieceNote').value.trim();
-  appt.span = Math.min(days, 5 - appt.day);
-  // Supprime l'ancien champ piece pour nettoyer
-  delete appt.piece;
+  appt.span             = Math.min(days, 5 - appt.day);
+  delete appt.piece; // nettoie l'ancien champ
   saveToFirebase(); closeEditModal(); render();
 }
 
@@ -791,7 +843,10 @@ function doSearch(query) {
   const results = document.getElementById('searchResults');
   if (!q) { results.classList.remove('open'); return; }
   const matches = state.appointments.filter(a => a.name && a.name.toLowerCase().includes(q));
-  if (!matches.length) { results.innerHTML = '<div class="search-no-result">Aucun résultat</div>'; results.classList.add('open'); return; }
+  if (!matches.length) {
+    results.innerHTML = '<div class="search-no-result">Aucun résultat</div>';
+    results.classList.add('open'); return;
+  }
   results.innerHTML = matches.slice(0, 10).map(a => {
     const apptMon = getMonday(new Date(a.weekStart));
     const nowMon  = getMonday(new Date());
@@ -824,7 +879,7 @@ function doSearch(query) {
 
 // ── HISTORIQUE ──
 let historyPage = 0;
-function openHistory() { historyPage = 0; document.getElementById('historyModalOverlay').classList.add('open'); renderHistory(); }
+function openHistory()  { historyPage = 0; document.getElementById('historyModalOverlay').classList.add('open'); renderHistory(); }
 function closeHistory() { document.getElementById('historyModalOverlay').classList.remove('open'); }
 function renderHistory() {
   const startOff = -(historyPage * 4);
@@ -840,21 +895,21 @@ function renderHistory() {
     const urgents  = wa.filter(a => a.priority === 'haute').length;
     weeks.push({off, days, wa, totalH, pct, urgents, capacity});
   }
-  const first = weeks[weeks.length - 1].days[0];
+  const first = weeks[weeks.length-1].days[0];
   const last  = weeks[0].days[4];
   document.getElementById('historyRangeLabel').textContent =
-    `${first.toLocaleDateString('fr-FR', {day:'numeric', month:'short'})} → ${last.toLocaleDateString('fr-FR', {day:'numeric', month:'short', year:'numeric'})}`;
+    `${first.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} → ${last.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}`;
 
   const content = document.getElementById('historyContent'); content.innerHTML = '';
   weeks.forEach(({off, days, wa, totalH, pct, urgents, capacity}) => {
-    const isCurrentWeek = off === state.weekOffset;
+    const isCurrent = off === state.weekOffset;
     const div = document.createElement('div'); div.className = 'history-week';
     div.innerHTML = `
-      <div class="history-week-header" style="${isCurrentWeek ? 'background:var(--accent);' : ''}">
+      <div class="history-week-header" style="${isCurrent ? 'background:var(--accent);' : ''}">
         <span>${getWeekLabel(days)}</span>
         <span>${totalH}h / ${capacity}h (${pct}%)</span>
       </div>
-      <div class="history-week-body${isCurrentWeek ? ' open' : ''}">
+      <div class="history-week-body${isCurrent ? ' open' : ''}">
         <div class="history-stat-row">
           <div class="history-stat">📋 <strong>${wa.length}</strong> RDV</div>
           <div class="history-stat">⏱ <strong>${totalH}h</strong></div>
@@ -863,28 +918,28 @@ function renderHistory() {
         </div>
         <div class="history-appt-list">
           ${wa.length === 0 ? '<em style="color:var(--muted)">Aucun rendez-vous</em>' : wa.map(a => {
-            const rowName = a.type === 'loan' ? (state.loanNames[a.row] || '?') : (state.noLoanNames[a.row] || '?');
-            const dayName = days[a.day] ? days[a.day].toLocaleDateString('fr-FR', {weekday:'short', day:'numeric'}) : '?';
-            return `<div class="history-appt-item"><span style="color:${a.color}">●</span> ${a.name} — ${dayName} — ${rowName} — ${a.hours}h${a.priority === 'haute' ? ' 🔴' : ''}</div>`;
+            const rowName = a.type === 'loan' ? (state.loanNames[a.row]||'?') : (state.noLoanNames[a.row]||'?');
+            const dayName = days[a.day] ? days[a.day].toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'}) : '?';
+            return `<div class="history-appt-item"><span style="color:${a.color}">●</span> ${a.name} — ${dayName} — ${rowName} — ${a.hours}h${a.priority==='haute'?' 🔴':''}</div>`;
           }).join('')}
         </div>
         <button class="btn-secondary" style="margin-top:10px;padding:5px 12px;font-size:.78rem;" data-off="${off}">📅 Aller à cette semaine</button>
       </div>
     `;
-    div.querySelector('.history-week-header').addEventListener('click', () => { div.querySelector('.history-week-body').classList.toggle('open'); });
+    div.querySelector('.history-week-header').addEventListener('click', () => div.querySelector('.history-week-body').classList.toggle('open'));
     div.querySelector('[data-off]').addEventListener('click', () => { state.weekOffset = off; closeHistory(); render(); });
     content.appendChild(div);
   });
 }
 
 // ── EVENTS ──
-document.getElementById('btnPrevWeek').addEventListener('click', () => changeWeek(-1));
-document.getElementById('btnNextWeek').addEventListener('click', () => changeWeek(1));
-document.getElementById('btnToday').addEventListener('click',    () => goToday());
+document.getElementById('btnPrevWeek').addEventListener('click',  () => changeWeek(-1));
+document.getElementById('btnNextWeek').addEventListener('click',  () => changeWeek(1));
+document.getElementById('btnToday').addEventListener('click',     () => goToday());
 document.getElementById('btnTechMinus').addEventListener('click', () => changeTech(-1));
 document.getElementById('btnTechPlus').addEventListener('click',  () => changeTech(1));
-document.getElementById('btnHistory').addEventListener('click', () => openHistory());
-document.getElementById('btnPrint').addEventListener('click',   () => window.print());
+document.getElementById('btnHistory').addEventListener('click',   () => openHistory());
+document.getElementById('btnPrint').addEventListener('click',     () => window.print());
 document.getElementById('btnCloseModal').addEventListener('click',     () => closeModal());
 document.getElementById('btnSaveAppt').addEventListener('click',       () => saveAppt());
 document.getElementById('btnCloseEditModal').addEventListener('click', () => closeEditModal());
@@ -892,8 +947,8 @@ document.getElementById('btnSaveEditAppt').addEventListener('click',   () => sav
 document.getElementById('btnPieceNon').addEventListener('click',    () => setEditPieceStatus('none'));
 document.getElementById('btnPieceOui').addEventListener('click',    () => setEditPieceStatus('ordered'));
 document.getElementById('btnPieceLivree').addEventListener('click', () => setEditPieceStatus('delivered'));
-document.getElementById('btnPending').addEventListener('click', () => setEditStatus('pending'));
-document.getElementById('btnArrived').addEventListener('click', () => setEditStatus('arrived'));
+document.getElementById('btnPending').addEventListener('click',     () => setEditStatus('pending'));
+document.getElementById('btnArrived').addEventListener('click',     () => setEditStatus('arrived'));
 document.getElementById('editPrioBasse').addEventListener('click',   () => setEditPrio('basse'));
 document.getElementById('editPrioMoyenne').addEventListener('click', () => setEditPrio('moyenne'));
 document.getElementById('editPrioHaute').addEventListener('click',   () => setEditPrio('haute'));
@@ -905,14 +960,22 @@ document.getElementById('btnSaveAbsence').addEventListener('click',   () => save
 document.getElementById('btnCloseHistory').addEventListener('click',  () => closeHistory());
 document.getElementById('btnHistoryPrev').addEventListener('click',   () => { historyPage++; renderHistory(); });
 document.getElementById('btnHistoryNext').addEventListener('click',   () => { if (historyPage > 0) { historyPage--; renderHistory(); } });
-document.getElementById('absTypeConge').addEventListener('click',   () => { absType = 'conge';   document.getElementById('absTypeConge').className = 'status-btn active-arrived'; document.getElementById('absTypeAbsence').className = 'status-btn'; });
-document.getElementById('absTypeAbsence').addEventListener('click', () => { absType = 'absence'; document.getElementById('absTypeConge').className = 'status-btn'; document.getElementById('absTypeAbsence').className = 'status-btn active-pending'; });
+document.getElementById('absTypeConge').addEventListener('click',   () => {
+  absType = 'conge';
+  document.getElementById('absTypeConge').className   = 'status-btn active-arrived';
+  document.getElementById('absTypeAbsence').className = 'status-btn';
+});
+document.getElementById('absTypeAbsence').addEventListener('click', () => {
+  absType = 'absence';
+  document.getElementById('absTypeConge').className   = 'status-btn';
+  document.getElementById('absTypeAbsence').className = 'status-btn active-pending';
+});
 document.getElementById('searchInput').addEventListener('input', e => doSearch(e.target.value));
 document.getElementById('searchInput').addEventListener('blur',  () => setTimeout(() => document.getElementById('searchResults').classList.remove('open'), 200));
-document.getElementById('modalOverlay').addEventListener('click',         function(e) { if (e.target === this) closeModal(); });
-document.getElementById('editModalOverlay').addEventListener('click',     function(e) { if (e.target === this) closeEditModal(); });
-document.getElementById('absenceModalOverlay').addEventListener('click',  function(e) { if (e.target === this) closeAbsModal(); });
-document.getElementById('historyModalOverlay').addEventListener('click',  function(e) { if (e.target === this) closeHistory(); });
+document.getElementById('modalOverlay').addEventListener('click',        function(e) { if (e.target === this) closeModal(); });
+document.getElementById('editModalOverlay').addEventListener('click',    function(e) { if (e.target === this) closeEditModal(); });
+document.getElementById('absenceModalOverlay').addEventListener('click', function(e) { if (e.target === this) closeAbsModal(); });
+document.getElementById('historyModalOverlay').addEventListener('click', function(e) { if (e.target === this) closeHistory(); });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeModal(); closeEditModal(); closeAbsModal(); closeHistory(); document.getElementById('searchResults').classList.remove('open'); }
   if (e.key === 'Enter' && document.getElementById('modalOverlay').classList.contains('open')) saveAppt();
