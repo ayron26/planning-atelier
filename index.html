@@ -189,10 +189,11 @@
   .contrat-form-grid .full { grid-column: 1 / -1; }
 
   /* ── IMPRESSION ── */
-  @media print {
+@media print {
     body > *:not(#contrat-print-zone) { display: none !important; }
     #contrat-print-zone { display: block !important; }
     .contrat-print { padding: 15px; }
+    @page { margin: 1cm; size: A4; }
   }
   #contrat-print-zone { display: none; }
 
