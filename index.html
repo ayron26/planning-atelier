@@ -188,24 +188,14 @@
   .contrat-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .contrat-form-grid .full { grid-column: 1 / -1; }
 
-  /* ── IMPRESSION ── */
-@media print {
+  @media print {
     body > *:not(#contrat-print-zone) { display: none !important; }
     #contrat-print-zone { display: block !important; }
-    .contrat-print { padding: 15px; }
     @page { margin: 1cm; size: A4; }
   }
   #contrat-print-zone { display: none; }
 
-  .contrat-print {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    color: #1e2a38;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 30px;
-    font-size: 13px;
-    line-height: 1.5;
-  }
+  .contrat-print { font-family: 'Segoe UI', Arial, sans-serif; color: #1e2a38; max-width: 800px; margin: 0 auto; padding: 30px; font-size: 13px; line-height: 1.5; }
   .cp-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #1e2a38; padding-bottom: 16px; margin-bottom: 20px; }
   .cp-garage-name { font-size: 20px; font-weight: 700; color: #1e2a38; }
   .cp-garage-sub  { font-size: 12px; color: #6b7a8d; margin-top: 4px; }
@@ -239,9 +229,7 @@
 <body>
 
 <div class="topbar">
-  <div class="logo">
-    🔧 <div><span>CARROSSERIE BRUN</span><small>Valence Motors</small></div>
-  </div>
+  <div class="logo">🔧 <div><span>CARROSSERIE BRUN</span><small>Valence Motors</small></div></div>
   <div class="week-nav">
     <button id="btnPrevWeek">‹</button>
     <div class="week-label" id="weekLabel"></div>
@@ -408,31 +396,16 @@
       <div id="contratRdvInfo" style="font-size:.9rem;color:var(--text);font-weight:600;"></div>
       <div id="contratDatesInfo" style="font-size:.82rem;color:var(--muted);margin-top:3px;"></div>
     </div>
-
     <div style="font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">👤 Informations client</div>
     <div class="contrat-form-grid">
-      <div>
-        <label>Nom complet</label>
-        <input type="text" id="cNom" placeholder="DUPONT Martin">
-      </div>
-      <div>
-        <label>Téléphone</label>
-        <input type="text" id="cTel" placeholder="06 XX XX XX XX">
-      </div>
-      <div class="full">
-        <label>Adresse</label>
-        <input type="text" id="cAdresse" placeholder="12 rue des Lilas, 26000 Valence">
-      </div>
+      <div><label>Nom complet</label><input type="text" id="cNom" placeholder="DUPONT Martin"></div>
+      <div><label>Téléphone</label><input type="text" id="cTel" placeholder="06 XX XX XX XX"></div>
+      <div class="full"><label>Adresse</label><input type="text" id="cAdresse" placeholder="12 rue des Lilas, 26000 Valence"></div>
     </div>
-
-    <div style="font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 8px;">🚗 Véhicule de prêt</div>
+    <div style="font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 8px;">🚗 Véhicule de prêt — HYUNDAI BAYON</div>
     <div class="contrat-form-grid">
-      <div>
-        <label>Kilométrage départ</label>
-        <input type="number" id="cKm" placeholder="Ex: 12500">
-      </div>
-      <div>
-        <label>Niveau carburant</label>
+      <div><label>Kilométrage départ</label><input type="number" id="cKm" placeholder="Ex: 12500"></div>
+      <div><label>Niveau carburant</label>
         <select id="cCarburant">
           <option value="plein">Plein</option>
           <option value="3/4">3/4</option>
@@ -440,16 +413,9 @@
           <option value="1/4">1/4</option>
         </select>
       </div>
-      <div>
-        <label>Immatriculation</label>
-        <input type="text" id="cImmatPret" placeholder="XX-000-XX">
-      </div>
-      <div>
-        <label>Couleur</label>
-        <input type="text" id="cCouleurPret" placeholder="Gris, Blanc…">
-      </div>
+      <div><label>Immatriculation</label><input type="text" id="cImmatPret" placeholder="XX-000-XX"></div>
+      <div><label>Couleur</label><input type="text" id="cCouleurPret" placeholder="Gris, Blanc…"></div>
     </div>
-
     <div class="btn-row" style="margin-top:20px;">
       <button class="btn-secondary" id="btnCloseContrat">Annuler</button>
       <button class="btn-primary" id="btnImprimerContrat">🖨️ Imprimer le contrat</button>
@@ -478,7 +444,7 @@ const db     = getFirestore(fbApp);
 const docRef = doc(db, "planning", "main");
 
 const COLORS       = ['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
-const DEFAULT_LOAN   = ['Clio IV','01','02','03','04','05','06','07'];
+const DEFAULT_LOAN   = ['BAYON 01','BAYON 02','BAYON 03','BAYON 04','BAYON 05','BAYON 06','BAYON 07','BAYON 08'];
 const DEFAULT_NOLOAN = ['Poste 1','Poste 2','Poste 3','Poste 4','Poste 5','Poste 6','Poste 7','Poste 8'];
 const JOURS_FR = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 const MOIS_FR  = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
@@ -490,13 +456,13 @@ let contratAppt = null;
 let contratWeekOff = 0;
 
 function normalizeAppt(a) {
-  if (!a.pieceStatus)      a.pieceStatus      = (a.piece === true) ? 'ordered' : 'none';
-  if (!a.pieceFournisseur) a.pieceFournisseur  = '';
-  if (!a.pieceNote)        a.pieceNote         = '';
-  if (!a.priority)         a.priority          = 'moyenne';
-  if (!a.tel)              a.tel               = '';
-  if (!a.adresse)          a.adresse           = '';
-  if (a.arrived === undefined) a.arrived       = false;
+  if (!a.pieceStatus)      a.pieceStatus     = (a.piece === true) ? 'ordered' : 'none';
+  if (!a.pieceFournisseur) a.pieceFournisseur = '';
+  if (!a.pieceNote)        a.pieceNote        = '';
+  if (!a.priority)         a.priority         = 'moyenne';
+  if (!a.tel)              a.tel              = '';
+  if (!a.adresse)          a.adresse          = '';
+  if (a.arrived === undefined) a.arrived      = false;
   return a;
 }
 
@@ -507,13 +473,11 @@ function getMondayStr(weekStart) {
 }
 function hasNextWeek(appt) {
   const d = new Date(appt.weekStart); d.setDate(d.getDate() + 7);
-  const nxt = getMondayStr(d.toISOString());
-  return state.appointments.some(a => a.type===appt.type && a.row===appt.row && a.day===appt.day && a.name===appt.name && getMondayStr(a.weekStart)===nxt);
+  return state.appointments.some(a => a.type===appt.type && a.row===appt.row && a.day===appt.day && a.name===appt.name && getMondayStr(a.weekStart)===getMondayStr(d.toISOString()));
 }
 function hasPrevWeek(appt) {
   const d = new Date(appt.weekStart); d.setDate(d.getDate() - 7);
-  const prv = getMondayStr(d.toISOString());
-  return state.appointments.some(a => a.type===appt.type && a.row===appt.row && a.day===appt.day && a.name===appt.name && getMondayStr(a.weekStart)===prv);
+  return state.appointments.some(a => a.type===appt.type && a.row===appt.row && a.day===appt.day && a.name===appt.name && getMondayStr(a.weekStart)===getMondayStr(d.toISOString()));
 }
 
 // ── FIREBASE ──
@@ -537,7 +501,7 @@ onSnapshot(docRef, snap => {
     if (!Array.isArray(state.appointments)) state.appointments = [];
     if (!Array.isArray(state.loanNames))    state.loanNames    = [...DEFAULT_LOAN];
     if (!Array.isArray(state.noLoanNames))  state.noLoanNames  = [...DEFAULT_NOLOAN];
-    while (state.loanNames.length < 8)   state.loanNames.push('Poste ' + state.loanNames.length);
+    while (state.loanNames.length < 8)   state.loanNames.push('BAYON 0' + state.loanNames.length);
     while (state.noLoanNames.length < 8) state.noLoanNames.push('Poste ' + state.noLoanNames.length);
     state.appointments = state.appointments.map(normalizeAppt);
     state.weekOffset = off;
@@ -599,7 +563,7 @@ function render() {
   const w1 = getWeek1Days(), w2 = getWeek2Days();
   const allDays = [...w1, ...w2];
 
-  planner.appendChild(mksec('🚗 Véhicules de prêt (8 postes)'));
+  planner.appendChild(mksec('🚗 Véhicules de prêt — HYUNDAI BAYON (8 postes)'));
   const lc = document.createElement('div'); lc.className = 'grid-container';
   lc.appendChild(buildHeader(allDays));
   const lb = document.createElement('div'); lb.className = 'grid-body';
@@ -635,7 +599,7 @@ function makeRow(type, rowIdx, name, allDays) {
   const label = document.createElement('div'); label.className = 'row-label';
   label.innerHTML = `<span class="vehicle-icon">${type === 'loan' ? '🚗' : '🔧'}</span>`;
   const nameEl = document.createElement('span'); nameEl.className = 'vehicle-name';
-  nameEl.textContent = name; nameEl.title = 'Cliquer pour modifier';
+  nameEl.textContent = name; nameEl.title = 'Cliquer pour modifier (mettre l\'immatriculation)';
   nameEl.addEventListener('click', () => startEditName(nameEl, type, rowIdx));
   label.appendChild(nameEl);
   if (type === 'loan') { const b = document.createElement('span'); b.className = 'loan-badge'; b.textContent = 'PRÊT'; label.appendChild(b); }
@@ -721,9 +685,9 @@ function renderAppts(w1, w2) {
     el.addEventListener('click', e => { if (e.target.closest('.appt-actions') || e.target.classList.contains('resize-handle')) return; openEditModal(appt.id); });
 
     let tip = `${appt.name} — ${appt.hours}h — ${span}j`;
-    if (appt.tel)     tip += ` — 📞 ${appt.tel}`;
-    if (hasSuite)     tip += ' — ▶ Suite S+1';
-    if (hasOrigine)   tip += ' — ◀ Vient de S-1';
+    if (appt.tel)   tip += ` — 📞 ${appt.tel}`;
+    if (hasSuite)   tip += ' — ▶ Suite S+1';
+    if (hasOrigine) tip += ' — ◀ Vient de S-1';
     el.addEventListener('mouseenter', e => showTooltip(e, tip));
     el.addEventListener('mouseleave', hideTooltip);
     el.addEventListener('mousemove',  e => moveTooltip(e));
@@ -742,12 +706,9 @@ function renderAppts(w1, w2) {
     handle.addEventListener('mousedown', e => {
       e.preventDefault(); e.stopPropagation();
       const cellW = cell.getBoundingClientRect().width;
-      const startX = e.clientX;
-      const origSpan = appt.span || 1;
-      const maxSpan  = 5 - appt.day;
+      const startX = e.clientX, origSpan = appt.span || 1, maxSpan = 5 - appt.day;
       let currentSpan = origSpan;
-      document.body.style.cursor = 'ew-resize';
-      document.body.style.userSelect = 'none';
+      document.body.style.cursor = 'ew-resize'; document.body.style.userSelect = 'none';
       el.setAttribute('draggable', 'false');
       const onMove = mv => {
         const newSpan = Math.max(1, Math.min(maxSpan, origSpan + Math.round((mv.clientX - startX) / cellW)));
@@ -762,10 +723,10 @@ function renderAppts(w1, w2) {
         el.setAttribute('draggable', 'true');
         if (currentSpan !== origSpan) { appt.span = currentSpan; saveToFirebase(); render(); }
         document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup',   onUp);
+        document.removeEventListener('mouseup', onUp);
       };
       document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup',   onUp);
+      document.addEventListener('mouseup', onUp);
     });
 
     cell.appendChild(el);
@@ -783,15 +744,17 @@ function openContrat(appt, weekOff) {
   document.getElementById('cAdresse').value = appt.adresse || '';
   document.getElementById('cKm').value          = '';
   document.getElementById('cCarburant').value   = 'plein';
-  document.getElementById('cImmatPret').value   = '';
   document.getElementById('cCouleurPret').value = '';
+
+  // Immatriculation = nom de la ligne (que l'utilisateur aura mis à jour)
+  const rowNameFull = state.loanNames[appt.row] || '';
+  document.getElementById('cImmatPret').value = rowNameFull;
 
   const days      = getWeekDays(weekOff);
   const dateDebut = days[appt.day];
   const dateFin   = days[Math.min(appt.day + (appt.span || 1) - 1, 4)];
-  const rowName   = state.loanNames[appt.row] || 'Véhicule de prêt';
 
-  document.getElementById('contratRdvInfo').textContent   = `${appt.name} — ${rowName}`;
+  document.getElementById('contratRdvInfo').textContent   = `${appt.name} — HYUNDAI BAYON (${rowNameFull})`;
   document.getElementById('contratDatesInfo').textContent = `Du ${formatDateFR(dateDebut)} au ${formatDateFR(dateFin)}`;
 
   document.getElementById('contratModalOverlay').classList.add('open');
@@ -805,7 +768,7 @@ function imprimerContrat() {
   const days      = getWeekDays(contratWeekOff);
   const dateDebut = days[contratAppt.day];
   const dateFin   = days[Math.min(contratAppt.day + (contratAppt.span || 1) - 1, 4)];
-  const rowName   = state.loanNames[contratAppt.row] || 'Véhicule de prêt';
+  const immat     = document.getElementById('cImmatPret').value || '____________________________';
   const carburant = document.getElementById('cCarburant').value;
   const niveaux   = ['plein','3/4','1/2','1/4'];
   const numContrat = 'CBV-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-4);
@@ -819,10 +782,7 @@ function imprimerContrat() {
     <div class="cp-header">
       <div>
         <div class="cp-garage-name">CARROSSERIE BRUN — VALENCE MOTORS</div>
-        <div class="cp-garage-sub">
-          307 avenue de Romans — 26000 Valence<br>
-          Tél : 04 75 55 64 39
-        </div>
+        <div class="cp-garage-sub">307 avenue de Romans — 26000 Valence<br>Tél : 04 75 55 64 39</div>
       </div>
       <div class="cp-num">
         <strong>CONTRAT N° ${numContrat}</strong>
@@ -841,9 +801,9 @@ function imprimerContrat() {
         <div class="cp-row"><span class="cp-label">Permis de conduire</span><span class="cp-val">Photocopie fournie &nbsp;<span class="cp-check"></span></span></div>
       </div>
       <div class="cp-box">
-        <div class="cp-box-title">🚗 Véhicule de prêt — HYUNDAI BAYON</div>
-        <div class="cp-row"><span class="cp-label">Désignation</span><span class="cp-val">${rowName}</span></div>
-        <div class="cp-row"><span class="cp-label">Immatriculation</span><span class="cp-val">${document.getElementById('cImmatPret').value || '____________________________'}</span></div>
+        <div class="cp-box-title">🚗 Véhicule de prêt</div>
+        <div class="cp-row"><span class="cp-label">Marque / Modèle</span><span class="cp-val">HYUNDAI BAYON</span></div>
+        <div class="cp-row"><span class="cp-label">Immatriculation</span><span class="cp-val">${immat}</span></div>
         <div class="cp-row"><span class="cp-label">Couleur</span><span class="cp-val">${document.getElementById('cCouleurPret').value || '____________________________'}</span></div>
         <div class="cp-row"><span class="cp-label">Kilométrage départ</span><span class="cp-val">${document.getElementById('cKm').value ? document.getElementById('cKm').value + ' km' : '____________________________'}</span></div>
         <div class="cp-row"><span class="cp-label">Niveau carburant</span><span class="cp-val"><span class="cp-carburant">${carburantHTML}</span></span></div>
@@ -854,12 +814,12 @@ function imprimerContrat() {
       <div>
         <div class="cp-date-label">📅 Remise du véhicule</div>
         <div class="cp-date-val">${formatDateFR(dateDebut)}</div>
-        <div class="cp-date-sub">Heure : _________ h &nbsp;&nbsp; Km retour : _____________</div>
+        <div class="cp-date-sub">Heure : _________ h</div>
       </div>
       <div>
         <div class="cp-date-label">📅 Restitution prévue</div>
         <div class="cp-date-val">${formatDateFR(dateFin)}</div>
-        <div class="cp-date-sub">Heure : _________ h</div>
+        <div class="cp-date-sub">Heure : _________ h &nbsp;&nbsp; Km retour : _____________</div>
       </div>
     </div>
 
@@ -1095,8 +1055,8 @@ function saveEditAppt() {
   const days    = parseInt(document.getElementById('editApptDays').value)    || 1;
   if (!name) { document.getElementById('editApptName').focus(); return; }
   const appt = state.appointments.find(a => a.id === editingApptId); if (!appt) return;
-  appt.name    = name; appt.hours = hours; appt.color = COLORS[editSelectedColor];
-  appt.tel     = tel; appt.adresse = adresse;
+  appt.name = name; appt.hours = hours; appt.color = COLORS[editSelectedColor];
+  appt.tel = tel; appt.adresse = adresse;
   appt.arrived = (editStatus === 'arrived'); appt.priority = editPriority;
   appt.pieceStatus = editPieceStatus;
   appt.pieceFournisseur = document.getElementById('editPieceFournisseur').value.trim();
