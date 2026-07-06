@@ -26,10 +26,18 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--surface); color: var(--text); min-height: 100vh; }
 
+  /* ── TOPBAR ── */
   .topbar { background: var(--steel); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; height: 56px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
   .topbar .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1rem; letter-spacing: .04em; line-height: 1.2; }
   .topbar .logo span { color: var(--accent); }
   .topbar .logo small { font-size: .65rem; opacity: .7; font-weight: 400; display: block; letter-spacing: .06em; }
+
+  /* ── NAV MENU ── */
+  .nav-menu { display: flex; align-items: center; gap: 4px; }
+  .nav-btn { background: transparent; border: none; color: rgba(255,255,255,.7); border-radius: 8px; padding: 6px 14px; cursor: pointer; font-size: .85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: all .15s; font-family: inherit; }
+  .nav-btn:hover { background: var(--steel-mid); color: #fff; }
+  .nav-btn.active { background: var(--accent); color: #fff; }
+
   .topbar .week-nav { display: flex; align-items: center; gap: 8px; }
   .topbar .week-nav button { background: var(--steel-mid); border: none; color: #fff; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: background .15s; }
   .topbar .week-nav button:hover { background: var(--accent); }
@@ -52,6 +60,11 @@
   .toolbar-btn { background: var(--steel-mid); border: none; color: #fff; border-radius: 6px; padding: 0 10px; height: 32px; cursor: pointer; font-size: .78rem; font-weight: 600; display: flex; align-items: center; gap: 5px; transition: background .15s; white-space: nowrap; }
   .toolbar-btn:hover { background: var(--accent); }
 
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── PLANNING ATELIER ── */
   .search-bar { padding: 8px 16px; background: var(--card); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
   .search-wrap { position: relative; }
   .search-bar input { width: 300px; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: .88rem; font-family: inherit; outline: none; transition: border-color .15s; }
@@ -64,11 +77,9 @@
   .search-result-item .sri-name { font-weight: 700; font-size: .88rem; }
   .search-result-item .sri-meta { font-size: .75rem; color: var(--muted); }
   .search-no-result { padding: 14px; color: var(--muted); font-size: .85rem; text-align: center; }
-
   .planner-wrap { padding: 16px; max-width: 1600px; margin: 0 auto; }
   .section-label { display: flex; align-items: center; gap: 10px; margin: 12px 0 6px; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
   .grid-container { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,.06); margin-bottom: 4px; display: flex; flex-direction: column; }
   .grid-header { display: grid; grid-template-columns: var(--col-label) repeat(5, var(--col-day)); background: var(--steel); height: var(--header-h); border-radius: 12px 12px 0 0; flex-shrink: 0; }
   .grid-header .h-corner { display: flex; align-items: center; padding: 0 12px; color: rgba(255,255,255,.5); font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-right: 1px solid rgba(255,255,255,.08); }
@@ -95,13 +106,11 @@
   .day-cell.today-col { background: rgba(232,76,30,.04) !important; }
   .day-cell.today-col:hover { background: rgba(232,76,30,.1) !important; }
   .day-cell.drag-over { background: rgba(232,76,30,.18) !important; outline: 2px dashed var(--accent); outline-offset: -2px; }
-
   .absence-block { position: absolute; inset: 2px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 700; z-index: 5; cursor: default; }
   .absence-block.conge   { background: repeating-linear-gradient(45deg,#e8f5e9,#e8f5e9 4px,#c8e6c9 4px,#c8e6c9 8px); color: #2e7d32; border: 1.5px solid #a5d6a7; }
   .absence-block.absence { background: repeating-linear-gradient(45deg,#fff3e0,#fff3e0 4px,#ffe0b2 4px,#ffe0b2 8px); color: #e65100; border: 1.5px solid #ffcc80; }
   .absence-block .abs-del { opacity: 0; margin-left: 4px; cursor: pointer; }
   .absence-block:hover .abs-del { opacity: 1; }
-
   .appt { position: absolute; top: 4px; bottom: 4px; left: 3px; right: 3px; border-radius: 6px; display: flex; align-items: center; padding: 0 18px 0 11px; font-size: .76rem; font-weight: 600; gap: 4px; overflow: hidden; white-space: nowrap; cursor: grab; box-shadow: 0 2px 6px rgba(0,0,0,.15); user-select: none; z-index: 10; transition: box-shadow .15s, opacity .15s; }
   .appt:active { cursor: grabbing; }
   .appt.dragging { opacity: .45; box-shadow: none; }
@@ -127,9 +136,64 @@
   .badge-blue   { background: #2980b9; }
   .badge-red    { background: #e74c3c; }
   .appt.arrived { outline: 3px solid #2ecc71; outline-offset: -2px; }
-
   #dragGhost { position: fixed; pointer-events: none; z-index: 999; border-radius: 6px; padding: 4px 10px; font-size: .78rem; font-weight: 700; color: #fff; white-space: nowrap; box-shadow: 0 6px 20px rgba(0,0,0,.3); opacity: .88; transform: translate(-50%,-50%); }
 
+  /* ── PLANNING CONGÉS ── */
+  .conges-wrap { padding: 20px; max-width: 1400px; margin: 0 auto; }
+  .conges-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .conges-title { font-size: 1.3rem; font-weight: 700; color: var(--steel); display: flex; align-items: center; gap: 10px; }
+  .conges-nav { display: flex; align-items: center; gap: 10px; }
+  .conges-nav button { background: var(--steel); border: none; color: #fff; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; transition: background .15s; }
+  .conges-nav button:hover { background: var(--accent); }
+  .conges-month-label { font-size: 1.1rem; font-weight: 700; min-width: 180px; text-align: center; color: var(--steel); }
+  .conges-today-btn { background: var(--steel-mid); border: none; color: #fff; border-radius: 8px; padding: 6px 14px; cursor: pointer; font-size: .85rem; font-weight: 600; font-family: inherit; transition: background .15s; }
+  .conges-today-btn:hover { background: var(--accent); }
+
+  /* Légende */
+  .conges-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--muted); font-weight: 600; }
+  .legend-dot { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+
+  /* Grille congés */
+  .conges-grid { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,.06); overflow: hidden; }
+  .conges-grid-header { display: grid; background: var(--steel); height: 40px; }
+  .conges-grid-body-row { display: grid; border-bottom: 1px solid var(--border); min-height: 52px; }
+  .conges-grid-body-row:last-child { border-bottom: none; }
+  .conges-tech-label { display: flex; align-items: center; padding: 0 14px; font-weight: 700; font-size: .88rem; background: var(--card); border-right: 2px solid var(--border); gap: 8px; }
+  .conges-tech-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .conges-h-label { display: flex; align-items: center; padding: 0 14px; color: rgba(255,255,255,.5); font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-right: 1px solid rgba(255,255,255,.08); }
+  .conges-h-day { display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,.85); border-right: 1px solid rgba(255,255,255,.06); font-size: .7rem; font-weight: 600; cursor: default; }
+  .conges-h-day.today { background: var(--accent); color: #fff; }
+  .conges-h-day.weekend { background: rgba(255,255,255,.04); color: rgba(255,255,255,.4); }
+  .conges-cell { border-right: 1px solid var(--border); position: relative; cursor: pointer; min-height: 52px; transition: background .1s; }
+  .conges-cell:last-child { border-right: none; }
+  .conges-cell:hover { background: rgba(232,76,30,.06) !important; }
+  .conges-cell.today-col { background: rgba(232,76,30,.04) !important; }
+  .conges-cell.weekend-col { background: #fafafa; cursor: default; }
+  .conges-cell.weekend-col:hover { background: #fafafa !important; }
+
+  /* Blocs congés */
+  .conges-bloc { position: absolute; inset: 3px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 700; z-index: 5; cursor: pointer; transition: opacity .15s; }
+  .conges-bloc:hover { opacity: .85; }
+  .conges-bloc .bloc-del { display: none; position: absolute; top: 2px; right: 4px; font-size: .7rem; cursor: pointer; }
+  .conges-bloc:hover .bloc-del { display: block; }
+  .conges-bloc.type-conge     { background: #2ecc71; color: #fff; }
+  .conges-bloc.type-maladie   { background: #e74c3c; color: #fff; }
+  .conges-bloc.type-accident  { background: #e67e22; color: #fff; }
+  .conges-bloc.type-formation { background: #2980b9; color: #fff; }
+  .conges-bloc.type-rtt       { background: #8e44ad; color: #fff; }
+  .conges-bloc.type-sans-solde{ background: #7f8c8d; color: #fff; }
+  .conges-bloc.type-ferie     { background: #f39c12; color: #fff; }
+
+  /* Stats congés */
+  .conges-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 20px; }
+  .conges-stat-card { background: var(--card); border-radius: 10px; border: 1px solid var(--border); padding: 14px 16px; }
+  .conges-stat-name { font-size: .85rem; font-weight: 700; color: var(--steel); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .conges-stat-row { display: flex; justify-content: space-between; align-items: center; font-size: .78rem; margin-bottom: 4px; }
+  .conges-stat-row .label { color: var(--muted); }
+  .conges-stat-row .val { font-weight: 700; }
+
+  /* MODALS */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 200; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
   .modal { background: #fff; border-radius: 14px; padding: 28px 30px; width: 440px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
@@ -151,7 +215,7 @@
   .btn-primary:hover { background: #c43f18; }
   .btn-secondary { background: var(--surface); color: var(--muted); border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 18px; font-size: .9rem; cursor: pointer; }
   .btn-secondary:hover { background: var(--border); }
-  #editModalOverlay, #absenceModalOverlay, #historyModalOverlay, #contratModalOverlay { z-index: 210; }
+  #editModalOverlay, #absenceModalOverlay, #historyModalOverlay, #contratModalOverlay, #congesModalOverlay { z-index: 210; }
   .status-row { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
   .status-btn { flex: 1; min-width: 90px; border: 2px solid var(--border); border-radius: 8px; padding: 8px 6px; font-size: .78rem; font-weight: 700; cursor: pointer; background: var(--surface); color: var(--muted); transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 5px; font-family: inherit; }
   .status-btn.active-arrived   { border-color: #2ecc71; background: #eafaf1; color: #1e8449; }
@@ -182,9 +246,15 @@
   .loader { display: flex; align-items: center; justify-content: center; height: 200px; color: var(--muted); font-size: .9rem; gap: 10px; }
   .loader::before { content: ''; width: 20px; height: 20px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
   .contrat-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .contrat-form-grid .full { grid-column: 1 / -1; }
+
+  /* Type selector congés */
+  .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .type-card { border: 2px solid var(--border); border-radius: 8px; padding: 10px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: .85rem; font-weight: 600; transition: all .15s; background: var(--surface); }
+  .type-card:hover { border-color: var(--accent); }
+  .type-card.selected { border-color: transparent; color: #fff; }
+  .type-card .type-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
 
   @media print {
     body > *:not(#contrat-print-zone) { display: none !important; }
@@ -192,7 +262,6 @@
     @page { margin: 1cm; size: A4; }
   }
   #contrat-print-zone { display: none; }
-
   .contrat-print { font-family: 'Segoe UI', Arial, sans-serif; color: #1e2a38; max-width: 800px; margin: 0 auto; padding: 30px; font-size: 13px; line-height: 1.5; }
   .cp-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #1e2a38; padding-bottom: 16px; margin-bottom: 20px; }
   .cp-garage-name { font-size: 20px; font-weight: 700; color: #1e2a38; }
@@ -226,47 +295,90 @@
 </head>
 <body>
 
+<!-- ── TOPBAR ── -->
 <div class="topbar">
-  <div class="logo">🔧 <div><span>CARROSSERIE BRUN</span><small>Valence Motors</small></div></div>
-  <div class="week-nav">
-    <button id="btnPrevWeek">‹</button>
-    <div class="week-label" id="weekLabel"></div>
-    <button id="btnNextWeek">›</button>
-    <button id="btnToday" style="width:auto;padding:0 10px;font-size:.78rem;">Auj.</button>
+  <div style="display:flex;align-items:center;gap:20px;">
+    <div class="logo">🔧 <div><span>CARROSSERIE BRUN</span><small>Valence Motors</small></div></div>
+    <nav class="nav-menu">
+      <button class="nav-btn active" id="navAtelier" onclick="switchPage('atelier')">🔧 Planning Atelier</button>
+      <button class="nav-btn" id="navConges" onclick="switchPage('conges')">🏖️ Congés Techniciens</button>
+    </nav>
   </div>
-  <div class="stats">
-    <span class="sync-indicator sync-wait" id="syncStatus">⏳ Sync</span>
-    <div class="stat-box"><div class="val" id="totalHours">0h</div><div class="lbl">Heures</div></div>
-    <div class="stat-box"><div class="val" id="totalAppts">0</div><div class="lbl">RDV</div></div>
-    <div class="tech-box">
-      <div class="tech-block"><div class="val" id="totalCapacity">117h</div><div class="lbl">Capacité</div></div>
-      <div class="tech-sep"></div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
-        <div style="display:flex;align-items:center;gap:5px;">
-          <button class="tech-btn" id="btnTechMinus">−</button>
-          <span class="val" id="techCount">3</span>
-          <button class="tech-btn" id="btnTechPlus">+</button>
-        </div>
-        <div class="lbl">Techniciens</div>
-      </div>
-      <div class="tech-sep"></div>
-      <div class="tech-block"><div class="val" id="fillRate" style="color:#2ecc71;">0%</div><div class="lbl">Remplissage</div></div>
+  <div id="atelierTopRight" style="display:flex;align-items:center;gap:10px;">
+    <div class="week-nav">
+      <button id="btnPrevWeek">‹</button>
+      <div class="week-label" id="weekLabel"></div>
+      <button id="btnNextWeek">›</button>
+      <button id="btnToday" style="width:auto;padding:0 10px;font-size:.78rem;">Auj.</button>
     </div>
-    <button class="toolbar-btn" id="btnHistory">📊 Historique</button>
-    <button class="toolbar-btn" id="btnPrint">🖨️ Imprimer</button>
+    <div class="stats">
+      <span class="sync-indicator sync-wait" id="syncStatus">⏳ Sync</span>
+      <div class="stat-box"><div class="val" id="totalHours">0h</div><div class="lbl">Heures</div></div>
+      <div class="stat-box"><div class="val" id="totalAppts">0</div><div class="lbl">RDV</div></div>
+      <div class="tech-box">
+        <div class="tech-block"><div class="val" id="totalCapacity">117h</div><div class="lbl">Capacité</div></div>
+        <div class="tech-sep"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+          <div style="display:flex;align-items:center;gap:5px;">
+            <button class="tech-btn" id="btnTechMinus">−</button>
+            <span class="val" id="techCount">3</span>
+            <button class="tech-btn" id="btnTechPlus">+</button>
+          </div>
+          <div class="lbl">Techniciens</div>
+        </div>
+        <div class="tech-sep"></div>
+        <div class="tech-block"><div class="val" id="fillRate" style="color:#2ecc71;">0%</div><div class="lbl">Remplissage</div></div>
+      </div>
+      <button class="toolbar-btn" id="btnHistory">📊 Historique</button>
+      <button class="toolbar-btn" id="btnPrint">🖨️ Imprimer</button>
+    </div>
+  </div>
+  <div id="congesTopRight" style="display:none;align-items:center;gap:10px;">
+    <span class="sync-indicator sync-wait" id="syncStatusConges">⏳ Sync</span>
   </div>
 </div>
 
-<div class="search-bar">
-  <div class="search-wrap">
-    <input type="text" id="searchInput" placeholder="🔍 Rechercher un client, véhicule…">
-    <div class="search-results" id="searchResults"></div>
+<!-- ── PAGE ATELIER ── -->
+<div class="page active" id="pageAtelier">
+  <div class="search-bar">
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="🔍 Rechercher un client, véhicule…">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+    <span style="font-size:.75rem;color:var(--muted);">Clic droit sur une cellule → congé / absence</span>
   </div>
-  <span style="font-size:.75rem;color:var(--muted);">Clic droit sur une cellule → congé / absence</span>
+  <div class="planner-wrap">
+    <div id="planner"><div class="loader">Chargement…</div></div>
+  </div>
 </div>
 
-<div class="planner-wrap">
-  <div id="planner"><div class="loader">Chargement…</div></div>
+<!-- ── PAGE CONGÉS ── -->
+<div class="page" id="pageConges">
+  <div class="conges-wrap">
+    <div class="conges-header">
+      <div class="conges-title">🏖️ Planning Congés Techniciens</div>
+      <div class="conges-nav">
+        <button id="btnCongesPrev">‹</button>
+        <div class="conges-month-label" id="congesMonthLabel"></div>
+        <button id="btnCongesNext">›</button>
+        <button class="conges-today-btn" id="btnCongesToday">Aujourd'hui</button>
+      </div>
+    </div>
+
+    <div class="conges-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#2ecc71"></div> Congés payés</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div> Arrêt maladie</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e67e22"></div> Accident travail</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#2980b9"></div> Formation</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#8e44ad"></div> RTT</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7f8c8d"></div> Sans solde</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f39c12"></div> Jour férié</div>
+    </div>
+
+    <div class="conges-grid" id="congesGrid"></div>
+
+    <div class="conges-stats" id="congesStats"></div>
+  </div>
 </div>
 
 <div id="contrat-print-zone"></div>
@@ -350,7 +462,7 @@
   </div>
 </div>
 
-<!-- MODAL ABSENCE -->
+<!-- MODAL ABSENCE PLANNING -->
 <div class="modal-overlay" id="absenceModalOverlay">
   <div class="modal" style="width:340px;">
     <h2 style="gap:8px;">🏖️ Congé / Absence</h2>
@@ -420,6 +532,22 @@
   </div>
 </div>
 
+<!-- MODAL CONGÉ TECHNICIEN -->
+<div class="modal-overlay" id="congesModalOverlay">
+  <div class="modal" style="width:420px;">
+    <h2 style="gap:8px;">🏖️ Ajouter une absence</h2>
+    <div id="congesModalInfo" style="background:#f8f9fa;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.88rem;font-weight:600;color:var(--steel);border:1px solid var(--border);"></div>
+    <label>Type d'absence</label>
+    <div class="type-grid" id="typeGrid"></div>
+    <label>Note (optionnel)</label>
+    <input type="text" id="congesNote" placeholder="Ex: Opération programmée, Stage…">
+    <div class="btn-row" style="margin-top:20px;">
+      <button class="btn-secondary" id="btnCloseCongesModal">Annuler</button>
+      <button class="btn-primary" id="btnSaveConges">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <div class="tooltip" id="tooltip"></div>
 <div id="dragGhost" style="display:none"></div>
 
@@ -436,47 +564,61 @@ const firebaseConfig = {
   appId: "1:72223690252:web:1bdb17a61caa960c08a829"
 };
 
-const fbApp  = initializeApp(firebaseConfig);
-const db     = getFirestore(fbApp);
-const docRef = doc(db, "planning", "main");
+const fbApp   = initializeApp(firebaseConfig);
+const db      = getFirestore(fbApp);
+const docRef  = doc(db, "planning", "main");
+const docConges = doc(db, "planning", "conges");
 
+// ── CONSTANTES ──
 const COLORS       = ['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
 const DEFAULT_LOAN   = ['BAYON 01','BAYON 02','BAYON 03','BAYON 04','BAYON 05','BAYON 06','BAYON 07','BAYON 08'];
 const DEFAULT_NOLOAN = ['Poste 1','Poste 2','Poste 3','Poste 4','Poste 5','Poste 6','Poste 7','Poste 8'];
 const JOURS_FR = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 const MOIS_FR  = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const MOIS_COURT = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
 
+const TECHNICIENS = [
+  { id:'fabien',   nom:'Fabien',   color:'#2980b9' },
+  { id:'eric',     nom:'Éric',     color:'#27ae60' },
+  { id:'david',    nom:'David',    color:'#8e44ad' },
+  { id:'alois',    nom:'Aloïs',    color:'#c0392b' },
+  { id:'anthony',  nom:'Anthony',  color:'#d35400' }
+];
+
+const TYPES_ABSENCE = [
+  { id:'conge',      label:'Congés payés',    color:'#2ecc71', icon:'🏖️' },
+  { id:'maladie',    label:'Arrêt maladie',   color:'#e74c3c', icon:'🤒' },
+  { id:'accident',   label:'Accident travail',color:'#e67e22', icon:'🚑' },
+  { id:'formation',  label:'Formation',       color:'#2980b9', icon:'📚' },
+  { id:'rtt',        label:'RTT',             color:'#8e44ad', icon:'📅' },
+  { id:'sans-solde', label:'Sans solde',      color:'#7f8c8d', icon:'📋' },
+  { id:'ferie',      label:'Jour férié',      color:'#f39c12', icon:'🎉' }
+];
+
+// ── ÉTAT ──
 let state    = { loanNames:[...DEFAULT_LOAN], noLoanNames:[...DEFAULT_NOLOAN], appointments:[], absences:[], weekOffset:0 };
+let congesState = { absences:[] }; // { id, techId, date:'YYYY-MM-DD', type, note }
 let nbTech   = parseInt(localStorage.getItem('carrosserie_tech') || '3');
-let isSaving = false;
+let isSaving = false, isSavingConges = false;
 let contratAppt = null, contratWeekOff = 0;
+let congesMonth = new Date().getMonth();
+let congesYear  = new Date().getFullYear();
+let pendingConges = null, selectedCongesType = 'conge';
+let currentPage = 'atelier';
 
-function normalizeAppt(a) {
-  if (!a.pieceStatus)      a.pieceStatus     = (a.piece === true) ? 'ordered' : 'none';
-  if (!a.pieceFournisseur) a.pieceFournisseur = '';
-  if (!a.pieceNote)        a.pieceNote        = '';
-  if (!a.priority)         a.priority         = 'moyenne';
-  if (!a.tel)              a.tel              = '';
-  if (!a.adresse)          a.adresse          = '';
-  if (a.arrived === undefined) a.arrived      = false;
-  return a;
-}
+// ── NAVIGATION PAGES ──
+window.switchPage = function(page) {
+  currentPage = page;
+  document.getElementById('pageAtelier').classList.toggle('active', page === 'atelier');
+  document.getElementById('pageConges').classList.toggle('active', page === 'conges');
+  document.getElementById('navAtelier').classList.toggle('active', page === 'atelier');
+  document.getElementById('navConges').classList.toggle('active', page === 'conges');
+  document.getElementById('atelierTopRight').style.display = page === 'atelier' ? 'flex' : 'none';
+  document.getElementById('congesTopRight').style.display  = page === 'conges'  ? 'flex' : 'none';
+  if (page === 'conges') renderConges();
+};
 
-function getMondayStr(weekStart) {
-  const d = new Date(weekStart), day = d.getDay();
-  d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day));
-  d.setHours(0,0,0,0); return d.toDateString();
-}
-function hasNextWeek(appt) {
-  const d = new Date(appt.weekStart); d.setDate(d.getDate() + 7);
-  return state.appointments.some(a => a.type===appt.type && a.row===appt.row && a.day===appt.day && a.name===appt.name && getMondayStr(a.weekStart)===getMondayStr(d.toISOString()));
-}
-function hasPrevWeek(appt) {
-  const d = new Date(appt.weekStart); d.setDate(d.getDate() - 7);
-  return state.appointments.some(a => a.type===appt.type && a.row===appt.row && a.day===appt.day && a.name===appt.name && getMondayStr(a.weekStart)===getMondayStr(d.toISOString()));
-}
-
-// ── FIREBASE ──
+// ── FIREBASE ATELIER ──
 function setSyncStatus(s) {
   const el = document.getElementById('syncStatus');
   const map = { ok:['✅ Sync','sync-ok'], wait:['⏳ Conn…','sync-wait'], save:['💾 Sauvegarde…','sync-wait'], err:['❌ Hors ligne','sync-err'] };
@@ -488,6 +630,20 @@ async function saveToFirebase() {
   catch(e) { console.error(e); setSyncStatus('err'); }
   setTimeout(() => isSaving = false, 600);
 }
+
+// ── FIREBASE CONGÉS ──
+function setSyncConges(s) {
+  const el = document.getElementById('syncStatusConges');
+  const map = { ok:['✅ Sync','sync-ok'], wait:['⏳ Conn…','sync-wait'], save:['💾 Sauvegarde…','sync-wait'], err:['❌ Hors ligne','sync-err'] };
+  el.textContent = map[s][0]; el.className = 'sync-indicator ' + map[s][1];
+}
+async function saveConges() {
+  isSavingConges = true; setSyncConges('save');
+  try { await setDoc(docConges, { ...congesState, updatedAt: Date.now() }); setSyncConges('ok'); }
+  catch(e) { console.error(e); setSyncConges('err'); }
+  setTimeout(() => isSavingConges = false, 600);
+}
+
 onSnapshot(docRef, snap => {
   if (isSaving) return;
   if (snap.exists()) {
@@ -505,6 +661,29 @@ onSnapshot(docRef, snap => {
   } else { setSyncStatus('ok'); }
   render();
 }, err => { console.error(err); setSyncStatus('err'); render(); });
+
+onSnapshot(docConges, snap => {
+  if (isSavingConges) return;
+  if (snap.exists()) {
+    congesState = { ...snap.data() };
+    if (!Array.isArray(congesState.absences)) congesState.absences = [];
+  } else {
+    congesState = { absences: [] };
+  }
+  setSyncConges('ok');
+  if (currentPage === 'conges') renderConges();
+}, err => { console.error(err); setSyncConges('err'); });
+
+function normalizeAppt(a) {
+  if (!a.pieceStatus)      a.pieceStatus     = (a.piece === true) ? 'ordered' : 'none';
+  if (!a.pieceFournisseur) a.pieceFournisseur = '';
+  if (!a.pieceNote)        a.pieceNote        = '';
+  if (!a.priority)         a.priority         = 'moyenne';
+  if (!a.tel)              a.tel              = '';
+  if (!a.adresse)          a.adresse          = '';
+  if (a.arrived === undefined) a.arrived      = false;
+  return a;
+}
 
 // ── DATES ──
 function getMonday(date) {
@@ -525,6 +704,22 @@ function getWeekLabel(days) {
 function formatDateFR(d) {
   return `${JOURS_FR[d.getDay()]} ${d.getDate()} ${MOIS_FR[d.getMonth()]} ${d.getFullYear()}`;
 }
+function dateToKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function getMondayStr(weekStart) {
+  const d = new Date(weekStart), day = d.getDay();
+  d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day));
+  d.setHours(0,0,0,0); return d.toDateString();
+}
+function hasNextWeek(appt) {
+  const d = new Date(appt.weekStart); d.setDate(d.getDate() + 7);
+  return state.appointments.some(a => a.type===appt.type && a.row===appt.row && a.day===appt.day && a.name===appt.name && getMondayStr(a.weekStart)===getMondayStr(d.toISOString()));
+}
+function hasPrevWeek(appt) {
+  const d = new Date(appt.weekStart); d.setDate(d.getDate() - 7);
+  return state.appointments.some(a => a.type===appt.type && a.row===appt.row && a.day===appt.day && a.name===appt.name && getMondayStr(a.weekStart)===getMondayStr(d.toISOString()));
+}
 
 // ── TECH ──
 function changeTech(delta) { nbTech = Math.max(1, Math.min(20, nbTech + delta)); localStorage.setItem('carrosserie_tech', nbTech); updateTech(); }
@@ -541,7 +736,7 @@ function updateTech() {
   el.style.color = pct >= 100 ? '#e74c3c' : pct >= 80 ? '#f5a623' : '#2ecc71';
 }
 
-// ── RENDER ──
+// ── RENDER ATELIER ──
 function render() {
   const days = getWeekDays();
   document.getElementById('weekLabel').textContent = getWeekLabel(days);
@@ -586,7 +781,7 @@ function makeRow(type, rowIdx, name, days) {
   const label = document.createElement('div'); label.className = 'row-label';
   label.innerHTML = `<span class="vehicle-icon">${type === 'loan' ? '🚗' : '🔧'}</span>`;
   const nameEl = document.createElement('span'); nameEl.className = 'vehicle-name';
-  nameEl.textContent = name; nameEl.title = 'Cliquer pour modifier (immatriculation)';
+  nameEl.textContent = name; nameEl.title = 'Cliquer pour modifier';
   nameEl.addEventListener('click', () => startEditName(nameEl, type, rowIdx));
   label.appendChild(nameEl);
   if (type === 'loan') { const b = document.createElement('span'); b.className = 'loan-badge'; b.textContent = 'PRÊT'; label.appendChild(b); }
@@ -613,7 +808,6 @@ function startEditName(el, type, rowIdx) {
   input.addEventListener('keydown', e => { if (e.key === 'Enter') save(); if (e.key === 'Escape') render(); });
 }
 
-// ── RENDER APPOINTMENTS ──
 function renderAppts(days) {
   const ws = days[0].toDateString();
   state.appointments.forEach(appt => {
@@ -622,7 +816,6 @@ function renderAppts(days) {
     const span = Math.min(appt.span || 1, 5 - appt.day);
     const cell = document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`);
     if (!cell) return;
-
     const hasSuite   = hasNextWeek(appt);
     const hasOrigine = hasPrevWeek(appt);
     const prio = appt.priority || 'moyenne';
@@ -631,14 +824,10 @@ function renderAppts(days) {
     el.style.background = appt.color || '#2980b9';
     if (span > 1) { el.style.right = `calc(-${(span-1)*100}% - ${span-1}px)`; el.style.zIndex = 15; }
     if (appt.arrived) el.classList.add('arrived');
-
     let pieceBadge = '';
     if (appt.pieceStatus === 'delivered') pieceBadge = '<span class="badge badge-blue">✅ LIVRÉ</span>';
     else if (appt.pieceStatus === 'ordered') pieceBadge = '<span class="badge badge-orange">📦 CMD</span>';
-
-    const btnContrat = appt.type === 'loan'
-      ? `<button class="btn-action btn-contrat" title="Contrat de prêt">📄</button>` : '';
-
+    const btnContrat = appt.type === 'loan' ? `<button class="btn-action btn-contrat" title="Contrat de prêt">📄</button>` : '';
     el.innerHTML = `
       <div class="prio-strip"></div>
       ${hasOrigine ? '<span class="badge-origine">◀ S-1</span>' : ''}
@@ -655,14 +844,12 @@ function renderAppts(days) {
       </div>
       <div class="resize-handle" title="Étirer">⠿</div>
     `;
-
     if (appt.type === 'loan') {
       el.querySelector('.btn-contrat').addEventListener('click', e => { e.stopPropagation(); openContrat(appt); });
     }
     el.querySelector('.btn-copy').addEventListener('click', e => { e.stopPropagation(); copyToNextWeek(appt); });
     el.querySelector('.btn-del').addEventListener('click',  e => { e.stopPropagation(); deleteAppt(appt.id); });
     el.addEventListener('click', e => { if (e.target.closest('.appt-actions') || e.target.classList.contains('resize-handle')) return; openEditModal(appt.id); });
-
     let tip = `${appt.name} — ${appt.hours}h — ${span}j`;
     if (appt.tel)   tip += ` — 📞 ${appt.tel}`;
     if (hasSuite)   tip += ' — ▶ Suite S+1';
@@ -670,7 +857,6 @@ function renderAppts(days) {
     el.addEventListener('mouseenter', e => showTooltip(e, tip));
     el.addEventListener('mouseleave', hideTooltip);
     el.addEventListener('mousemove',  e => moveTooltip(e));
-
     el.setAttribute('draggable', 'true');
     el.addEventListener('dragstart', e => {
       if (e.target.closest('.appt-actions') || e.target.classList.contains('resize-handle')) { e.preventDefault(); return; }
@@ -680,7 +866,6 @@ function renderAppts(days) {
       e.dataTransfer.setDragImage(ghost, -999, -999);
     });
     el.addEventListener('dragend', () => { el.classList.remove('dragging'); document.getElementById('dragGhost').style.display = 'none'; dragApptId = null; });
-
     const handle = el.querySelector('.resize-handle');
     handle.addEventListener('mousedown', e => {
       e.preventDefault(); e.stopPropagation();
@@ -691,28 +876,20 @@ function renderAppts(days) {
       el.setAttribute('draggable', 'false');
       const onMove = mv => {
         const newSpan = Math.max(1, Math.min(maxSpan, origSpan + Math.round((mv.clientX - startX) / cellW)));
-        if (newSpan !== currentSpan) {
-          currentSpan = newSpan;
-          el.style.right  = currentSpan > 1 ? `calc(-${(currentSpan-1)*100}% - ${currentSpan-1}px)` : '3px';
-          el.style.zIndex = currentSpan > 1 ? '15' : '10';
-        }
+        if (newSpan !== currentSpan) { currentSpan = newSpan; el.style.right = currentSpan > 1 ? `calc(-${(currentSpan-1)*100}% - ${currentSpan-1}px)` : '3px'; el.style.zIndex = currentSpan > 1 ? '15' : '10'; }
       };
       const onUp = () => {
         document.body.style.cursor = ''; document.body.style.userSelect = '';
         el.setAttribute('draggable', 'true');
         if (currentSpan !== origSpan) { appt.span = currentSpan; saveToFirebase(); render(); }
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onUp);
+        document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp);
       };
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onUp);
+      document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp);
     });
-
     cell.appendChild(el);
   });
 }
 
-// ── ABSENCES ──
 function renderAbsences(days) {
   if (!state.absences) return;
   const ws = days[0].toDateString();
@@ -726,6 +903,176 @@ function renderAbsences(days) {
     el.querySelector('.abs-del').addEventListener('click', e => { e.stopPropagation(); deleteAbsence(abs.id); });
     cell.appendChild(el);
   });
+}
+
+// ── RENDER CONGÉS ──
+function renderConges() {
+  const year = congesYear, month = congesMonth;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const today = new Date();
+  document.getElementById('congesMonthLabel').textContent = `${MOIS_FR[month].charAt(0).toUpperCase() + MOIS_FR[month].slice(1)} ${year}`;
+
+  // Calcul largeur colonnes
+  const labelW = 160;
+  const colW   = `1fr`;
+  const gridCols = `${labelW}px repeat(${daysInMonth}, ${colW})`;
+
+  const grid = document.getElementById('congesGrid');
+  grid.innerHTML = '';
+
+  // Header
+  const header = document.createElement('div');
+  header.className = 'conges-grid-header';
+  header.style.gridTemplateColumns = gridCols;
+  let headerHTML = `<div class="conges-h-label">TECHNICIEN</div>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(year, month, d);
+    const dow  = date.getDay();
+    const isWE = dow === 0 || dow === 6;
+    const isTod = date.toDateString() === today.toDateString();
+    const jourCourt = ['D','L','M','M','J','V','S'][dow];
+    headerHTML += `<div class="conges-h-day${isTod ? ' today' : ''}${isWE ? ' weekend' : ''}" title="${JOURS_FR[dow]} ${d}">
+      <span style="font-size:.65rem;opacity:.7;">${jourCourt}</span>
+      <span>${d}</span>
+    </div>`;
+  }
+  header.innerHTML = headerHTML;
+  grid.appendChild(header);
+
+  // Lignes techniciens
+  TECHNICIENS.forEach(tech => {
+    const row = document.createElement('div');
+    row.className = 'conges-grid-body-row';
+    row.style.gridTemplateColumns = gridCols;
+
+    // Label technicien
+    const initiales = tech.nom.slice(0,2).toUpperCase();
+    row.innerHTML = `<div class="conges-tech-label">
+      <div class="conges-tech-avatar" style="background:${tech.color}">${initiales}</div>
+      ${tech.nom}
+    </div>`;
+
+    // Cellules jours
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date    = new Date(year, month, d);
+      const dow     = date.getDay();
+      const isWE    = dow === 0 || dow === 6;
+      const isTod   = date.toDateString() === today.toDateString();
+      const dateKey = dateToKey(date);
+
+      const cell = document.createElement('div');
+      cell.className = `conges-cell${isTod ? ' today-col' : ''}${isWE ? ' weekend-col' : ''}`;
+
+      if (!isWE) {
+        cell.addEventListener('click', () => openCongesModal(tech, date));
+      }
+
+      // Cherche une absence pour ce tech ce jour
+      const abs = congesState.absences.find(a => a.techId === tech.id && a.date === dateKey);
+      if (abs) {
+        const typeInfo = TYPES_ABSENCE.find(t => t.id === abs.type) || TYPES_ABSENCE[0];
+        const bloc = document.createElement('div');
+        bloc.className = `conges-bloc type-${abs.type}`;
+        bloc.innerHTML = `<span>${typeInfo.icon}</span><span class="bloc-del" title="Supprimer">✕</span>`;
+        if (abs.note) bloc.title = abs.note;
+        bloc.querySelector('.bloc-del').addEventListener('click', e => { e.stopPropagation(); deleteCongesAbs(abs.id); });
+        cell.appendChild(bloc);
+      }
+
+      row.appendChild(cell);
+    }
+    grid.appendChild(row);
+  });
+
+  // Stats
+  renderCongesStats(year, month, daysInMonth);
+}
+
+function renderCongesStats(year, month, daysInMonth) {
+  const statsEl = document.getElementById('congesStats');
+  statsEl.innerHTML = '';
+  TECHNICIENS.forEach(tech => {
+    const absThisMonth = congesState.absences.filter(a => {
+      if (a.techId !== tech.id) return false;
+      const d = new Date(a.date);
+      return d.getFullYear() === year && d.getMonth() === month;
+    });
+    const card = document.createElement('div');
+    card.className = 'conges-stat-card';
+    const counts = {};
+    TYPES_ABSENCE.forEach(t => counts[t.id] = 0);
+    absThisMonth.forEach(a => { if (counts[a.type] !== undefined) counts[a.type]++; });
+    const total = absThisMonth.length;
+    card.innerHTML = `
+      <div class="conges-stat-name">
+        <div class="conges-tech-avatar" style="background:${tech.color};width:24px;height:24px;font-size:.68rem;">${tech.nom.slice(0,2).toUpperCase()}</div>
+        ${tech.nom}
+      </div>
+      ${TYPES_ABSENCE.filter(t => counts[t.id] > 0).map(t => `
+        <div class="conges-stat-row">
+          <span class="label">${t.icon} ${t.label}</span>
+          <span class="val" style="color:${t.color}">${counts[t.id]}j</span>
+        </div>`).join('')}
+      ${total === 0 ? '<div style="font-size:.78rem;color:var(--muted);text-align:center;padding:8px 0;">Aucune absence</div>' : `
+      <div style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px;">
+        <div class="conges-stat-row"><span class="label" style="font-weight:700;">Total</span><span class="val">${total}j</span></div>
+      </div>`}
+    `;
+    statsEl.appendChild(card);
+  });
+}
+
+// ── MODAL CONGÉS ──
+function openCongesModal(tech, date) {
+  pendingConges = { tech, date };
+  selectedCongesType = 'conge';
+  document.getElementById('congesNote').value = '';
+  document.getElementById('congesModalInfo').textContent =
+    `${tech.nom} — ${JOURS_FR[date.getDay()]} ${date.getDate()} ${MOIS_FR[date.getMonth()]} ${date.getFullYear()}`;
+
+  // Type grid
+  const tg = document.getElementById('typeGrid');
+  tg.innerHTML = '';
+  TYPES_ABSENCE.forEach(t => {
+    const card = document.createElement('div');
+    card.className = `type-card${t.id === selectedCongesType ? ' selected' : ''}`;
+    if (t.id === selectedCongesType) card.style.background = t.color;
+    card.innerHTML = `<div class="type-dot" style="background:${t.color}"></div>${t.icon} ${t.label}`;
+    card.addEventListener('click', () => {
+      selectedCongesType = t.id;
+      tg.querySelectorAll('.type-card').forEach(c => { c.classList.remove('selected'); c.style.background = ''; });
+      card.classList.add('selected'); card.style.background = t.color;
+    });
+    tg.appendChild(card);
+  });
+
+  document.getElementById('congesModalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('congesNote').focus(), 50);
+}
+
+function closeCongesModal() { document.getElementById('congesModalOverlay').classList.remove('open'); pendingConges = null; }
+
+function saveCongesAbs() {
+  if (!pendingConges) return;
+  const dateKey = dateToKey(pendingConges.date);
+  // Supprime si déjà une absence ce jour pour ce tech
+  congesState.absences = congesState.absences.filter(a => !(a.techId === pendingConges.tech.id && a.date === dateKey));
+  congesState.absences.push({
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+    techId: pendingConges.tech.id,
+    date:   dateKey,
+    type:   selectedCongesType,
+    note:   document.getElementById('congesNote').value.trim()
+  });
+  saveConges();
+  closeCongesModal();
+  renderConges();
+}
+
+function deleteCongesAbs(id) {
+  congesState.absences = congesState.absences.filter(a => a.id !== id);
+  saveConges();
+  renderConges();
 }
 
 // ── CONTRAT ──
@@ -760,7 +1107,6 @@ function imprimerContrat() {
   const niveaux   = ['plein','3/4','1/2','1/4'];
   const numContrat = 'CBV-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-4);
   const carburantHTML = niveaux.map(n => `<span><span class="cp-check${carburant===n?' checked':''}"></span> ${n}</span>`).join('');
-
   document.getElementById('contrat-print-zone').innerHTML = `<div class="contrat-print">
     <div class="cp-header">
       <div>
@@ -862,7 +1208,7 @@ function copyToNextWeek(appt) {
   saveToFirebase(); render();
 }
 
-// ── ABSENCE MODAL ──
+// ── ABSENCE PLANNING ──
 let pendingAbsence=null, absType='conge';
 function openAbsenceModal(type,row,day) {
   pendingAbsence={type,row,day}; absType='conge';
@@ -886,7 +1232,7 @@ function saveAbsence() {
 }
 function deleteAbsence(id) { state.absences=state.absences.filter(a=>a.id!==id); saveToFirebase(); render(); }
 
-// ── MODAL NOUVEAU RDV ──
+// ── MODAL RDV ──
 let pendingAppt=null, selectedColor=0, newPriority='moyenne';
 function openModal(type,row,day) {
   pendingAppt={type,row,day}; selectedColor=0; newPriority='moyenne';
@@ -1128,6 +1474,11 @@ document.getElementById('btnHistoryPrev').addEventListener('click',   ()=>{histo
 document.getElementById('btnHistoryNext').addEventListener('click',   ()=>{if(historyPage>0){historyPage--;renderHistory();}});
 document.getElementById('btnCloseContrat').addEventListener('click',    ()=>closeContrat());
 document.getElementById('btnImprimerContrat').addEventListener('click', ()=>imprimerContrat());
+document.getElementById('btnCongesPrev').addEventListener('click', ()=>{ congesMonth--; if(congesMonth<0){congesMonth=11;congesYear--;} renderConges(); });
+document.getElementById('btnCongesNext').addEventListener('click', ()=>{ congesMonth++; if(congesMonth>11){congesMonth=0;congesYear++;} renderConges(); });
+document.getElementById('btnCongesToday').addEventListener('click', ()=>{ congesMonth=new Date().getMonth(); congesYear=new Date().getFullYear(); renderConges(); });
+document.getElementById('btnCloseCongesModal').addEventListener('click', ()=>closeCongesModal());
+document.getElementById('btnSaveConges').addEventListener('click',       ()=>saveCongesAbs());
 document.getElementById('absTypeConge').addEventListener('click',   ()=>{absType='conge';document.getElementById('absTypeConge').className='status-btn active-arrived';document.getElementById('absTypeAbsence').className='status-btn';});
 document.getElementById('absTypeAbsence').addEventListener('click', ()=>{absType='absence';document.getElementById('absTypeConge').className='status-btn';document.getElementById('absTypeAbsence').className='status-btn active-pending';});
 document.getElementById('searchInput').addEventListener('input', e=>doSearch(e.target.value));
@@ -1137,9 +1488,11 @@ document.getElementById('editModalOverlay').addEventListener('click',    functio
 document.getElementById('absenceModalOverlay').addEventListener('click', function(e){if(e.target===this)closeAbsModal();});
 document.getElementById('historyModalOverlay').addEventListener('click', function(e){if(e.target===this)closeHistory();});
 document.getElementById('contratModalOverlay').addEventListener('click', function(e){if(e.target===this)closeContrat();});
+document.getElementById('congesModalOverlay').addEventListener('click',  function(e){if(e.target===this)closeCongesModal();});
 document.addEventListener('keydown', e=>{
-  if(e.key==='Escape'){closeModal();closeEditModal();closeAbsModal();closeHistory();closeContrat();document.getElementById('searchResults').classList.remove('open');}
+  if(e.key==='Escape'){closeModal();closeEditModal();closeAbsModal();closeHistory();closeContrat();closeCongesModal();document.getElementById('searchResults').classList.remove('open');}
   if(e.key==='Enter'&&document.getElementById('modalOverlay').classList.contains('open'))saveAppt();
+  if(e.key==='Enter'&&document.getElementById('congesModalOverlay').classList.contains('open'))saveCongesAbs();
 });
 
 buildColorPicker('colorPicker', i=>selectedColor=i);
