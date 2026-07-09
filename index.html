@@ -194,7 +194,7 @@
   .modal input:focus, .modal textarea:focus, .modal select:focus { border-color: var(--accent); }
   .modal .hours-row { display: flex; gap: 10px; }
   .modal .hours-row > div { flex: 1; }
-  .modal .duration-note { font-size: .75rem; color: var(--muted); margin-top: 6px; background: #f0f7ff; border-radius: 6px; padding: 6px 10px; border-left: 3px solid #2980b9; }
+  .preview-note { font-size: .82rem; color: #1a5276; background: #e8f4fd; border-radius: 6px; padding: 8px 12px; margin-top: 6px; border-left: 3px solid #2980b9; font-weight: 600; }
   .color-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
   .color-swatch { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform .15s, border-color .15s; }
   .color-swatch:hover { transform: scale(1.15); }
@@ -373,7 +373,7 @@
     <input type="text" id="apptAdresse" placeholder="12 rue des Lilas, 26000 Valence">
     <label>Nombre de jours de travaux</label>
     <input type="number" id="apptDays" value="1" min="1" max="20">
-    <div class="duration-note" id="apptDaysPreview">📅 Le RDV s'étalera sur 1 jour</div>
+    <div class="preview-note" id="apptPreview">📅 1 jour</div>
     <label>Heures de travail</label>
     <input type="number" id="apptHours" value="4" min="0.5" max="999" step="0.5">
     <label>Priorité</label>
@@ -405,7 +405,7 @@
     <input type="number" id="editApptHours" min="0.5" max="999" step="0.5">
     <label>Nombre de jours de travaux</label>
     <input type="number" id="editApptDays" min="1" max="20">
-    <div class="duration-note" id="editApptDaysPreview" style="margin-top:6px;">📅 —</div>
+    <div class="preview-note" id="editApptPreview" style="margin-top:6px;">📅 —</div>
     <label>Priorité</label>
     <div class="status-row">
       <button class="status-btn" id="editPrioBasse">🟢 Basse</button>
@@ -575,10 +575,16 @@ let state       = { loanNames:[...DEFAULT_LOAN], noLoanNames:[...DEFAULT_NOLOAN]
 let congesState = { absences:[] };
 let nbTech      = parseInt(localStorage.getItem('carrosserie_tech') || '3');
 let isSaving = false, isSavingConges = false;
-let contratAppt = null, contratWeekOff = 0;
+let contratAppt = null;
 let congesMonth = new Date().getMonth(), congesYear = new Date().getFullYear();
 let pendingConges = null, selectedCongesType = 'conge';
 let currentPage = 'atelier';
+let pendingAppt = null, selectedColor = 0, newPriority = 'moyenne';
+let editingApptId = null, editSelectedColor = 0, editStatus = 'pending', editPieceStatus = 'none', editPriority = 'moyenne';
+let editApptRef = null; // référence au RDV en cours d'édition (le premier segment)
+let pendingAbsence = null, absType = 'conge';
+let dragApptId = null;
+let historyPage = 0;
 
 // ── NAVIGATION ──
 window.switchPage = function(page) {
@@ -652,34 +658,16 @@ function normalizeAppt(a) {
   if(!a.tel)              a.tel='';
   if(!a.adresse)          a.adresse='';
   if(a.arrived===undefined) a.arrived=false;
-  // Normalise ancien champ piece
   if(a.piece===true && a.pieceStatus==='none') a.pieceStatus='ordered';
+  if(!a.groupId)          a.groupId=a.id; // rétrocompat
+  if(!a.totalDays)        a.totalDays=a.span||1;
+  if(!a.segmentIndex)     a.segmentIndex=0;
   return a;
-}
-
-// ── CALCUL DATE FIN (jours ouvrés, skip weekends) ──
-function calcDateFin(dateDebut, nbJours) {
-  const fin = new Date(dateDebut);
-  let reste = (nbJours||1) - 1;
-  while(reste > 0) {
-    fin.setDate(fin.getDate()+1);
-    const dow = fin.getDay();
-    if(dow!==0 && dow!==6) reste--;
-  }
-  return fin;
-}
-
-// ── CALCUL SPAN VISIBLE CETTE SEMAINE (combien de jours s'affichent) ──
-// Retourne le nb de jours ouvrés restant cette semaine depuis dayIdx
-function spanVisibleThisWeek(dayIdx, totalSpan) {
-  // Max jours jusqu'à vendredi = 5 - dayIdx
-  const maxCesSemaine = 5 - dayIdx;
-  return Math.min(totalSpan, maxCesSemaine);
 }
 
 // ── DATES ──
 function getMonday(date) {
-  const d=new Date(date), day=d.getDay();
+  const d=new Date(date),day=d.getDay();
   d.setDate(d.getDate()+(day===0?-6:1-day));
   d.setHours(0,0,0,0); return d;
 }
@@ -705,15 +693,58 @@ function getMondayStr(weekStart){
   d.setHours(0,0,0,0); return d.toDateString();
 }
 
-// ── PREVIEW DATES DANS MODAL ──
-function updateDaysPreview(previewId, dayIdx, weekOff, nbJours) {
-  if(!nbJours || nbJours<1) { document.getElementById(previewId).textContent='📅 —'; return; }
-  const days = getWeekDays(weekOff);
-  const dateDebut = days[dayIdx];
-  const dateFin   = calcDateFin(dateDebut, nbJours);
-  const semainesDebordement = dateFin > days[4] ? ' ⚠️ déborde semaine suivante' : '';
-  document.getElementById(previewId).textContent =
-    `📅 Du ${formatDateFR(dateDebut)} au ${formatDateFR(dateFin)}${semainesDebordement}`;
+// ── CALCUL DATE FIN (jours ouvrés) ──
+function calcDateFin(dateDebut, nbJours) {
+  const fin=new Date(dateDebut);
+  let reste=(nbJours||1)-1;
+  while(reste>0){
+    fin.setDate(fin.getDate()+1);
+    const dow=fin.getDay();
+    if(dow!==0&&dow!==6) reste--;
+  }
+  return fin;
+}
+
+// ── DÉCOUPE UN RDV EN SEGMENTS PAR SEMAINE ──
+// Retourne un tableau de segments : { weekStart, day, span, segmentIndex, hasPrev, hasNext }
+function splitRdvIntoWeeks(startDay, totalDays, weekStartDate) {
+  const segments = [];
+  let remaining = totalDays;
+  let currentDay = startDay; // 0=lun .. 4=ven
+  let currentWeekStart = new Date(weekStartDate);
+  let segIdx = 0;
+
+  while(remaining > 0) {
+    // Jours disponibles cette semaine depuis currentDay
+    const daysThisWeek = Math.min(remaining, 5 - currentDay);
+    segments.push({
+      weekStart: new Date(currentWeekStart),
+      day: currentDay,
+      span: daysThisWeek,
+      segmentIndex: segIdx,
+      hasPrev: segIdx > 0,
+      hasNext: remaining - daysThisWeek > 0
+    });
+    remaining -= daysThisWeek;
+    // Semaine suivante commence lundi (day=0)
+    currentDay = 0;
+    currentWeekStart = new Date(currentWeekStart);
+    currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+    segIdx++;
+  }
+  return segments;
+}
+
+// ── PREVIEW DANS MODAL ──
+function updatePreview(previewId, startDay, weekOff, nbJours) {
+  if(!nbJours||nbJours<1){document.getElementById(previewId).textContent='📅 —';return;}
+  const days=getWeekDays(weekOff);
+  const dateDebut=days[startDay];
+  const dateFin=calcDateFin(dateDebut,nbJours);
+  const segs=splitRdvIntoWeeks(startDay,nbJours,days[0]);
+  let txt=`📅 Du ${formatDateFR(dateDebut)} au ${formatDateFR(dateFin)} (${nbJours}j)`;
+  if(segs.length>1) txt+=` — sur ${segs.length} semaines`;
+  document.getElementById(previewId).textContent=txt;
 }
 
 // ── TECH ──
@@ -723,7 +754,7 @@ function updateTech(){
   document.getElementById('techCount').textContent=nbTech;
   document.getElementById('totalCapacity').textContent=capacity+'h';
   const days=getWeekDays(),ws=days[0].toDateString();
-  const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
+  const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws&&a.segmentIndex===0);
   const used=wa.reduce((s,a)=>s+(a.hours||0),0);
   const pct=capacity>0?Math.round((used/capacity)*100):0;
   const el=document.getElementById('fillRate');
@@ -803,99 +834,93 @@ function startEditName(el,type,rowIdx){
 }
 
 // ── RENDER APPOINTMENTS ──
-// Un RDV avec span>5 depuis dayIdx génère automatiquement un bloc sur la semaine suivante
 function renderAppts(days){
   const ws=days[0].toDateString();
-
+  // Affiche uniquement les segments qui appartiennent à cette semaine
   state.appointments.forEach(appt=>{
     if(new Date(appt.weekStart).toDateString()!==ws) return;
     if(appt.row===undefined||appt.day===undefined) return;
 
-    const span   = appt.span||1;
-    const dayIdx = appt.day;
-    // Jours visibles cette semaine
-    const visibleCetteSemaine = Math.min(span, 5-dayIdx);
-    // Jours qui débordent semaine suivante
-    const debordement = span - visibleCetteSemaine;
+    const span=appt.span||1;
+    const cell=document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`);
+    if(!cell) return;
 
-    drawApptBlock(appt, days, dayIdx, visibleCetteSemaine, debordement>0, false);
+    const prio=appt.priority||'moyenne';
+    const el=document.createElement('div');
+    el.className=`appt prio-${prio}`;
+    el.style.background=appt.color||'#2980b9';
+    if(span>1){el.style.right=`calc(-${(span-1)*100}% - ${span-1}px)`;el.style.zIndex=15;}
+    if(appt.arrived) el.classList.add('arrived');
 
-    // Si débordement : dessine aussi sur la semaine suivante
-    if(debordement>0) {
-      const nextDays = getWeekDays(state.weekOffset+1);
-      drawApptBlock(appt, nextDays, 0, debordement, false, true);
+    let pieceBadge='';
+    if(appt.pieceStatus==='delivered') pieceBadge='<span class="badge badge-blue">✅</span>';
+    else if(appt.pieceStatus==='ordered') pieceBadge='<span class="badge badge-orange">📦</span>';
+
+    const btnContrat=appt.type==='loan'&&appt.segmentIndex===0?`<button class="btn-action btn-contrat" title="Contrat de prêt">📄</button>`:'';
+    const prevBadge=appt.hasPrev?'<span class="badge-prev">◀ suite</span>':'';
+    const nextBadge=appt.hasNext?'<span class="badge-next">suite ▶</span>':'';
+
+    el.innerHTML=`
+      <div class="prio-strip"></div>
+      ${prevBadge}
+      <span class="appt-name">${appt.name}</span>
+      ${prio==='haute'?'<span class="badge badge-red">🔴</span>':''}
+      ${appt.arrived?'<span class="badge badge-green">✔</span>':''}
+      ${pieceBadge}
+      <span class="appt-hours">${appt.hours}h</span>
+      ${nextBadge}
+      <div class="appt-actions">
+        ${btnContrat}
+        <button class="btn-action btn-del" title="Supprimer tout le RDV">✕</button>
+      </div>
+    `;
+
+    // Contrat uniquement sur le premier segment
+    if(appt.type==='loan'&&appt.segmentIndex===0){
+      const btnC=el.querySelector('.btn-contrat');
+      if(btnC) btnC.addEventListener('click',e=>{e.stopPropagation();openContrat(appt);});
     }
+    // Supprimer TOUS les segments du groupe
+    el.querySelector('.btn-del').addEventListener('click',e=>{e.stopPropagation();deleteGroup(appt.groupId);});
+    // Clic = éditer (ouvre modal sur le premier segment)
+    el.addEventListener('click',e=>{if(e.target.closest('.appt-actions'))return;openEditModal(appt.groupId);});
+
+    // Tooltip
+    const totalDays=appt.totalDays||appt.span||1;
+    const firstSeg=state.appointments.find(a=>a.groupId===appt.groupId&&a.segmentIndex===0);
+    let tip=`${appt.name} — ${appt.hours}h — ${totalDays}j`;
+    if(firstSeg){
+      const dDebut=getWeekDays(getWeekOffset(firstSeg.weekStart))[firstSeg.day];
+      const dFin=calcDateFin(dDebut,totalDays);
+      tip+=` (${formatDateFR(dDebut)} → ${formatDateFR(dFin)})`;
+    }
+    if(appt.tel) tip+=` — 📞 ${appt.tel}`;
+    el.addEventListener('mouseenter',e=>showTooltip(e,tip));
+    el.addEventListener('mouseleave',hideTooltip);
+    el.addEventListener('mousemove', e=>moveTooltip(e));
+
+    // Drag — uniquement sur le premier segment
+    if(appt.segmentIndex===0){
+      el.setAttribute('draggable','true');
+      el.addEventListener('dragstart',e=>{
+        if(e.target.closest('.appt-actions')){e.preventDefault();return;}
+        dragApptId=appt.groupId; el.classList.add('dragging');
+        const ghost=document.getElementById('dragGhost');
+        ghost.style.display='block'; ghost.style.background=appt.color; ghost.textContent=appt.name;
+        e.dataTransfer.setDragImage(ghost,-999,-999);
+      });
+      el.addEventListener('dragend',()=>{el.classList.remove('dragging');document.getElementById('dragGhost').style.display='none';dragApptId=null;});
+    }
+
+    cell.appendChild(el);
   });
 }
 
-function drawApptBlock(appt, days, startDay, spanVisible, hasNext, isPrev) {
-  const cell=document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${startDay}"]`);
-  if(!cell) return;
-
-  const prio=appt.priority||'moyenne';
-  const el=document.createElement('div');
-  el.className=`appt prio-${prio}`;
-  el.style.background=appt.color||'#2980b9';
-  if(spanVisible>1){
-    el.style.right=`calc(-${(spanVisible-1)*100}% - ${spanVisible-1}px)`;
-    el.style.zIndex=15;
-  }
-  if(appt.arrived) el.classList.add('arrived');
-
-  let pieceBadge='';
-  if(appt.pieceStatus==='delivered') pieceBadge='<span class="badge badge-blue">✅</span>';
-  else if(appt.pieceStatus==='ordered') pieceBadge='<span class="badge badge-orange">📦</span>';
-
-  const btnContrat=appt.type==='loan'?`<button class="btn-action btn-contrat" title="Contrat">📄</button>`:'';
-  const prevBadge=isPrev?'<span class="badge-prev">◀ S-1</span>':'';
-  const nextBadge=hasNext?'<span class="badge-next">▶ S+1</span>':'';
-
-  el.innerHTML=`
-    <div class="prio-strip"></div>
-    ${prevBadge}
-    <span class="appt-name">${appt.name}</span>
-    ${prio==='haute'?'<span class="badge badge-red">🔴</span>':''}
-    ${appt.arrived?'<span class="badge badge-green">✔</span>':''}
-    ${pieceBadge}
-    <span class="appt-hours">${appt.hours}h</span>
-    ${nextBadge}
-    <div class="appt-actions">
-      ${btnContrat}
-      <button class="btn-action btn-copy" title="Copier semaine suivante">📋+1</button>
-      <button class="btn-action btn-del" title="Supprimer">✕</button>
-    </div>
-  `;
-
-  const dateDebut=days[startDay]||days[0];
-  const dateFin=calcDateFin(days[appt.day]||days[0], appt.span||1);
-  let tip=`${appt.name} — ${appt.hours}h — ${appt.span||1}j`;
-  tip+=` (${formatDateFR(days[appt.day]||days[0])} → ${formatDateFR(dateFin)})`;
-  if(appt.tel) tip+=` — 📞 ${appt.tel}`;
-
-  if(appt.type==='loan'){
-    const btnC=el.querySelector('.btn-contrat');
-    if(btnC) btnC.addEventListener('click',e=>{e.stopPropagation();openContrat(appt);});
-  }
-  el.querySelector('.btn-copy').addEventListener('click',e=>{e.stopPropagation();copyToNextWeek(appt);});
-  el.querySelector('.btn-del').addEventListener('click', e=>{e.stopPropagation();deleteAppt(appt.id);});
-  el.addEventListener('click',e=>{if(e.target.closest('.appt-actions'))return;openEditModal(appt.id);});
-  el.addEventListener('mouseenter',e=>showTooltip(e,tip));
-  el.addEventListener('mouseleave',hideTooltip);
-  el.addEventListener('mousemove', e=>moveTooltip(e));
-
-  if(!isPrev){
-    el.setAttribute('draggable','true');
-    el.addEventListener('dragstart',e=>{
-      if(e.target.closest('.appt-actions')){e.preventDefault();return;}
-      dragApptId=appt.id; el.classList.add('dragging');
-      const ghost=document.getElementById('dragGhost');
-      ghost.style.display='block'; ghost.style.background=appt.color; ghost.textContent=appt.name;
-      e.dataTransfer.setDragImage(ghost,-999,-999);
-    });
-    el.addEventListener('dragend',()=>{el.classList.remove('dragging');document.getElementById('dragGhost').style.display='none';dragApptId=null;});
-  }
-
-  cell.appendChild(el);
+// Calcule le weekOffset d'un weekStart ISO
+function getWeekOffset(weekStart){
+  const apptMon=getMonday(new Date(weekStart));
+  const nowMon=getMonday(new Date());
+  return Math.round((apptMon-nowMon)/(7*86400000));
 }
 
 // ── ABSENCES ──
@@ -916,7 +941,7 @@ function renderAbsences(days){
 
 // ── CONTRAT ──
 function openContrat(appt){
-  contratAppt=appt; contratWeekOff=state.weekOffset;
+  contratAppt=appt;
   document.getElementById('cNom').value    =appt.name   ||'';
   document.getElementById('cTel').value    =appt.tel    ||'';
   document.getElementById('cAdresse').value=appt.adresse||'';
@@ -925,11 +950,13 @@ function openContrat(appt){
   document.getElementById('cCouleurPret').value='';
   const immat=state.loanNames[appt.row]||'';
   document.getElementById('cImmatPret').value=immat;
-  const days=getWeekDays(state.weekOffset);
+  const weekOff=getWeekOffset(appt.weekStart);
+  const days=getWeekDays(weekOff);
   const dateDebut=days[appt.day];
-  const dateFin=calcDateFin(dateDebut,appt.span||1);
+  const totalDays=appt.totalDays||appt.span||1;
+  const dateFin=calcDateFin(dateDebut,totalDays);
   document.getElementById('contratRdvInfo').textContent=`${appt.name} — HYUNDAI BAYON (${immat})`;
-  document.getElementById('contratDatesInfo').textContent=`Du ${formatDateFR(dateDebut)} au ${formatDateFR(dateFin)} — ${appt.span||1} jour(s)`;
+  document.getElementById('contratDatesInfo').textContent=`Du ${formatDateFR(dateDebut)} au ${formatDateFR(dateFin)} — ${totalDays} jour(s)`;
   document.getElementById('contratModalOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('cNom').focus(),50);
 }
@@ -937,9 +964,11 @@ function closeContrat(){document.getElementById('contratModalOverlay').classList
 
 function imprimerContrat(){
   if(!contratAppt) return;
-  const days=getWeekDays(contratWeekOff);
+  const weekOff=getWeekOffset(contratAppt.weekStart);
+  const days=getWeekDays(weekOff);
   const dateDebut=days[contratAppt.day];
-  const dateFin=calcDateFin(dateDebut,contratAppt.span||1);
+  const totalDays=contratAppt.totalDays||contratAppt.span||1;
+  const dateFin=calcDateFin(dateDebut,totalDays);
   const immat=document.getElementById('cImmatPret').value||'____________________________';
   const carburant=document.getElementById('cCarburant').value;
   const niveaux=['plein','3/4','1/2','1/4'];
@@ -1015,7 +1044,324 @@ function imprimerContrat(){
   setTimeout(()=>{window.print();setTimeout(()=>{document.getElementById('contrat-print-zone').innerHTML='';},3000);},200);
 }
 
-// ── RENDER CONGÉS ──
+// ── DRAG & DROP ──
+document.addEventListener('dragover',e=>{const g=document.getElementById('dragGhost');if(g.style.display==='block'){g.style.left=e.clientX+'px';g.style.top=(e.clientY-20)+'px';}});
+
+function handleDrop(type,row,day){
+  if(!dragApptId) return;
+  // Trouve le premier segment du groupe
+  const firstSeg=state.appointments.find(a=>a.groupId===dragApptId&&a.segmentIndex===0);
+  if(!firstSeg) return;
+  const totalDays=firstSeg.totalDays||firstSeg.span||1;
+  const days=getWeekDays();
+  // Supprime tous les anciens segments
+  state.appointments=state.appointments.filter(a=>a.groupId!==dragApptId);
+  // Recrée les segments à partir du nouvel emplacement
+  const segs=splitRdvIntoWeeks(day,totalDays,days[0]);
+  segs.forEach((seg,i)=>{
+    state.appointments.push({
+      ...firstSeg,
+      id: i===0 ? firstSeg.id : Date.now().toString(36)+Math.random().toString(36).slice(2)+i,
+      weekStart: seg.weekStart.toISOString(),
+      day: seg.day,
+      span: seg.span,
+      segmentIndex: seg.segmentIndex,
+      hasPrev: seg.hasPrev,
+      hasNext: seg.hasNext,
+      type, row
+    });
+  });
+  saveToFirebase(); render();
+}
+
+// ── SUPPRIMER GROUPE ──
+function deleteGroup(groupId){
+  state.appointments=state.appointments.filter(a=>a.groupId!==groupId);
+  saveToFirebase(); render();
+}
+
+// ── MODAL NOUVEAU RDV ──
+function openModal(type,row,day){
+  pendingAppt={type,row,day}; selectedColor=0; newPriority='moyenne';
+  document.getElementById('apptName').value='';
+  document.getElementById('apptTel').value='';
+  document.getElementById('apptAdresse').value='';
+  document.getElementById('apptDays').value=1;
+  document.getElementById('apptHours').value=4;
+  updatePreview('apptPreview',day,state.weekOffset,1);
+  setNewPrio('moyenne');
+  buildColorPicker('colorPicker',i=>selectedColor=i);
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('apptName').focus(),50);
+}
+function setNewPrio(p){
+  newPriority=p;
+  document.getElementById('newPrioBasse').className='status-btn'+(p==='basse'?' active-basse':'');
+  document.getElementById('newPrioMoyenne').className='status-btn'+(p==='moyenne'?' active-moyenne':'');
+  document.getElementById('newPrioHaute').className='status-btn'+(p==='haute'?' active-haute':'');
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');pendingAppt=null;}
+
+function saveAppt(){
+  if(!pendingAppt) return;
+  const name=document.getElementById('apptName').value.trim();
+  const tel=document.getElementById('apptTel').value.trim();
+  const adresse=document.getElementById('apptAdresse').value.trim();
+  const totalDays=parseInt(document.getElementById('apptDays').value)||1;
+  const hours=parseFloat(document.getElementById('apptHours').value)||0;
+  if(!name){document.getElementById('apptName').focus();return;}
+
+  const days=getWeekDays();
+  const groupId=Date.now().toString(36)+Math.random().toString(36).slice(2);
+  const color=COLORS[selectedColor];
+
+  // Découpe en segments par semaine
+  const segs=splitRdvIntoWeeks(pendingAppt.day,totalDays,days[0]);
+
+  segs.forEach((seg,i)=>{
+    state.appointments.push({
+      id: groupId+(i===0?'':'-'+i),
+      groupId,
+      segmentIndex: seg.segmentIndex,
+      hasPrev: seg.hasPrev,
+      hasNext: seg.hasNext,
+      totalDays,
+      type:pendingAppt.type, row:pendingAppt.row,
+      day:seg.day, span:seg.span,
+      name, hours, tel, adresse, color,
+      weekStart: seg.weekStart.toISOString(),
+      priority:newPriority, arrived:false,
+      pieceStatus:'none', pieceFournisseur:'', pieceNote:''
+    });
+  });
+
+  saveToFirebase(); closeModal(); render();
+}
+
+// ── EDIT MODAL ──
+function openEditModal(groupId){
+  // Trouve le premier segment
+  const first=state.appointments.find(a=>a.groupId===groupId&&a.segmentIndex===0);
+  if(!first) return;
+  editingApptId=groupId; editApptRef=first;
+  editStatus=first.arrived?'arrived':'pending';
+  editPieceStatus=first.pieceStatus||'none'; editPriority=first.priority||'moyenne';
+  editSelectedColor=Math.max(0,COLORS.indexOf(first.color));
+  document.getElementById('editApptName').value=first.name;
+  document.getElementById('editApptTel').value=first.tel||'';
+  document.getElementById('editApptAdresse').value=first.adresse||'';
+  document.getElementById('editApptHours').value=first.hours;
+  document.getElementById('editApptDays').value=first.totalDays||first.span||1;
+  document.getElementById('editPieceFournisseur').value=first.pieceFournisseur||'';
+  document.getElementById('editPieceNote').value=first.pieceNote||'';
+  const weekOff=getWeekOffset(first.weekStart);
+  updatePreview('editApptPreview',first.day,weekOff,first.totalDays||first.span||1);
+  setEditStatus(editStatus); setEditPieceStatus(editPieceStatus); setEditPrio(editPriority);
+  buildColorPicker('editColorPicker',i=>editSelectedColor=i);
+  document.querySelectorAll('#editColorPicker .color-swatch').forEach((s,i)=>s.classList.toggle('selected',i===editSelectedColor));
+  document.getElementById('editModalOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('editApptName').focus(),50);
+}
+function setEditPrio(p){
+  editPriority=p;
+  document.getElementById('editPrioBasse').className='status-btn'+(p==='basse'?' active-basse':'');
+  document.getElementById('editPrioMoyenne').className='status-btn'+(p==='moyenne'?' active-moyenne':'');
+  document.getElementById('editPrioHaute').className='status-btn'+(p==='haute'?' active-haute':'');
+}
+function setEditStatus(s){
+  editStatus=s;
+  document.getElementById('btnPending').className='status-btn'+(s==='pending'?' active-pending':'');
+  document.getElementById('btnArrived').className='status-btn'+(s==='arrived'?' active-arrived':'');
+}
+function setEditPieceStatus(s){
+  editPieceStatus=s;
+  document.getElementById('btnPieceNon').className='status-btn'+(s==='none'?' active-pending':'');
+  document.getElementById('btnPieceOui').className='status-btn'+(s==='ordered'?' active-ordered':'');
+  document.getElementById('btnPieceLivree').className='status-btn'+(s==='delivered'?' active-delivered':'');
+  document.querySelector('.piece-fournisseur').style.display=(s==='none'?'none':'block');
+}
+function closeEditModal(){document.getElementById('editModalOverlay').classList.remove('open');editingApptId=null;editApptRef=null;}
+
+function saveEditAppt(){
+  if(!editingApptId||!editApptRef) return;
+  const name=document.getElementById('editApptName').value.trim();
+  const tel=document.getElementById('editApptTel').value.trim();
+  const adresse=document.getElementById('editApptAdresse').value.trim();
+  const hours=parseFloat(document.getElementById('editApptHours').value)||0;
+  const totalDays=parseInt(document.getElementById('editApptDays').value)||1;
+  if(!name){document.getElementById('editApptName').focus();return;}
+
+  const color=COLORS[editSelectedColor];
+  const pf=document.getElementById('editPieceFournisseur').value.trim();
+  const pn=document.getElementById('editPieceNote').value.trim();
+
+  // Supprime tous les anciens segments
+  state.appointments=state.appointments.filter(a=>a.groupId!==editingApptId);
+
+  // Recrée les segments avec les nouvelles infos
+  const weekOff=getWeekOffset(editApptRef.weekStart);
+  const days=getWeekDays(weekOff);
+  const segs=splitRdvIntoWeeks(editApptRef.day,totalDays,days[0]);
+
+  segs.forEach((seg,i)=>{
+    state.appointments.push({
+      id: editingApptId+(i===0?'':'-'+i),
+      groupId: editingApptId,
+      segmentIndex: seg.segmentIndex,
+      hasPrev: seg.hasPrev,
+      hasNext: seg.hasNext,
+      totalDays,
+      type:editApptRef.type, row:editApptRef.row,
+      day:seg.day, span:seg.span,
+      name, hours, tel, adresse, color,
+      weekStart: seg.weekStart.toISOString(),
+      priority:editPriority,
+      arrived:(editStatus==='arrived'),
+      pieceStatus:editPieceStatus,
+      pieceFournisseur:pf,
+      pieceNote:pn
+    });
+  });
+
+  saveToFirebase(); closeEditModal(); render();
+}
+
+function deleteAppt(id){state.appointments=state.appointments.filter(a=>a.id!==id);saveToFirebase();render();}
+
+function buildColorPicker(elId,onPick){
+  const cp=document.getElementById(elId); cp.innerHTML='';
+  COLORS.forEach((c,i)=>{
+    const sw=document.createElement('div'); sw.className=`color-swatch${i===0?' selected':''}`; sw.style.background=c;
+    sw.addEventListener('click',()=>{cp.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));sw.classList.add('selected');onPick(i);});
+    cp.appendChild(sw);
+  });
+}
+
+// ── ABSENCE MODAL ──
+function openAbsenceModal(type,row,day){
+  pendingAbsence={type,row,day}; absType='conge';
+  document.getElementById('absLabel').value='';
+  document.getElementById('absTypeConge').className='status-btn active-arrived';
+  document.getElementById('absTypeAbsence').className='status-btn';
+  document.getElementById('absenceModalOverlay').classList.add('open');
+}
+function closeAbsModal(){document.getElementById('absenceModalOverlay').classList.remove('open');pendingAbsence=null;}
+function saveAbsence(){
+  if(!pendingAbsence) return;
+  if(!state.absences) state.absences=[];
+  const weekDays=getWeekDays();
+  state.absences.push({
+    id:Date.now().toString(36)+Math.random().toString(36).slice(2),
+    type:pendingAbsence.type,row:pendingAbsence.row,day:pendingAbsence.day,
+    absType,label:document.getElementById('absLabel').value.trim(),
+    weekStart:weekDays[0].toISOString()
+  });
+  saveToFirebase(); closeAbsModal(); render();
+}
+function deleteAbsence(id){state.absences=state.absences.filter(a=>a.id!==id);saveToFirebase();render();}
+
+// ── STATS ──
+function updateStats(){
+  const days=getWeekDays(),ws=days[0].toDateString();
+  // Compte uniquement les segments principaux (segmentIndex===0) pour les heures
+  const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
+  const waMain=wa.filter(a=>a.segmentIndex===0);
+  document.getElementById('totalHours').textContent=waMain.reduce((s,a)=>s+(a.hours||0),0)+'h';
+  document.getElementById('totalAppts').textContent=waMain.length;
+  updateTech();
+}
+function changeWeek(d){state.weekOffset+=d;render();}
+function goToday(){state.weekOffset=0;render();}
+
+// ── TOOLTIP ──
+function showTooltip(e,t){const el=document.getElementById('tooltip');el.textContent=t;el.classList.add('show');moveTooltip(e);}
+function moveTooltip(e){const el=document.getElementById('tooltip');el.style.left=(e.clientX+12)+'px';el.style.top=(e.clientY-32)+'px';}
+function hideTooltip(){document.getElementById('tooltip').classList.remove('show');}
+
+// ── RECHERCHE ──
+function doSearch(query){
+  const q=query.trim().toLowerCase();
+  const results=document.getElementById('searchResults');
+  if(!q){results.classList.remove('open');return;}
+  // Cherche uniquement dans les segments 0
+  const matches=state.appointments.filter(a=>a.segmentIndex===0&&a.name&&a.name.toLowerCase().includes(q));
+  if(!matches.length){results.innerHTML='<div class="search-no-result">Aucun résultat</div>';results.classList.add('open');return;}
+  results.innerHTML=matches.slice(0,10).map(a=>{
+    const off=getWeekOffset(a.weekStart);
+    const days=getWeekDays(off);
+    const dayName=days[a.day]?days[a.day].toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'short'}):'?';
+    const rowName=a.type==='loan'?(state.loanNames[a.row]||'?'):(state.noLoanNames[a.row]||'?');
+    return `<div class="search-result-item" data-groupid="${a.groupId}" data-offset="${off}">
+      <span class="sri-name" style="color:${a.color}">● ${a.name}</span>
+      <span class="sri-meta">${dayName} — ${rowName} — ${a.hours}h — ${a.totalDays||a.span||1}j${a.priority==='haute'?' 🔴':''}${a.tel?' — 📞 '+a.tel:''}</span>
+    </div>`;
+  }).join('');
+  results.classList.add('open');
+  results.querySelectorAll('.search-result-item').forEach(item=>{
+    item.addEventListener('click',()=>{
+      const off=parseInt(item.dataset.offset);
+      state.weekOffset=off; results.classList.remove('open');
+      document.getElementById('searchInput').value=''; render();
+      setTimeout(()=>{
+        const groupId=item.dataset.groupid;
+        const appt=state.appointments.find(a=>a.groupId===groupId&&a.segmentIndex===0);
+        if(!appt) return;
+        const cell=document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`);
+        if(cell){const el=cell.querySelector('.appt');if(el){el.classList.add('highlight');setTimeout(()=>el.classList.remove('highlight'),3500);}}
+      },120);
+    });
+  });
+}
+
+// ── HISTORIQUE ──
+function openHistory(){historyPage=0;document.getElementById('historyModalOverlay').classList.add('open');renderHistory();}
+function closeHistory(){document.getElementById('historyModalOverlay').classList.remove('open');}
+function renderHistory(){
+  const startOff=-(historyPage*4),weeks=[];
+  for(let i=0;i<4;i++){
+    const off=startOff-i,days=getWeekDays(off),ws=days[0].toDateString();
+    // Compte uniquement les segments 0 cette semaine
+    const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws&&a.segmentIndex===0);
+    const totalH=wa.reduce((s,a)=>s+(a.hours||0),0);
+    const capacity=nbTech*39,pct=capacity>0?Math.round((totalH/capacity)*100):0;
+    const urgents=wa.filter(a=>a.priority==='haute').length;
+    weeks.push({off,days,wa,totalH,pct,urgents,capacity});
+  }
+  const first=weeks[weeks.length-1].days[0],last=weeks[0].days[4];
+  document.getElementById('historyRangeLabel').textContent=
+    `${first.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} → ${last.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}`;
+  const content=document.getElementById('historyContent'); content.innerHTML='';
+  weeks.forEach(({off,days,wa,totalH,pct,urgents,capacity})=>{
+    const isCurrent=off===state.weekOffset;
+    const div=document.createElement('div'); div.className='history-week';
+    div.innerHTML=`
+      <div class="history-week-header" style="${isCurrent?'background:var(--accent);':''}">
+        <span>${days[0].toLocaleDateString('fr-FR',{day:'numeric',month:'long'})} → ${days[4].toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}</span>
+        <span>${totalH}h / ${capacity}h (${pct}%)</span>
+      </div>
+      <div class="history-week-body${isCurrent?' open':''}">
+        <div class="history-stat-row">
+          <div class="history-stat">📋 <strong>${wa.length}</strong> RDV</div>
+          <div class="history-stat">⏱ <strong>${totalH}h</strong></div>
+          <div class="history-stat">📊 <strong>${pct}%</strong></div>
+          ${urgents?`<div class="history-stat">🔴 <strong>${urgents}</strong> urgent(s)</div>`:''}
+        </div>
+        <div class="history-appt-list">
+          ${wa.length===0?'<em style="color:var(--muted)">Aucun rendez-vous</em>':wa.map(a=>{
+            const rowName=a.type==='loan'?(state.loanNames[a.row]||'?'):(state.noLoanNames[a.row]||'?');
+            const dayName=days[a.day]?days[a.day].toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'}):'?';
+            return `<div class="history-appt-item"><span style="color:${a.color}">●</span> ${a.name} — ${dayName} — ${rowName} — ${a.hours}h — ${a.totalDays||a.span||1}j${a.priority==='haute'?' 🔴':''}</div>`;
+          }).join('')}
+        </div>
+        <button class="btn-secondary" style="margin-top:10px;padding:5px 12px;font-size:.78rem;" data-off="${off}">📅 Aller à cette semaine</button>
+      </div>`;
+    div.querySelector('.history-week-header').addEventListener('click',()=>div.querySelector('.history-week-body').classList.toggle('open'));
+    div.querySelector('[data-off]').addEventListener('click',()=>{state.weekOffset=off;closeHistory();render();});
+    content.appendChild(div);
+  });
+}
+
+// ── PLANNING CONGÉS ──
 function renderConges(){
   const year=congesYear,month=congesMonth;
   const daysInMonth=new Date(year,month+1,0).getDate();
@@ -1074,8 +1420,8 @@ function renderCongesStats(year,month){
       <div class="conges-stat-name">
         <div class="conges-tech-avatar" style="background:${tech.color};width:24px;height:24px;font-size:.68rem;">${tech.nom.slice(0,2).toUpperCase()}</div>${tech.nom}
       </div>
-      ${TYPES_ABSENCE.filter(t=>counts[t.id]>0).map(t=>`
-        <div class="conges-stat-row"><span class="label">${t.icon} ${t.label}</span><span class="val" style="color:${t.color}">${counts[t.id]}j</span></div>`).join('')}
+      ${TYPES_ABSENCE.filter(t=>counts[t.id]>0).map(t=>
+        `<div class="conges-stat-row"><span class="label">${t.icon} ${t.label}</span><span class="val" style="color:${t.color}">${counts[t.id]}j</span></div>`).join('')}
       ${total===0?'<div style="font-size:.78rem;color:var(--muted);text-align:center;padding:8px 0;">Aucune absence</div>':
         `<div style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px;">
           <div class="conges-stat-row"><span class="label" style="font-weight:700;">Total</span><span class="val">${total}j</span></div>
@@ -1084,7 +1430,6 @@ function renderCongesStats(year,month){
   });
 }
 
-// ── MODAL CONGÉS ──
 function openCongesModal(tech,date){
   pendingConges={tech,date}; selectedCongesType='conge';
   document.getElementById('congesNote').value='';
@@ -1113,7 +1458,7 @@ function saveCongesAbs(){
   congesState.absences=congesState.absences.filter(a=>!(a.techId===pendingConges.tech.id&&a.date===dateKey));
   congesState.absences.push({
     id:Date.now().toString(36)+Math.random().toString(36).slice(2),
-    techId:pendingConges.tech.id, date:dateKey, type:selectedCongesType,
+    techId:pendingConges.tech.id,date:dateKey,type:selectedCongesType,
     note:document.getElementById('congesNote').value.trim()
   });
   saveConges(); closeCongesModal(); renderConges();
@@ -1121,274 +1466,6 @@ function saveCongesAbs(){
 function deleteCongesAbs(id){
   congesState.absences=congesState.absences.filter(a=>a.id!==id);
   saveConges(); renderConges();
-}
-
-// ── DRAG ──
-let dragApptId=null;
-document.addEventListener('dragover',e=>{const g=document.getElementById('dragGhost');if(g.style.display==='block'){g.style.left=e.clientX+'px';g.style.top=(e.clientY-20)+'px';}});
-function handleDrop(type,row,day){
-  if(!dragApptId) return;
-  const appt=state.appointments.find(a=>a.id===dragApptId); if(!appt) return;
-  const days=getWeekDays();
-  appt.type=type; appt.row=row; appt.day=day;
-  appt.weekStart=days[0].toISOString();
-  saveToFirebase(); render();
-}
-
-function copyToNextWeek(appt){
-  const apptMon=getMonday(new Date(appt.weekStart));
-  const nowMon=getMonday(new Date());
-  const nextOffset=Math.round((apptMon-nowMon)/(7*86400000))+1;
-  const nextDays=getWeekDays(nextOffset);
-  state.appointments.push({
-    id:Date.now().toString(36)+Math.random().toString(36).slice(2),
-    type:appt.type,row:appt.row,day:appt.day,span:appt.span,
-    name:appt.name,hours:appt.hours,color:appt.color,
-    tel:appt.tel||'',adresse:appt.adresse||'',
-    priority:appt.priority||'moyenne',arrived:false,
-    pieceStatus:appt.pieceStatus||'none',
-    pieceFournisseur:appt.pieceFournisseur||'',
-    pieceNote:appt.pieceNote||'',
-    weekStart:nextDays[0].toISOString()
-  });
-  saveToFirebase(); render();
-}
-
-// ── ABSENCE MODAL ──
-let pendingAbsence=null,absType='conge';
-function openAbsenceModal(type,row,day){
-  pendingAbsence={type,row,day}; absType='conge';
-  document.getElementById('absLabel').value='';
-  document.getElementById('absTypeConge').className='status-btn active-arrived';
-  document.getElementById('absTypeAbsence').className='status-btn';
-  document.getElementById('absenceModalOverlay').classList.add('open');
-}
-function closeAbsModal(){document.getElementById('absenceModalOverlay').classList.remove('open');pendingAbsence=null;}
-function saveAbsence(){
-  if(!pendingAbsence) return;
-  if(!state.absences) state.absences=[];
-  const weekDays=getWeekDays();
-  state.absences.push({
-    id:Date.now().toString(36)+Math.random().toString(36).slice(2),
-    type:pendingAbsence.type,row:pendingAbsence.row,day:pendingAbsence.day,
-    absType,label:document.getElementById('absLabel').value.trim(),
-    weekStart:weekDays[0].toISOString()
-  });
-  saveToFirebase(); closeAbsModal(); render();
-}
-function deleteAbsence(id){state.absences=state.absences.filter(a=>a.id!==id);saveToFirebase();render();}
-
-// ── MODAL RDV ──
-let pendingAppt=null,selectedColor=0,newPriority='moyenne';
-function openModal(type,row,day){
-  pendingAppt={type,row,day}; selectedColor=0; newPriority='moyenne';
-  document.getElementById('apptName').value='';
-  document.getElementById('apptTel').value='';
-  document.getElementById('apptAdresse').value='';
-  document.getElementById('apptDays').value=1;
-  document.getElementById('apptHours').value=4;
-  updateDaysPreview('apptDaysPreview',day,state.weekOffset,1);
-  setNewPrio('moyenne');
-  buildColorPicker('colorPicker',i=>selectedColor=i);
-  document.getElementById('modalOverlay').classList.add('open');
-  setTimeout(()=>document.getElementById('apptName').focus(),50);
-}
-function setNewPrio(p){
-  newPriority=p;
-  document.getElementById('newPrioBasse').className='status-btn'+(p==='basse'?' active-basse':'');
-  document.getElementById('newPrioMoyenne').className='status-btn'+(p==='moyenne'?' active-moyenne':'');
-  document.getElementById('newPrioHaute').className='status-btn'+(p==='haute'?' active-haute':'');
-}
-function closeModal(){document.getElementById('modalOverlay').classList.remove('open');pendingAppt=null;}
-function saveAppt(){
-  if(!pendingAppt) return;
-  const name=document.getElementById('apptName').value.trim();
-  const tel=document.getElementById('apptTel').value.trim();
-  const adresse=document.getElementById('apptAdresse').value.trim();
-  const nbJours=parseInt(document.getElementById('apptDays').value)||1;
-  const hours=parseFloat(document.getElementById('apptHours').value)||0;
-  if(!name){document.getElementById('apptName').focus();return;}
-  const weekDays=getWeekDays();
-  state.appointments.push({
-    id:Date.now().toString(36)+Math.random().toString(36).slice(2),
-    type:pendingAppt.type,row:pendingAppt.row,day:pendingAppt.day,
-    span:nbJours, // span = nb total de jours ouvrés, peut dépasser 5
-    name,hours,tel,adresse,
-    color:COLORS[selectedColor],weekStart:weekDays[0].toISOString(),
-    priority:newPriority,arrived:false,
-    pieceStatus:'none',pieceFournisseur:'',pieceNote:''
-  });
-  saveToFirebase(); closeModal(); render();
-}
-function deleteAppt(id){state.appointments=state.appointments.filter(a=>a.id!==id);saveToFirebase();render();}
-
-function buildColorPicker(elId,onPick){
-  const cp=document.getElementById(elId); cp.innerHTML='';
-  COLORS.forEach((c,i)=>{
-    const sw=document.createElement('div'); sw.className=`color-swatch${i===0?' selected':''}`; sw.style.background=c;
-    sw.addEventListener('click',()=>{cp.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));sw.classList.add('selected');onPick(i);});
-    cp.appendChild(sw);
-  });
-}
-
-// ── STATS ──
-function updateStats(){
-  const days=getWeekDays(),ws=days[0].toDateString();
-  const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
-  document.getElementById('totalHours').textContent=wa.reduce((s,a)=>s+(a.hours||0),0)+'h';
-  document.getElementById('totalAppts').textContent=wa.length;
-  updateTech();
-}
-function changeWeek(d){state.weekOffset+=d;render();}
-function goToday(){state.weekOffset=0;render();}
-
-// ── TOOLTIP ──
-function showTooltip(e,t){const el=document.getElementById('tooltip');el.textContent=t;el.classList.add('show');moveTooltip(e);}
-function moveTooltip(e){const el=document.getElementById('tooltip');el.style.left=(e.clientX+12)+'px';el.style.top=(e.clientY-32)+'px';}
-function hideTooltip(){document.getElementById('tooltip').classList.remove('show');}
-
-// ── EDIT MODAL ──
-let editingApptId=null,editSelectedColor=0,editStatus='pending',editPieceStatus='none',editPriority='moyenne';
-let editApptDayIdx=0,editApptWeekOff=0;
-function openEditModal(id){
-  const appt=state.appointments.find(a=>a.id===id); if(!appt) return;
-  editingApptId=id; editStatus=appt.arrived?'arrived':'pending';
-  editPieceStatus=appt.pieceStatus||'none'; editPriority=appt.priority||'moyenne';
-  editSelectedColor=Math.max(0,COLORS.indexOf(appt.color));
-  editApptDayIdx=appt.day; editApptWeekOff=state.weekOffset;
-  document.getElementById('editApptName').value=appt.name;
-  document.getElementById('editApptTel').value=appt.tel||'';
-  document.getElementById('editApptAdresse').value=appt.adresse||'';
-  document.getElementById('editApptHours').value=appt.hours;
-  document.getElementById('editApptDays').value=appt.span||1;
-  document.getElementById('editPieceFournisseur').value=appt.pieceFournisseur||'';
-  document.getElementById('editPieceNote').value=appt.pieceNote||'';
-  updateDaysPreview('editApptDaysPreview',appt.day,state.weekOffset,appt.span||1);
-  setEditStatus(editStatus); setEditPieceStatus(editPieceStatus); setEditPrio(editPriority);
-  buildColorPicker('editColorPicker',i=>editSelectedColor=i);
-  document.querySelectorAll('#editColorPicker .color-swatch').forEach((s,i)=>s.classList.toggle('selected',i===editSelectedColor));
-  document.getElementById('editModalOverlay').classList.add('open');
-  setTimeout(()=>document.getElementById('editApptName').focus(),50);
-}
-function setEditPrio(p){
-  editPriority=p;
-  document.getElementById('editPrioBasse').className='status-btn'+(p==='basse'?' active-basse':'');
-  document.getElementById('editPrioMoyenne').className='status-btn'+(p==='moyenne'?' active-moyenne':'');
-  document.getElementById('editPrioHaute').className='status-btn'+(p==='haute'?' active-haute':'');
-}
-function setEditStatus(s){
-  editStatus=s;
-  document.getElementById('btnPending').className='status-btn'+(s==='pending'?' active-pending':'');
-  document.getElementById('btnArrived').className='status-btn'+(s==='arrived'?' active-arrived':'');
-}
-function setEditPieceStatus(s){
-  editPieceStatus=s;
-  document.getElementById('btnPieceNon').className='status-btn'+(s==='none'?' active-pending':'');
-  document.getElementById('btnPieceOui').className='status-btn'+(s==='ordered'?' active-ordered':'');
-  document.getElementById('btnPieceLivree').className='status-btn'+(s==='delivered'?' active-delivered':'');
-  document.querySelector('.piece-fournisseur').style.display=(s==='none'?'none':'block');
-}
-function closeEditModal(){document.getElementById('editModalOverlay').classList.remove('open');editingApptId=null;}
-function saveEditAppt(){
-  if(!editingApptId) return;
-  const name=document.getElementById('editApptName').value.trim();
-  const tel=document.getElementById('editApptTel').value.trim();
-  const adresse=document.getElementById('editApptAdresse').value.trim();
-  const hours=parseFloat(document.getElementById('editApptHours').value)||0;
-  const nbJours=parseInt(document.getElementById('editApptDays').value)||1;
-  if(!name){document.getElementById('editApptName').focus();return;}
-  const appt=state.appointments.find(a=>a.id===editingApptId); if(!appt) return;
-  appt.name=name; appt.hours=hours; appt.color=COLORS[editSelectedColor];
-  appt.tel=tel; appt.adresse=adresse;
-  appt.arrived=(editStatus==='arrived'); appt.priority=editPriority;
-  appt.pieceStatus=editPieceStatus;
-  appt.pieceFournisseur=document.getElementById('editPieceFournisseur').value.trim();
-  appt.pieceNote=document.getElementById('editPieceNote').value.trim();
-  appt.span=nbJours;
-  delete appt.piece;
-  saveToFirebase(); closeEditModal(); render();
-}
-
-// ── RECHERCHE ──
-function doSearch(query){
-  const q=query.trim().toLowerCase();
-  const results=document.getElementById('searchResults');
-  if(!q){results.classList.remove('open');return;}
-  const matches=state.appointments.filter(a=>a.name&&a.name.toLowerCase().includes(q));
-  if(!matches.length){results.innerHTML='<div class="search-no-result">Aucun résultat</div>';results.classList.add('open');return;}
-  results.innerHTML=matches.slice(0,10).map(a=>{
-    const apptMon=getMonday(new Date(a.weekStart));
-    const nowMon=getMonday(new Date());
-    const off=Math.round((apptMon-nowMon)/(7*86400000));
-    const days=getWeekDays(off);
-    const dayName=days[a.day]?days[a.day].toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'short'}):'?';
-    const rowName=a.type==='loan'?(state.loanNames[a.row]||'?'):(state.noLoanNames[a.row]||'?');
-    return `<div class="search-result-item" data-id="${a.id}" data-offset="${off}">
-      <span class="sri-name" style="color:${a.color}">● ${a.name}</span>
-      <span class="sri-meta">${dayName} — ${rowName} — ${a.hours}h — ${a.span||1}j${a.priority==='haute'?' 🔴':''}${a.tel?' — 📞 '+a.tel:''}</span>
-    </div>`;
-  }).join('');
-  results.classList.add('open');
-  results.querySelectorAll('.search-result-item').forEach(item=>{
-    item.addEventListener('click',()=>{
-      const id=item.dataset.id,off=parseInt(item.dataset.offset);
-      state.weekOffset=off; results.classList.remove('open');
-      document.getElementById('searchInput').value=''; render();
-      setTimeout(()=>{
-        const appt=state.appointments.find(a=>a.id===id); if(!appt) return;
-        const cell=document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`);
-        if(cell){const el=cell.querySelector('.appt');if(el){el.classList.add('highlight');setTimeout(()=>el.classList.remove('highlight'),3500);}}
-      },120);
-    });
-  });
-}
-
-// ── HISTORIQUE ──
-let historyPage=0;
-function openHistory(){historyPage=0;document.getElementById('historyModalOverlay').classList.add('open');renderHistory();}
-function closeHistory(){document.getElementById('historyModalOverlay').classList.remove('open');}
-function renderHistory(){
-  const startOff=-(historyPage*4),weeks=[];
-  for(let i=0;i<4;i++){
-    const off=startOff-i,days=getWeekDays(off),ws=days[0].toDateString();
-    const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
-    const totalH=wa.reduce((s,a)=>s+(a.hours||0),0);
-    const capacity=nbTech*39,pct=capacity>0?Math.round((totalH/capacity)*100):0;
-    const urgents=wa.filter(a=>a.priority==='haute').length;
-    weeks.push({off,days,wa,totalH,pct,urgents,capacity});
-  }
-  const first=weeks[weeks.length-1].days[0],last=weeks[0].days[4];
-  document.getElementById('historyRangeLabel').textContent=
-    `${first.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} → ${last.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}`;
-  const content=document.getElementById('historyContent'); content.innerHTML='';
-  weeks.forEach(({off,days,wa,totalH,pct,urgents,capacity})=>{
-    const isCurrent=off===state.weekOffset;
-    const div=document.createElement('div'); div.className='history-week';
-    div.innerHTML=`
-      <div class="history-week-header" style="${isCurrent?'background:var(--accent);':''}">
-        <span>${days[0].toLocaleDateString('fr-FR',{day:'numeric',month:'long'})} → ${days[4].toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}</span>
-        <span>${totalH}h / ${capacity}h (${pct}%)</span>
-      </div>
-      <div class="history-week-body${isCurrent?' open':''}">
-        <div class="history-stat-row">
-          <div class="history-stat">📋 <strong>${wa.length}</strong> RDV</div>
-          <div class="history-stat">⏱ <strong>${totalH}h</strong></div>
-          <div class="history-stat">📊 <strong>${pct}%</strong></div>
-          ${urgents?`<div class="history-stat">🔴 <strong>${urgents}</strong> urgent(s)</div>`:''}
-        </div>
-        <div class="history-appt-list">
-          ${wa.length===0?'<em style="color:var(--muted)">Aucun rendez-vous</em>':wa.map(a=>{
-            const rowName=a.type==='loan'?(state.loanNames[a.row]||'?'):(state.noLoanNames[a.row]||'?');
-            const dayName=days[a.day]?days[a.day].toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'}):'?';
-            return `<div class="history-appt-item"><span style="color:${a.color}">●</span> ${a.name} — ${dayName} — ${rowName} — ${a.hours}h — ${a.span||1}j${a.priority==='haute'?' 🔴':''}</div>`;
-          }).join('')}
-        </div>
-        <button class="btn-secondary" style="margin-top:10px;padding:5px 12px;font-size:.78rem;" data-off="${off}">📅 Aller à cette semaine</button>
-      </div>`;
-    div.querySelector('.history-week-header').addEventListener('click',()=>div.querySelector('.history-week-body').classList.toggle('open'));
-    div.querySelector('[data-off]').addEventListener('click',()=>{state.weekOffset=off;closeHistory();render();});
-    content.appendChild(div);
-  });
 }
 
 // ── EVENTS ──
@@ -1437,12 +1514,15 @@ document.getElementById('historyModalOverlay').addEventListener('click',function
 document.getElementById('contratModalOverlay').addEventListener('click',function(e){if(e.target===this)closeContrat();});
 document.getElementById('congesModalOverlay').addEventListener('click', function(e){if(e.target===this)closeCongesModal();});
 
-// Preview dynamique quand on change le nombre de jours
+// Preview dynamique
 document.getElementById('apptDays').addEventListener('input',e=>{
-  if(pendingAppt) updateDaysPreview('apptDaysPreview',pendingAppt.day,state.weekOffset,parseInt(e.target.value)||1);
+  if(pendingAppt) updatePreview('apptPreview',pendingAppt.day,state.weekOffset,parseInt(e.target.value)||1);
 });
 document.getElementById('editApptDays').addEventListener('input',e=>{
-  updateDaysPreview('editApptDaysPreview',editApptDayIdx,editApptWeekOff,parseInt(e.target.value)||1);
+  if(editApptRef){
+    const weekOff=getWeekOffset(editApptRef.weekStart);
+    updatePreview('editApptPreview',editApptRef.day,weekOff,parseInt(e.target.value)||1);
+  }
 });
 
 document.addEventListener('keydown',e=>{
