@@ -18,7 +18,7 @@
     --loan-bg:  #e8f4fd;
     --loan-hd:  #1a5276;
     --noloan-bg:#fef9f0;
-    --slot-h:   52px;
+    --slot-h:   56px;
     --col-label:160px;
     --col-day:  1fr;
     --header-h: 48px;
@@ -71,9 +71,11 @@
   .search-result-item .sri-name { font-weight: 700; font-size: .88rem; }
   .search-result-item .sri-meta { font-size: .75rem; color: var(--muted); }
   .search-no-result { padding: 14px; color: var(--muted); font-size: .85rem; text-align: center; }
+
   .planner-wrap { padding: 16px; max-width: 1600px; margin: 0 auto; }
   .section-label { display: flex; align-items: center; gap: 10px; margin: 12px 0 6px; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
   .grid-container { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,.06); margin-bottom: 4px; display: flex; flex-direction: column; }
   .grid-header { display: grid; grid-template-columns: var(--col-label) repeat(5, var(--col-day)); background: var(--steel); height: var(--header-h); border-radius: 12px 12px 0 0; flex-shrink: 0; }
   .grid-header .h-corner { display: flex; align-items: center; padding: 0 12px; color: rgba(255,255,255,.5); font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-right: 1px solid rgba(255,255,255,.08); }
@@ -86,9 +88,9 @@
   .grid-row:last-child { border-bottom: none; }
   .row-label { display: flex; align-items: center; padding: 0 10px; border-right: 2px solid var(--border); gap: 7px; font-size: .83rem; font-weight: 600; white-space: nowrap; overflow: hidden; cursor: default; position: relative; z-index: 2; background: var(--card); }
   .row-label .vehicle-icon { font-size: 1rem; flex-shrink: 0; }
-  .row-label .vehicle-name { flex: 1; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-bottom: 1px dashed transparent; transition: border-color .15s; padding: 2px 4px; border-radius: 3px; }
+  .row-label .vehicle-name { flex: 1; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-bottom: 1px dashed transparent; transition: border-color .15s; padding: 2px 4px; border-radius: 3px; font-size: .8rem; }
   .row-label .vehicle-name:hover { border-color: var(--accent); background: rgba(232,76,30,.05); }
-  .row-label input.vehicle-edit { flex: 1; border: 1.5px solid var(--accent); border-radius: 4px; padding: 2px 6px; font-size: .83rem; font-weight: 600; font-family: inherit; color: var(--text); outline: none; background: #fff; }
+  .row-label input.vehicle-edit { flex: 1; border: 1.5px solid var(--accent); border-radius: 4px; padding: 2px 6px; font-size: .8rem; font-weight: 600; font-family: inherit; color: var(--text); outline: none; background: #fff; }
   .loan-badge { font-size: .6rem; background: var(--loan-hd); color: #fff; border-radius: 3px; padding: 1px 5px; font-weight: 700; letter-spacing: .04em; flex-shrink: 0; }
   .grid-row.has-loan .row-label { background: var(--loan-bg); }
   .grid-row.has-loan .day-cell  { background: rgba(26,82,118,.03); }
@@ -100,34 +102,73 @@
   .day-cell.today-col { background: rgba(232,76,30,.04) !important; }
   .day-cell.today-col:hover { background: rgba(232,76,30,.1) !important; }
   .day-cell.drag-over { background: rgba(232,76,30,.18) !important; outline: 2px dashed var(--accent); outline-offset: -2px; }
+
   .absence-block { position: absolute; inset: 2px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 700; z-index: 5; cursor: default; }
   .absence-block.conge   { background: repeating-linear-gradient(45deg,#e8f5e9,#e8f5e9 4px,#c8e6c9 4px,#c8e6c9 8px); color: #2e7d32; border: 1.5px solid #a5d6a7; }
   .absence-block.absence { background: repeating-linear-gradient(45deg,#fff3e0,#fff3e0 4px,#ffe0b2 4px,#ffe0b2 8px); color: #e65100; border: 1.5px solid #ffcc80; }
   .absence-block .abs-del { opacity: 0; margin-left: 4px; cursor: pointer; }
   .absence-block:hover .abs-del { opacity: 1; }
-  .appt { position: absolute; top: 4px; bottom: 4px; left: 3px; right: 3px; border-radius: 6px; display: flex; align-items: center; padding: 0 18px 0 11px; font-size: .76rem; font-weight: 600; gap: 4px; overflow: hidden; white-space: nowrap; cursor: grab; box-shadow: 0 2px 6px rgba(0,0,0,.15); user-select: none; z-index: 10; transition: box-shadow .15s, opacity .15s; }
-  .appt:active { cursor: grabbing; }
-  .appt.dragging { opacity: .45; box-shadow: none; }
+
+  /* ── APPOINTMENTS ── */
+  .appt {
+    position: absolute; top: 3px; bottom: 3px; left: 3px; right: 3px;
+    border-radius: 7px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 4px 8px 4px 11px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,.18);
+    user-select: none; z-index: 10;
+    transition: box-shadow .15s, opacity .15s, transform .1s;
+    overflow: hidden;
+  }
+  .appt:hover { box-shadow: 0 4px 16px rgba(0,0,0,.25); transform: translateY(-1px); }
+  .appt.dragging { opacity: .45; box-shadow: none; transform: none; }
   .appt.highlight { outline: 3px solid #f5a623; outline-offset: -2px; animation: pulse 1s ease-in-out 3; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
-  .appt .appt-name { flex: 1; overflow: hidden; text-overflow: ellipsis; }
-  .appt .appt-hours { font-size: .68rem; opacity: .85; background: rgba(255,255,255,.25); border-radius: 4px; padding: 1px 4px; flex-shrink: 0; }
-  .appt .appt-actions { display: flex; gap: 3px; opacity: 0; transition: opacity .15s; flex-shrink: 0; }
+
+  /* Ligne du haut : nom + badges */
+  .appt-top { display: flex; align-items: center; gap: 4px; overflow: hidden; white-space: nowrap; }
+  .appt-name { font-size: .76rem; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+
+  /* Ligne du bas : infos + actions */
+  .appt-bottom { display: flex; align-items: center; gap: 4px; overflow: hidden; }
+  .appt-hours-tag { font-size: .66rem; background: rgba(255,255,255,.22); color: #fff; border-radius: 4px; padding: 1px 5px; font-weight: 700; flex-shrink: 0; }
+  .appt-tel-tag { font-size: .62rem; color: rgba(255,255,255,.75); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Bouton contrat intégré dans le RDV */
+  .btn-contrat-inline {
+    font-size: .65rem; font-weight: 700;
+    background: rgba(255,255,255,.9); color: #1a5276;
+    border: none; border-radius: 4px;
+    padding: 2px 7px; cursor: pointer;
+    display: flex; align-items: center; gap: 3px;
+    flex-shrink: 0; white-space: nowrap;
+    transition: background .12s;
+    font-family: inherit;
+  }
+  .btn-contrat-inline:hover { background: #fff; color: var(--accent); }
+
+  /* Actions au survol */
+  .appt-actions { display: flex; gap: 3px; opacity: 0; transition: opacity .15s; flex-shrink: 0; position: absolute; top: 3px; right: 3px; }
   .appt:hover .appt-actions { opacity: 1; }
-  .appt .btn-action { font-size: .78rem; line-height: 1; padding: 2px 5px; border-radius: 4px; background: rgba(255,255,255,.22); color: #fff; cursor: pointer; border: none; font-family: inherit; transition: background .12s; white-space: nowrap; }
-  .appt .btn-action:hover { background: rgba(255,255,255,.42); }
-  .badge-next { font-size: .58rem; font-weight: 800; background: #f39c12; color: #fff; border-radius: 4px; padding: 1px 5px; flex-shrink: 0; }
-  .badge-prev { font-size: .58rem; font-weight: 800; background: #8e44ad; color: #fff; border-radius: 4px; padding: 1px 5px; flex-shrink: 0; }
-  .prio-strip { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; border-radius: 6px 0 0 6px; }
+  .btn-action { font-size: .72rem; line-height: 1; padding: 2px 5px; border-radius: 4px; background: rgba(0,0,0,.3); color: #fff; cursor: pointer; border: none; font-family: inherit; transition: background .12s; white-space: nowrap; }
+  .btn-action:hover { background: rgba(0,0,0,.55); }
+  .btn-del-action { background: rgba(231,76,60,.5); }
+  .btn-del-action:hover { background: #e74c3c; }
+
+  .badge-next { font-size: .55rem; font-weight: 800; background: rgba(0,0,0,.25); color: #fff; border-radius: 3px; padding: 1px 4px; flex-shrink: 0; }
+  .badge-prev { font-size: .55rem; font-weight: 800; background: rgba(0,0,0,.25); color: #fff; border-radius: 3px; padding: 1px 4px; flex-shrink: 0; }
+  .prio-strip { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; border-radius: 7px 0 0 7px; }
   .prio-haute   .prio-strip { background: #e74c3c; }
-  .prio-moyenne .prio-strip { background: rgba(255,255,255,.2); }
+  .prio-moyenne .prio-strip { background: rgba(255,255,255,.15); }
   .prio-basse   .prio-strip { background: #2ecc71; }
-  .badge { font-size: .58rem; font-weight: 800; letter-spacing: .05em; color: #fff; border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
-  .badge-green  { background: #2ecc71; }
-  .badge-orange { background: #e67e22; }
-  .badge-blue   { background: #2980b9; }
-  .badge-red    { background: #e74c3c; }
-  .appt.arrived { outline: 3px solid #2ecc71; outline-offset: -2px; }
+  .badge { font-size: .55rem; font-weight: 800; color: #fff; border-radius: 3px; padding: 1px 4px; flex-shrink: 0; }
+  .badge-green  { background: rgba(46,204,113,.8); }
+  .badge-orange { background: rgba(230,126,34,.8); }
+  .badge-blue   { background: rgba(41,128,185,.8); }
+  .badge-red    { background: rgba(231,76,60,.8); }
+  .appt.arrived { outline: 2.5px solid #2ecc71; outline-offset: -2px; }
+
   #dragGhost { position: fixed; pointer-events: none; z-index: 999; border-radius: 6px; padding: 4px 10px; font-size: .78rem; font-weight: 700; color: #fff; white-space: nowrap; box-shadow: 0 6px 20px rgba(0,0,0,.3); opacity: .88; transform: translate(-50%,-50%); }
 
   /* CONGÉS */
@@ -230,7 +271,7 @@
   .history-appt-item:last-child { border-bottom: none; }
   .history-nav { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
   .history-nav span { flex: 1; text-align: center; font-weight: 600; font-size: .9rem; }
-  .tooltip { position: fixed; background: var(--steel); color: #fff; font-size: .78rem; padding: 6px 12px; border-radius: 6px; pointer-events: none; z-index: 300; max-width: 320px; white-space: normal; opacity: 0; transition: opacity .15s; }
+  .tooltip { position: fixed; background: var(--steel); color: #fff; font-size: .78rem; padding: 6px 12px; border-radius: 6px; pointer-events: none; z-index: 300; max-width: 360px; white-space: normal; opacity: 0; transition: opacity .15s; line-height: 1.5; }
   .tooltip.show { opacity: 1; }
   .loader { display: flex; align-items: center; justify-content: center; height: 200px; color: var(--muted); font-size: .9rem; gap: 10px; }
   .loader::before { content: ''; width: 20px; height: 20px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
@@ -326,7 +367,7 @@
       <input type="text" id="searchInput" placeholder="🔍 Rechercher un client, véhicule…">
       <div class="search-results" id="searchResults"></div>
     </div>
-    <span style="font-size:.75rem;color:var(--muted);">Clic droit sur une cellule → congé / absence</span>
+    <span style="font-size:.75rem;color:var(--muted);">Clic droit → congé / absence &nbsp;|&nbsp; Clic sur RDV → modifier</span>
   </div>
   <div class="planner-wrap">
     <div id="planner"><div class="loader">Chargement…</div></div>
@@ -581,7 +622,7 @@ let pendingConges = null, selectedCongesType = 'conge';
 let currentPage = 'atelier';
 let pendingAppt = null, selectedColor = 0, newPriority = 'moyenne';
 let editingApptId = null, editSelectedColor = 0, editStatus = 'pending', editPieceStatus = 'none', editPriority = 'moyenne';
-let editApptRef = null; // référence au RDV en cours d'édition (le premier segment)
+let editApptRef = null;
 let pendingAbsence = null, absType = 'conge';
 let dragApptId = null;
 let historyPage = 0;
@@ -659,10 +700,62 @@ function normalizeAppt(a) {
   if(!a.adresse)          a.adresse='';
   if(a.arrived===undefined) a.arrived=false;
   if(a.piece===true && a.pieceStatus==='none') a.pieceStatus='ordered';
-  if(!a.groupId)          a.groupId=a.id; // rétrocompat
-  if(!a.totalDays)        a.totalDays=a.span||1;
-  if(!a.segmentIndex)     a.segmentIndex=0;
+  if(!a.groupId)    a.groupId=a.id;
+  if(!a.totalDays)  a.totalDays=a.span||1;
+  if(a.segmentIndex===undefined) a.segmentIndex=0;
+  if(!a.hasPrev)    a.hasPrev=false;
+  if(!a.hasNext)    a.hasNext=false;
   return a;
+}
+
+// ── CALCUL DATE FIN (jours ouvrés) ──
+function calcDateFin(dateDebut, nbJours) {
+  const fin=new Date(dateDebut);
+  let reste=(nbJours||1)-1;
+  while(reste>0){
+    fin.setDate(fin.getDate()+1);
+    const dow=fin.getDay();
+    if(dow!==0&&dow!==6) reste--;
+  }
+  return fin;
+}
+
+// ── DÉCOUPE EN SEGMENTS PAR SEMAINE ──
+function splitRdvIntoWeeks(startDay, totalDays, weekStartDate) {
+  const segments=[];
+  let remaining=totalDays;
+  let currentDay=startDay;
+  let currentWeekStart=new Date(weekStartDate);
+  let segIdx=0;
+  while(remaining>0){
+    const daysThisWeek=Math.min(remaining,5-currentDay);
+    segments.push({
+      weekStart:new Date(currentWeekStart),
+      day:currentDay,
+      span:daysThisWeek,
+      segmentIndex:segIdx,
+      hasPrev:segIdx>0,
+      hasNext:remaining-daysThisWeek>0
+    });
+    remaining-=daysThisWeek;
+    currentDay=0;
+    currentWeekStart=new Date(currentWeekStart);
+    currentWeekStart.setDate(currentWeekStart.getDate()+7);
+    segIdx++;
+  }
+  return segments;
+}
+
+// ── PREVIEW ──
+function updatePreview(previewId, startDay, weekOff, nbJours) {
+  if(!nbJours||nbJours<1){document.getElementById(previewId).textContent='📅 —';return;}
+  const days=getWeekDays(weekOff);
+  const dateDebut=days[startDay];
+  const dateFin=calcDateFin(dateDebut,nbJours);
+  const segs=splitRdvIntoWeeks(startDay,nbJours,days[0]);
+  let txt=`📅 Du ${formatDateFR(dateDebut)} au ${formatDateFR(dateFin)} (${nbJours}j)`;
+  if(segs.length>1) txt+=` — sur ${segs.length} semaines`;
+  document.getElementById(previewId).textContent=txt;
 }
 
 // ── DATES ──
@@ -687,64 +780,10 @@ function formatDateFR(d){
 function dateToKey(d){
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-function getMondayStr(weekStart){
-  const d=new Date(weekStart),day=d.getDay();
-  d.setDate(d.getDate()+(day===0?-6:1-day));
-  d.setHours(0,0,0,0); return d.toDateString();
-}
-
-// ── CALCUL DATE FIN (jours ouvrés) ──
-function calcDateFin(dateDebut, nbJours) {
-  const fin=new Date(dateDebut);
-  let reste=(nbJours||1)-1;
-  while(reste>0){
-    fin.setDate(fin.getDate()+1);
-    const dow=fin.getDay();
-    if(dow!==0&&dow!==6) reste--;
-  }
-  return fin;
-}
-
-// ── DÉCOUPE UN RDV EN SEGMENTS PAR SEMAINE ──
-// Retourne un tableau de segments : { weekStart, day, span, segmentIndex, hasPrev, hasNext }
-function splitRdvIntoWeeks(startDay, totalDays, weekStartDate) {
-  const segments = [];
-  let remaining = totalDays;
-  let currentDay = startDay; // 0=lun .. 4=ven
-  let currentWeekStart = new Date(weekStartDate);
-  let segIdx = 0;
-
-  while(remaining > 0) {
-    // Jours disponibles cette semaine depuis currentDay
-    const daysThisWeek = Math.min(remaining, 5 - currentDay);
-    segments.push({
-      weekStart: new Date(currentWeekStart),
-      day: currentDay,
-      span: daysThisWeek,
-      segmentIndex: segIdx,
-      hasPrev: segIdx > 0,
-      hasNext: remaining - daysThisWeek > 0
-    });
-    remaining -= daysThisWeek;
-    // Semaine suivante commence lundi (day=0)
-    currentDay = 0;
-    currentWeekStart = new Date(currentWeekStart);
-    currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-    segIdx++;
-  }
-  return segments;
-}
-
-// ── PREVIEW DANS MODAL ──
-function updatePreview(previewId, startDay, weekOff, nbJours) {
-  if(!nbJours||nbJours<1){document.getElementById(previewId).textContent='📅 —';return;}
-  const days=getWeekDays(weekOff);
-  const dateDebut=days[startDay];
-  const dateFin=calcDateFin(dateDebut,nbJours);
-  const segs=splitRdvIntoWeeks(startDay,nbJours,days[0]);
-  let txt=`📅 Du ${formatDateFR(dateDebut)} au ${formatDateFR(dateFin)} (${nbJours}j)`;
-  if(segs.length>1) txt+=` — sur ${segs.length} semaines`;
-  document.getElementById(previewId).textContent=txt;
+function getWeekOffset(weekStart){
+  const apptMon=getMonday(new Date(weekStart));
+  const nowMon=getMonday(new Date());
+  return Math.round((apptMon-nowMon)/(7*86400000));
 }
 
 // ── TECH ──
@@ -768,21 +807,18 @@ function render(){
   updateStats();
   const planner=document.getElementById('planner');
   planner.innerHTML='';
-
   planner.appendChild(mksec('🚗 Véhicules de prêt — HYUNDAI BAYON (8 postes)'));
   const lc=document.createElement('div'); lc.className='grid-container';
   lc.appendChild(buildHeader(days));
   const lb=document.createElement('div'); lb.className='grid-body';
   state.loanNames.forEach((n,i)=>lb.appendChild(makeRow('loan',i,n,days)));
   lc.appendChild(lb); planner.appendChild(lc);
-
   planner.appendChild(mksec('🔩 Postes sans véhicule de prêt'));
   const nc=document.createElement('div'); nc.className='grid-container';
   nc.appendChild(buildHeader(days));
   const nb=document.createElement('div'); nb.className='grid-body';
   state.noLoanNames.forEach((n,i)=>nb.appendChild(makeRow('noloan',i,n,days)));
   nc.appendChild(nb); planner.appendChild(nc);
-
   renderAppts(days);
   renderAbsences(days);
 }
@@ -836,74 +872,92 @@ function startEditName(el,type,rowIdx){
 // ── RENDER APPOINTMENTS ──
 function renderAppts(days){
   const ws=days[0].toDateString();
-  // Affiche uniquement les segments qui appartiennent à cette semaine
   state.appointments.forEach(appt=>{
     if(new Date(appt.weekStart).toDateString()!==ws) return;
     if(appt.row===undefined||appt.day===undefined) return;
-
     const span=appt.span||1;
     const cell=document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`);
     if(!cell) return;
 
     const prio=appt.priority||'moyenne';
+    const isLoanFirst=appt.type==='loan'&&appt.segmentIndex===0;
+
+    // ── Calcul dates pour tooltip et contrat ──
+    const firstSeg=state.appointments.find(a=>a.groupId===appt.groupId&&a.segmentIndex===0)||appt;
+    const weekOffFirst=getWeekOffset(firstSeg.weekStart);
+    const daysFirst=getWeekDays(weekOffFirst);
+    const dateDebut=daysFirst[firstSeg.day]||daysFirst[0];
+    const totalDays=appt.totalDays||1;
+    const dateFin=calcDateFin(dateDebut,totalDays);
+
     const el=document.createElement('div');
-    el.className=`appt prio-${prio}`;
+    el.className=`appt prio-${prio}${appt.arrived?' arrived':''}`;
     el.style.background=appt.color||'#2980b9';
     if(span>1){el.style.right=`calc(-${(span-1)*100}% - ${span-1}px)`;el.style.zIndex=15;}
-    if(appt.arrived) el.classList.add('arrived');
 
     let pieceBadge='';
     if(appt.pieceStatus==='delivered') pieceBadge='<span class="badge badge-blue">✅</span>';
     else if(appt.pieceStatus==='ordered') pieceBadge='<span class="badge badge-orange">📦</span>';
 
-    const btnContrat=appt.type==='loan'&&appt.segmentIndex===0?`<button class="btn-action btn-contrat" title="Contrat de prêt">📄</button>`:'';
-    const prevBadge=appt.hasPrev?'<span class="badge-prev">◀ suite</span>':'';
-    const nextBadge=appt.hasNext?'<span class="badge-next">suite ▶</span>':'';
+    const arrivedBadge=appt.arrived?'<span class="badge badge-green">✔</span>':'';
+    const prioBadge=prio==='haute'?'<span class="badge badge-red">🔴</span>':'';
+    const prevBadge=appt.hasPrev?'<span class="badge-prev">◀</span>':'';
+    const nextBadge=appt.hasNext?'<span class="badge-next">▶</span>':'';
+    const telTag=appt.tel?`<span class="appt-tel-tag">📞 ${appt.tel}</span>`:'';
+
+    // ── BOUTON CONTRAT INLINE (dans la ligne du bas, visible uniquement sur lignes prêt segment 0) ──
+    const contratBtn=isLoanFirst
+      ? `<button class="btn-contrat-inline">📄 Contrat</button>`
+      : '';
 
     el.innerHTML=`
       <div class="prio-strip"></div>
-      ${prevBadge}
-      <span class="appt-name">${appt.name}</span>
-      ${prio==='haute'?'<span class="badge badge-red">🔴</span>':''}
-      ${appt.arrived?'<span class="badge badge-green">✔</span>':''}
-      ${pieceBadge}
-      <span class="appt-hours">${appt.hours}h</span>
-      ${nextBadge}
       <div class="appt-actions">
-        ${btnContrat}
-        <button class="btn-action btn-del" title="Supprimer tout le RDV">✕</button>
+        <button class="btn-action btn-del-action" title="Supprimer">✕</button>
+      </div>
+      <div class="appt-top">
+        ${prevBadge}
+        <span class="appt-name">${appt.name}</span>
+        ${prioBadge}${arrivedBadge}${pieceBadge}${nextBadge}
+      </div>
+      <div class="appt-bottom">
+        <span class="appt-hours-tag">${appt.hours}h · ${totalDays}j</span>
+        ${telTag}
+        ${contratBtn}
       </div>
     `;
 
-    // Contrat uniquement sur le premier segment
-    if(appt.type==='loan'&&appt.segmentIndex===0){
-      const btnC=el.querySelector('.btn-contrat');
-      if(btnC) btnC.addEventListener('click',e=>{e.stopPropagation();openContrat(appt);});
-    }
-    // Supprimer TOUS les segments du groupe
-    el.querySelector('.btn-del').addEventListener('click',e=>{e.stopPropagation();deleteGroup(appt.groupId);});
-    // Clic = éditer (ouvre modal sur le premier segment)
-    el.addEventListener('click',e=>{if(e.target.closest('.appt-actions'))return;openEditModal(appt.groupId);});
+    // Bouton supprimer
+    el.querySelector('.btn-del-action').addEventListener('click',e=>{e.stopPropagation();deleteGroup(appt.groupId);});
 
-    // Tooltip
-    const totalDays=appt.totalDays||appt.span||1;
-    const firstSeg=state.appointments.find(a=>a.groupId===appt.groupId&&a.segmentIndex===0);
-    let tip=`${appt.name} — ${appt.hours}h — ${totalDays}j`;
-    if(firstSeg){
-      const dDebut=getWeekDays(getWeekOffset(firstSeg.weekStart))[firstSeg.day];
-      const dFin=calcDateFin(dDebut,totalDays);
-      tip+=` (${formatDateFR(dDebut)} → ${formatDateFR(dFin)})`;
+    // Bouton contrat inline
+    if(isLoanFirst){
+      el.querySelector('.btn-contrat-inline').addEventListener('click',e=>{e.stopPropagation();openContrat(appt,dateDebut,dateFin,totalDays);});
     }
-    if(appt.tel) tip+=` — 📞 ${appt.tel}`;
+
+    // Clic = éditer
+    el.addEventListener('click',e=>{
+      if(e.target.closest('.appt-actions')||e.target.classList.contains('btn-contrat-inline')) return;
+      openEditModal(appt.groupId);
+    });
+
+    // Tooltip enrichi
+    let tip=`${appt.name}\n📅 ${formatDateFR(dateDebut)} → ${formatDateFR(dateFin)} (${totalDays}j)`;
+    if(appt.tel) tip+=`\n📞 ${appt.tel}`;
+    if(appt.adresse) tip+=`\n📍 ${appt.adresse}`;
+    if(prio==='haute') tip+='\n🔴 PRIORITÉ HAUTE';
+    if(appt.pieceStatus==='ordered') tip+=`\n📦 Pièce commandée${appt.pieceFournisseur?' — '+appt.pieceFournisseur:''}`;
+    if(appt.pieceStatus==='delivered') tip+='\n✅ Pièce livrée';
+    if(appt.pieceNote) tip+=`\n📝 ${appt.pieceNote}`;
     el.addEventListener('mouseenter',e=>showTooltip(e,tip));
     el.addEventListener('mouseleave',hideTooltip);
     el.addEventListener('mousemove', e=>moveTooltip(e));
 
-    // Drag — uniquement sur le premier segment
+    // Drag
     if(appt.segmentIndex===0){
       el.setAttribute('draggable','true');
       el.addEventListener('dragstart',e=>{
-        if(e.target.closest('.appt-actions')){e.preventDefault();return;}
+        if(e.target.closest('.appt-actions')||e.target.classList.contains('btn-contrat-inline')){e.preventDefault();return;}
         dragApptId=appt.groupId; el.classList.add('dragging');
         const ghost=document.getElementById('dragGhost');
         ghost.style.display='block'; ghost.style.background=appt.color; ghost.textContent=appt.name;
@@ -914,13 +968,6 @@ function renderAppts(days){
 
     cell.appendChild(el);
   });
-}
-
-// Calcule le weekOffset d'un weekStart ISO
-function getWeekOffset(weekStart){
-  const apptMon=getMonday(new Date(weekStart));
-  const nowMon=getMonday(new Date());
-  return Math.round((apptMon-nowMon)/(7*86400000));
 }
 
 // ── ABSENCES ──
@@ -940,7 +987,7 @@ function renderAbsences(days){
 }
 
 // ── CONTRAT ──
-function openContrat(appt){
+function openContrat(appt, dateDebut, dateFin, totalDays) {
   contratAppt=appt;
   document.getElementById('cNom').value    =appt.name   ||'';
   document.getElementById('cTel').value    =appt.tel    ||'';
@@ -950,13 +997,12 @@ function openContrat(appt){
   document.getElementById('cCouleurPret').value='';
   const immat=state.loanNames[appt.row]||'';
   document.getElementById('cImmatPret').value=immat;
-  const weekOff=getWeekOffset(appt.weekStart);
-  const days=getWeekDays(weekOff);
-  const dateDebut=days[appt.day];
-  const totalDays=appt.totalDays||appt.span||1;
-  const dateFin=calcDateFin(dateDebut,totalDays);
   document.getElementById('contratRdvInfo').textContent=`${appt.name} — HYUNDAI BAYON (${immat})`;
   document.getElementById('contratDatesInfo').textContent=`Du ${formatDateFR(dateDebut)} au ${formatDateFR(dateFin)} — ${totalDays} jour(s)`;
+  // Stocke les dates calculées pour l'impression
+  contratAppt._dateDebut=dateDebut;
+  contratAppt._dateFin=dateFin;
+  contratAppt._totalDays=totalDays;
   document.getElementById('contratModalOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('cNom').focus(),50);
 }
@@ -964,11 +1010,9 @@ function closeContrat(){document.getElementById('contratModalOverlay').classList
 
 function imprimerContrat(){
   if(!contratAppt) return;
-  const weekOff=getWeekOffset(contratAppt.weekStart);
-  const days=getWeekDays(weekOff);
-  const dateDebut=days[contratAppt.day];
-  const totalDays=contratAppt.totalDays||contratAppt.span||1;
-  const dateFin=calcDateFin(dateDebut,totalDays);
+  const dateDebut=contratAppt._dateDebut;
+  const dateFin=contratAppt._dateFin;
+  const totalDays=contratAppt._totalDays;
   const immat=document.getElementById('cImmatPret').value||'____________________________';
   const carburant=document.getElementById('cCarburant').value;
   const niveaux=['plein','3/4','1/2','1/4'];
@@ -1018,7 +1062,6 @@ function imprimerContrat(){
       <ul>
         <li>L'emprunteur reconnaît avoir pris possession du véhicule en bon état apparent et s'engage à le restituer dans le même état.</li>
         <li>Le véhicule est restitué avec le même niveau de carburant qu'à la remise.</li>
-        <li>A la réstution du véhicule , merci de nous fournir le justificatif de complement de carburant</li>
         <li>L'emprunteur est responsable de toute infraction au Code de la Route commise pendant la durée du prêt.</li>
         <li>En cas d'accident ou de sinistre, l'emprunteur s'engage à prévenir immédiatement la carrosserie et à conserver tous les documents nécessaires.</li>
         <li>Le véhicule ne peut être confié à un tiers. Usage limité au territoire français uniquement.</li>
@@ -1045,37 +1088,31 @@ function imprimerContrat(){
   setTimeout(()=>{window.print();setTimeout(()=>{document.getElementById('contrat-print-zone').innerHTML='';},3000);},200);
 }
 
-// ── DRAG & DROP ──
+// ── DRAG ──
 document.addEventListener('dragover',e=>{const g=document.getElementById('dragGhost');if(g.style.display==='block'){g.style.left=e.clientX+'px';g.style.top=(e.clientY-20)+'px';}});
 
 function handleDrop(type,row,day){
   if(!dragApptId) return;
-  // Trouve le premier segment du groupe
   const firstSeg=state.appointments.find(a=>a.groupId===dragApptId&&a.segmentIndex===0);
   if(!firstSeg) return;
   const totalDays=firstSeg.totalDays||firstSeg.span||1;
   const days=getWeekDays();
-  // Supprime tous les anciens segments
   state.appointments=state.appointments.filter(a=>a.groupId!==dragApptId);
-  // Recrée les segments à partir du nouvel emplacement
   const segs=splitRdvIntoWeeks(day,totalDays,days[0]);
   segs.forEach((seg,i)=>{
     state.appointments.push({
       ...firstSeg,
-      id: i===0 ? firstSeg.id : Date.now().toString(36)+Math.random().toString(36).slice(2)+i,
-      weekStart: seg.weekStart.toISOString(),
-      day: seg.day,
-      span: seg.span,
-      segmentIndex: seg.segmentIndex,
-      hasPrev: seg.hasPrev,
-      hasNext: seg.hasNext,
+      id:i===0?firstSeg.id:Date.now().toString(36)+Math.random().toString(36).slice(2)+i,
+      weekStart:seg.weekStart.toISOString(),
+      day:seg.day, span:seg.span,
+      segmentIndex:seg.segmentIndex,
+      hasPrev:seg.hasPrev, hasNext:seg.hasNext,
       type, row
     });
   });
   saveToFirebase(); render();
 }
 
-// ── SUPPRIMER GROUPE ──
 function deleteGroup(groupId){
   state.appointments=state.appointments.filter(a=>a.groupId!==groupId);
   saveToFirebase(); render();
@@ -1111,37 +1148,28 @@ function saveAppt(){
   const totalDays=parseInt(document.getElementById('apptDays').value)||1;
   const hours=parseFloat(document.getElementById('apptHours').value)||0;
   if(!name){document.getElementById('apptName').focus();return;}
-
   const days=getWeekDays();
   const groupId=Date.now().toString(36)+Math.random().toString(36).slice(2);
   const color=COLORS[selectedColor];
-
-  // Découpe en segments par semaine
   const segs=splitRdvIntoWeeks(pendingAppt.day,totalDays,days[0]);
-
   segs.forEach((seg,i)=>{
     state.appointments.push({
-      id: groupId+(i===0?'':'-'+i),
-      groupId,
-      segmentIndex: seg.segmentIndex,
-      hasPrev: seg.hasPrev,
-      hasNext: seg.hasNext,
-      totalDays,
-      type:pendingAppt.type, row:pendingAppt.row,
+      id:groupId+(i===0?'':'-'+i),
+      groupId, segmentIndex:seg.segmentIndex,
+      hasPrev:seg.hasPrev, hasNext:seg.hasNext,
+      totalDays, type:pendingAppt.type, row:pendingAppt.row,
       day:seg.day, span:seg.span,
       name, hours, tel, adresse, color,
-      weekStart: seg.weekStart.toISOString(),
+      weekStart:seg.weekStart.toISOString(),
       priority:newPriority, arrived:false,
       pieceStatus:'none', pieceFournisseur:'', pieceNote:''
     });
   });
-
   saveToFirebase(); closeModal(); render();
 }
 
 // ── EDIT MODAL ──
 function openEditModal(groupId){
-  // Trouve le premier segment
   const first=state.appointments.find(a=>a.groupId===groupId&&a.segmentIndex===0);
   if(!first) return;
   editingApptId=groupId; editApptRef=first;
@@ -1191,43 +1219,28 @@ function saveEditAppt(){
   const hours=parseFloat(document.getElementById('editApptHours').value)||0;
   const totalDays=parseInt(document.getElementById('editApptDays').value)||1;
   if(!name){document.getElementById('editApptName').focus();return;}
-
   const color=COLORS[editSelectedColor];
   const pf=document.getElementById('editPieceFournisseur').value.trim();
   const pn=document.getElementById('editPieceNote').value.trim();
-
-  // Supprime tous les anciens segments
   state.appointments=state.appointments.filter(a=>a.groupId!==editingApptId);
-
-  // Recrée les segments avec les nouvelles infos
   const weekOff=getWeekOffset(editApptRef.weekStart);
   const days=getWeekDays(weekOff);
   const segs=splitRdvIntoWeeks(editApptRef.day,totalDays,days[0]);
-
   segs.forEach((seg,i)=>{
     state.appointments.push({
-      id: editingApptId+(i===0?'':'-'+i),
-      groupId: editingApptId,
-      segmentIndex: seg.segmentIndex,
-      hasPrev: seg.hasPrev,
-      hasNext: seg.hasNext,
-      totalDays,
-      type:editApptRef.type, row:editApptRef.row,
+      id:editingApptId+(i===0?'':'-'+i),
+      groupId:editingApptId, segmentIndex:seg.segmentIndex,
+      hasPrev:seg.hasPrev, hasNext:seg.hasNext,
+      totalDays, type:editApptRef.type, row:editApptRef.row,
       day:seg.day, span:seg.span,
       name, hours, tel, adresse, color,
-      weekStart: seg.weekStart.toISOString(),
-      priority:editPriority,
-      arrived:(editStatus==='arrived'),
-      pieceStatus:editPieceStatus,
-      pieceFournisseur:pf,
-      pieceNote:pn
+      weekStart:seg.weekStart.toISOString(),
+      priority:editPriority, arrived:(editStatus==='arrived'),
+      pieceStatus:editPieceStatus, pieceFournisseur:pf, pieceNote:pn
     });
   });
-
   saveToFirebase(); closeEditModal(); render();
 }
-
-function deleteAppt(id){state.appointments=state.appointments.filter(a=>a.id!==id);saveToFirebase();render();}
 
 function buildColorPicker(elId,onPick){
   const cp=document.getElementById(elId); cp.innerHTML='';
@@ -1238,7 +1251,7 @@ function buildColorPicker(elId,onPick){
   });
 }
 
-// ── ABSENCE MODAL ──
+// ── ABSENCES PLANNING ──
 function openAbsenceModal(type,row,day){
   pendingAbsence={type,row,day}; absType='conge';
   document.getElementById('absLabel').value='';
@@ -1264,19 +1277,21 @@ function deleteAbsence(id){state.absences=state.absences.filter(a=>a.id!==id);sa
 // ── STATS ──
 function updateStats(){
   const days=getWeekDays(),ws=days[0].toDateString();
-  // Compte uniquement les segments principaux (segmentIndex===0) pour les heures
-  const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
-  const waMain=wa.filter(a=>a.segmentIndex===0);
-  document.getElementById('totalHours').textContent=waMain.reduce((s,a)=>s+(a.hours||0),0)+'h';
-  document.getElementById('totalAppts').textContent=waMain.length;
+  const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws&&a.segmentIndex===0);
+  document.getElementById('totalHours').textContent=wa.reduce((s,a)=>s+(a.hours||0),0)+'h';
+  document.getElementById('totalAppts').textContent=wa.length;
   updateTech();
 }
 function changeWeek(d){state.weekOffset+=d;render();}
 function goToday(){state.weekOffset=0;render();}
 
 // ── TOOLTIP ──
-function showTooltip(e,t){const el=document.getElementById('tooltip');el.textContent=t;el.classList.add('show');moveTooltip(e);}
-function moveTooltip(e){const el=document.getElementById('tooltip');el.style.left=(e.clientX+12)+'px';el.style.top=(e.clientY-32)+'px';}
+function showTooltip(e,t){
+  const el=document.getElementById('tooltip');
+  el.innerHTML=t.replace(/\n/g,'<br>');
+  el.classList.add('show');moveTooltip(e);
+}
+function moveTooltip(e){const el=document.getElementById('tooltip');el.style.left=(e.clientX+14)+'px';el.style.top=(e.clientY-40)+'px';}
 function hideTooltip(){document.getElementById('tooltip').classList.remove('show');}
 
 // ── RECHERCHE ──
@@ -1284,7 +1299,6 @@ function doSearch(query){
   const q=query.trim().toLowerCase();
   const results=document.getElementById('searchResults');
   if(!q){results.classList.remove('open');return;}
-  // Cherche uniquement dans les segments 0
   const matches=state.appointments.filter(a=>a.segmentIndex===0&&a.name&&a.name.toLowerCase().includes(q));
   if(!matches.length){results.innerHTML='<div class="search-no-result">Aucun résultat</div>';results.classList.add('open');return;}
   results.innerHTML=matches.slice(0,10).map(a=>{
@@ -1292,9 +1306,10 @@ function doSearch(query){
     const days=getWeekDays(off);
     const dayName=days[a.day]?days[a.day].toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'short'}):'?';
     const rowName=a.type==='loan'?(state.loanNames[a.row]||'?'):(state.noLoanNames[a.row]||'?');
+    const dFin=calcDateFin(days[a.day]||days[0],a.totalDays||1);
     return `<div class="search-result-item" data-groupid="${a.groupId}" data-offset="${off}">
       <span class="sri-name" style="color:${a.color}">● ${a.name}</span>
-      <span class="sri-meta">${dayName} — ${rowName} — ${a.hours}h — ${a.totalDays||a.span||1}j${a.priority==='haute'?' 🔴':''}${a.tel?' — 📞 '+a.tel:''}</span>
+      <span class="sri-meta">${dayName} — ${rowName} — ${a.hours}h — ${a.totalDays||1}j${a.priority==='haute'?' 🔴':''}${a.tel?' — 📞 '+a.tel:''}</span>
     </div>`;
   }).join('');
   results.classList.add('open');
@@ -1321,7 +1336,6 @@ function renderHistory(){
   const startOff=-(historyPage*4),weeks=[];
   for(let i=0;i<4;i++){
     const off=startOff-i,days=getWeekDays(off),ws=days[0].toDateString();
-    // Compte uniquement les segments 0 cette semaine
     const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws&&a.segmentIndex===0);
     const totalH=wa.reduce((s,a)=>s+(a.hours||0),0);
     const capacity=nbTech*39,pct=capacity>0?Math.round((totalH/capacity)*100):0;
@@ -1362,7 +1376,7 @@ function renderHistory(){
   });
 }
 
-// ── PLANNING CONGÉS ──
+// ── CONGÉS ──
 function renderConges(){
   const year=congesYear,month=congesMonth;
   const daysInMonth=new Date(year,month+1,0).getDate();
@@ -1515,7 +1529,6 @@ document.getElementById('historyModalOverlay').addEventListener('click',function
 document.getElementById('contratModalOverlay').addEventListener('click',function(e){if(e.target===this)closeContrat();});
 document.getElementById('congesModalOverlay').addEventListener('click', function(e){if(e.target===this)closeCongesModal();});
 
-// Preview dynamique
 document.getElementById('apptDays').addEventListener('input',e=>{
   if(pendingAppt) updatePreview('apptPreview',pendingAppt.day,state.weekOffset,parseInt(e.target.value)||1);
 });
