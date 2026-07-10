@@ -18,7 +18,7 @@
     --loan-bg:  #e8f4fd;
     --loan-hd:  #1a5276;
     --noloan-bg:#fef9f0;
-    --slot-h:   56px;
+    --slot-h:   58px;
     --col-label:160px;
     --col-day:  1fr;
     --header-h: 48px;
@@ -75,7 +75,6 @@
   .planner-wrap { padding: 16px; max-width: 1600px; margin: 0 auto; }
   .section-label { display: flex; align-items: center; gap: 10px; margin: 12px 0 6px; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
   .grid-container { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,.06); margin-bottom: 4px; display: flex; flex-direction: column; }
   .grid-header { display: grid; grid-template-columns: var(--col-label) repeat(5, var(--col-day)); background: var(--steel); height: var(--header-h); border-radius: 12px 12px 0 0; flex-shrink: 0; }
   .grid-header .h-corner { display: flex; align-items: center; padding: 0 12px; color: rgba(255,255,255,.5); font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-right: 1px solid rgba(255,255,255,.08); }
@@ -102,6 +101,9 @@
   .day-cell.today-col { background: rgba(232,76,30,.04) !important; }
   .day-cell.today-col:hover { background: rgba(232,76,30,.1) !important; }
   .day-cell.drag-over { background: rgba(232,76,30,.18) !important; outline: 2px dashed var(--accent); outline-offset: -2px; }
+  /* Cellule occupée */
+  .day-cell.occupied { background: rgba(231,76,60,.07) !important; cursor: not-allowed; }
+  .day-cell.occupied::after { content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: rgba(231,76,60,.4); }
 
   .absence-block { position: absolute; inset: 2px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 700; z-index: 5; cursor: default; }
   .absence-block.conge   { background: repeating-linear-gradient(45deg,#e8f5e9,#e8f5e9 4px,#c8e6c9 4px,#c8e6c9 8px); color: #2e7d32; border: 1.5px solid #a5d6a7; }
@@ -114,7 +116,7 @@
     position: absolute; top: 3px; bottom: 3px; left: 3px; right: 3px;
     border-radius: 7px;
     display: flex; flex-direction: column; justify-content: space-between;
-    padding: 4px 8px 4px 11px;
+    padding: 4px 8px 4px 12px;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,.18);
     user-select: none; z-index: 10;
@@ -125,39 +127,16 @@
   .appt.dragging { opacity: .45; box-shadow: none; transform: none; }
   .appt.highlight { outline: 3px solid #f5a623; outline-offset: -2px; animation: pulse 1s ease-in-out 3; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
-
-  /* Ligne du haut : nom + badges */
   .appt-top { display: flex; align-items: center; gap: 4px; overflow: hidden; white-space: nowrap; }
   .appt-name { font-size: .76rem; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; flex: 1; }
-
-  /* Ligne du bas : infos + actions */
   .appt-bottom { display: flex; align-items: center; gap: 4px; overflow: hidden; }
-  .appt-hours-tag { font-size: .66rem; background: rgba(255,255,255,.22); color: #fff; border-radius: 4px; padding: 1px 5px; font-weight: 700; flex-shrink: 0; }
+  .appt-hours-tag { font-size: .64rem; background: rgba(255,255,255,.22); color: #fff; border-radius: 4px; padding: 1px 5px; font-weight: 700; flex-shrink: 0; }
   .appt-tel-tag { font-size: .62rem; color: rgba(255,255,255,.75); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-  /* Bouton contrat intégré dans le RDV */
-  .btn-contrat-inline {
-    font-size: .65rem; font-weight: 700;
-    background: rgba(255,255,255,.9); color: #1a5276;
-    border: none; border-radius: 4px;
-    padding: 2px 7px; cursor: pointer;
-    display: flex; align-items: center; gap: 3px;
-    flex-shrink: 0; white-space: nowrap;
-    transition: background .12s;
-    font-family: inherit;
-  }
+  .appt-memo-dot { font-size: .65rem; flex-shrink: 0; opacity: .85; }
+  .btn-contrat-inline { font-size: .63rem; font-weight: 700; background: rgba(255,255,255,.9); color: #1a5276; border: none; border-radius: 4px; padding: 2px 6px; cursor: pointer; display: flex; align-items: center; gap: 3px; flex-shrink: 0; white-space: nowrap; transition: background .12s; font-family: inherit; }
   .btn-contrat-inline:hover { background: #fff; color: var(--accent); }
-
-  /* Actions au survol */
-  .appt-actions { display: flex; gap: 3px; opacity: 0; transition: opacity .15s; flex-shrink: 0; position: absolute; top: 3px; right: 3px; }
-  .appt:hover .appt-actions { opacity: 1; }
-  .btn-action { font-size: .72rem; line-height: 1; padding: 2px 5px; border-radius: 4px; background: rgba(0,0,0,.3); color: #fff; cursor: pointer; border: none; font-family: inherit; transition: background .12s; white-space: nowrap; }
-  .btn-action:hover { background: rgba(0,0,0,.55); }
-  .btn-del-action { background: rgba(231,76,60,.5); }
-  .btn-del-action:hover { background: #e74c3c; }
-
-  .badge-next { font-size: .55rem; font-weight: 800; background: rgba(0,0,0,.25); color: #fff; border-radius: 3px; padding: 1px 4px; flex-shrink: 0; }
-  .badge-prev { font-size: .55rem; font-weight: 800; background: rgba(0,0,0,.25); color: #fff; border-radius: 3px; padding: 1px 4px; flex-shrink: 0; }
+  .appt-del-btn { display: none; position: absolute; top: 3px; right: 3px; background: rgba(231,76,60,.85); color: #fff; border: none; border-radius: 4px; width: 18px; height: 18px; font-size: .72rem; cursor: pointer; align-items: center; justify-content: center; font-family: inherit; z-index: 20; }
+  .appt:hover .appt-del-btn { display: flex; }
   .prio-strip { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; border-radius: 7px 0 0 7px; }
   .prio-haute   .prio-strip { background: #e74c3c; }
   .prio-moyenne .prio-strip { background: rgba(255,255,255,.15); }
@@ -167,8 +146,9 @@
   .badge-orange { background: rgba(230,126,34,.8); }
   .badge-blue   { background: rgba(41,128,185,.8); }
   .badge-red    { background: rgba(231,76,60,.8); }
+  .badge-prev { font-size: .55rem; font-weight: 800; background: rgba(0,0,0,.25); color: #fff; border-radius: 3px; padding: 1px 4px; flex-shrink: 0; }
+  .badge-next { font-size: .55rem; font-weight: 800; background: rgba(0,0,0,.25); color: #fff; border-radius: 3px; padding: 1px 4px; flex-shrink: 0; }
   .appt.arrived { outline: 2.5px solid #2ecc71; outline-offset: -2px; }
-
   #dragGhost { position: fixed; pointer-events: none; z-index: 999; border-radius: 6px; padding: 4px 10px; font-size: .78rem; font-weight: 700; color: #fff; white-space: nowrap; box-shadow: 0 6px 20px rgba(0,0,0,.3); opacity: .88; transform: translate(-50%,-50%); }
 
   /* CONGÉS */
@@ -226,12 +206,12 @@
   /* MODALS */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 200; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
-  .modal { background: #fff; border-radius: 14px; padding: 28px 30px; width: 440px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+  .modal { background: #fff; border-radius: 14px; padding: 28px 30px; width: 460px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
   .modal h2 { font-size: 1.1rem; font-weight: 700; color: var(--steel); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
   .modal h2::before { content: '🔧'; font-size: 1.2rem; }
   .modal label { display: block; font-size: .78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; margin-top: 14px; }
   .modal input, .modal textarea, .modal select { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 12px; font-size: .88rem; font-family: inherit; color: var(--text); outline: none; transition: border-color .15s; background: #fff; }
-  .modal textarea { resize: vertical; min-height: 60px; }
+  .modal textarea { resize: vertical; min-height: 56px; }
   .modal input:focus, .modal textarea:focus, .modal select:focus { border-color: var(--accent); }
   .modal .hours-row { display: flex; gap: 10px; }
   .modal .hours-row > div { flex: 1; }
@@ -245,7 +225,7 @@
   .btn-primary:hover { background: #c43f18; }
   .btn-secondary { background: var(--surface); color: var(--muted); border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 18px; font-size: .9rem; cursor: pointer; }
   .btn-secondary:hover { background: var(--border); }
-  #editModalOverlay, #absenceModalOverlay, #historyModalOverlay, #contratModalOverlay, #congesModalOverlay { z-index: 210; }
+  #editModalOverlay,#absenceModalOverlay,#historyModalOverlay,#contratModalOverlay,#congesModalOverlay,#confirmModalOverlay,#historiqueContratOverlay,#restitutionModalOverlay { z-index: 210; }
   .status-row { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
   .status-btn { flex: 1; min-width: 90px; border: 2px solid var(--border); border-radius: 8px; padding: 8px 6px; font-size: .78rem; font-weight: 700; cursor: pointer; background: var(--surface); color: var(--muted); transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 5px; font-family: inherit; }
   .status-btn.active-arrived   { border-color: #2ecc71; background: #eafaf1; color: #1e8449; }
@@ -271,7 +251,7 @@
   .history-appt-item:last-child { border-bottom: none; }
   .history-nav { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
   .history-nav span { flex: 1; text-align: center; font-weight: 600; font-size: .9rem; }
-  .tooltip { position: fixed; background: var(--steel); color: #fff; font-size: .78rem; padding: 6px 12px; border-radius: 6px; pointer-events: none; z-index: 300; max-width: 360px; white-space: normal; opacity: 0; transition: opacity .15s; line-height: 1.5; }
+  .tooltip { position: fixed; background: var(--steel); color: #fff; font-size: .78rem; padding: 8px 12px; border-radius: 6px; pointer-events: none; z-index: 300; max-width: 360px; white-space: normal; opacity: 0; transition: opacity .15s; line-height: 1.6; }
   .tooltip.show { opacity: 1; }
   .loader { display: flex; align-items: center; justify-content: center; height: 200px; color: var(--muted); font-size: .9rem; gap: 10px; }
   .loader::before { content: ''; width: 20px; height: 20px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
@@ -279,12 +259,45 @@
   .contrat-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .contrat-form-grid .full { grid-column: 1 / -1; }
 
+  /* Historique contrats */
+  .contrat-history-item { border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .contrat-history-item .chi-info { flex: 1; }
+  .contrat-history-item .chi-nom { font-weight: 700; font-size: .9rem; color: var(--steel); }
+  .contrat-history-item .chi-meta { font-size: .75rem; color: var(--muted); margin-top: 3px; }
+  .contrat-history-item .chi-num { font-size: .72rem; background: var(--surface); border-radius: 4px; padding: 2px 8px; color: var(--muted); font-weight: 700; flex-shrink: 0; }
+  .contrat-history-item .chi-restitue { font-size: .72rem; color: #2ecc71; font-weight: 700; margin-top: 3px; }
+  .btn-restit { font-size: .72rem; background: #e8f4fd; color: #1a5276; border: 1px solid #aed6f1; border-radius: 5px; padding: 3px 8px; cursor: pointer; font-family: inherit; font-weight: 700; transition: background .12s; flex-shrink: 0; }
+  .btn-restit:hover { background: #aed6f1; }
+
+  /* Modal confirmation */
+  .confirm-modal { background: #fff; border-radius: 14px; padding: 28px 30px; width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,.25); text-align: center; }
+  .confirm-modal h3 { font-size: 1.1rem; font-weight: 700; color: var(--steel); margin-bottom: 10px; }
+  .confirm-modal p { font-size: .88rem; color: var(--muted); margin-bottom: 20px; }
+  .confirm-modal .btn-row { justify-content: center; }
+  .btn-danger { background: #e74c3c; color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-size: .9rem; font-weight: 700; cursor: pointer; transition: background .15s; }
+  .btn-danger:hover { background: #c0392b; }
+
+  /* Print planning */
   @media print {
-    body > *:not(#contrat-print-zone) { display: none !important; }
+    body > *:not(#contrat-print-zone):not(#planning-print-zone) { display: none !important; }
     #contrat-print-zone { display: block !important; }
-    @page { margin: 1cm; size: A4; }
+    #planning-print-zone { display: block !important; }
+    @page { margin: 1cm; size: A4 landscape; }
   }
   #contrat-print-zone { display: none; }
+  #planning-print-zone { display: none; }
+
+  .planning-print { font-family: 'Segoe UI', Arial, sans-serif; color: #1e2a38; padding: 20px; }
+  .pp-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1e2a38; padding-bottom: 10px; margin-bottom: 14px; }
+  .pp-title { font-size: 16px; font-weight: 700; }
+  .pp-week { font-size: 12px; color: #6b7a8d; }
+  .pp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .pp-table th { background: #1e2a38; color: #fff; padding: 6px 8px; text-align: center; font-weight: 700; }
+  .pp-table td { border: 1px solid #d0d6df; padding: 5px 7px; vertical-align: top; min-height: 28px; }
+  .pp-table .pp-label { background: #f0f2f5; font-weight: 700; font-size: 10px; width: 100px; }
+  .pp-appt { background: #e8f4fd; border-radius: 3px; padding: 2px 5px; margin-bottom: 2px; font-size: 10px; font-weight: 600; }
+  .pp-footer { margin-top: 14px; font-size: 10px; color: #6b7a8d; text-align: center; border-top: 1px solid #d0d6df; padding-top: 8px; }
+
   .contrat-print { font-family: 'Segoe UI', Arial, sans-serif; color: #1e2a38; max-width: 800px; margin: 0 auto; padding: 30px; font-size: 13px; line-height: 1.5; }
   .cp-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #1e2a38; padding-bottom: 16px; margin-bottom: 20px; }
   .cp-garage-name { font-size: 20px; font-weight: 700; }
@@ -324,6 +337,7 @@
     <nav class="nav-menu">
       <button class="nav-btn active" id="navAtelier" onclick="switchPage('atelier')">🔧 Planning Atelier</button>
       <button class="nav-btn" id="navConges" onclick="switchPage('conges')">🏖️ Congés Techniciens</button>
+      <button class="nav-btn" id="navContrats" onclick="switchPage('contrats')">📄 Contrats</button>
     </nav>
   </div>
   <div id="atelierTopRight" style="display:flex;align-items:center;gap:10px;">
@@ -352,11 +366,14 @@
         <div class="tech-block"><div class="val" id="fillRate" style="color:#2ecc71;">0%</div><div class="lbl">Remplissage</div></div>
       </div>
       <button class="toolbar-btn" id="btnHistory">📊 Historique</button>
-      <button class="toolbar-btn" id="btnPrint">🖨️ Imprimer</button>
+      <button class="toolbar-btn" id="btnPrintPlanning">🖨️ Imprimer</button>
     </div>
   </div>
   <div id="congesTopRight" style="display:none;align-items:center;gap:10px;">
     <span class="sync-indicator sync-wait" id="syncStatusConges">⏳ Sync</span>
+  </div>
+  <div id="contratsTopRight" style="display:none;align-items:center;gap:10px;">
+    <span style="font-size:.82rem;color:rgba(255,255,255,.7);">Historique des contrats de prêt</span>
   </div>
 </div>
 
@@ -367,7 +384,7 @@
       <input type="text" id="searchInput" placeholder="🔍 Rechercher un client, véhicule…">
       <div class="search-results" id="searchResults"></div>
     </div>
-    <span style="font-size:.75rem;color:var(--muted);">Clic droit → congé / absence &nbsp;|&nbsp; Clic sur RDV → modifier</span>
+    <span style="font-size:.75rem;color:var(--muted);">Clic droit → congé / absence &nbsp;|&nbsp; Clic → modifier</span>
   </div>
   <div class="planner-wrap">
     <div id="planner"><div class="loader">Chargement…</div></div>
@@ -400,7 +417,19 @@
   </div>
 </div>
 
+<!-- PAGE CONTRATS -->
+<div class="page" id="pageContrats">
+  <div style="padding:20px;max-width:900px;margin:0 auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="font-size:1.3rem;font-weight:700;color:var(--steel);">📄 Historique des contrats de prêt</div>
+      <div style="font-size:.82rem;color:var(--muted);" id="contratsCount"></div>
+    </div>
+    <div id="contratsListWrap"></div>
+  </div>
+</div>
+
 <div id="contrat-print-zone"></div>
+<div id="planning-print-zone"></div>
 
 <!-- MODAL NOUVEAU RDV -->
 <div class="modal-overlay" id="modalOverlay">
@@ -415,8 +444,10 @@
     <label>Nombre de jours de travaux</label>
     <input type="number" id="apptDays" value="1" min="1" max="20">
     <div class="preview-note" id="apptPreview">📅 1 jour</div>
-    <label>Heures de travail</label>
+    <label>Heures de travail (total)</label>
     <input type="number" id="apptHours" value="4" min="0.5" max="999" step="0.5">
+    <label>Mémo / Note rapide</label>
+    <textarea id="apptMemo" placeholder="Ex : Attente accord assurance, client à rappeler…"></textarea>
     <label>Priorité</label>
     <div class="status-row">
       <button class="status-btn" id="newPrioBasse">🟢 Basse</button>
@@ -442,11 +473,13 @@
     <input type="text" id="editApptTel" placeholder="06 XX XX XX XX">
     <label>Adresse client</label>
     <input type="text" id="editApptAdresse" placeholder="12 rue des Lilas, 26000 Valence">
-    <label>Heures de travail</label>
+    <label>Heures de travail (total)</label>
     <input type="number" id="editApptHours" min="0.5" max="999" step="0.5">
     <label>Nombre de jours de travaux</label>
     <input type="number" id="editApptDays" min="1" max="20">
     <div class="preview-note" id="editApptPreview" style="margin-top:6px;">📅 —</div>
+    <label>Mémo / Note rapide</label>
+    <textarea id="editApptMemo" placeholder="Ex : Attente accord assurance, client à rappeler…"></textarea>
     <label>Priorité</label>
     <div class="status-row">
       <button class="status-btn" id="editPrioBasse">🟢 Basse</button>
@@ -481,6 +514,18 @@
   </div>
 </div>
 
+<!-- MODAL CONFIRMATION SUPPRESSION -->
+<div class="modal-overlay" id="confirmModalOverlay">
+  <div class="confirm-modal">
+    <h3>⚠️ Confirmer la suppression</h3>
+    <p id="confirmText">Supprimer ce rendez-vous ?</p>
+    <div class="btn-row">
+      <button class="btn-secondary" id="btnConfirmNon">Annuler</button>
+      <button class="btn-danger" id="btnConfirmOui">Supprimer</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL ABSENCE -->
 <div class="modal-overlay" id="absenceModalOverlay">
   <div class="modal" style="width:340px;">
@@ -499,7 +544,7 @@
   </div>
 </div>
 
-<!-- MODAL HISTORIQUE -->
+<!-- MODAL HISTORIQUE PLANNING -->
 <div class="modal-overlay" id="historyModalOverlay">
   <div class="modal" style="width:620px;">
     <h2 style="gap:8px;">📊 Historique des semaines</h2>
@@ -542,11 +587,36 @@
         </select>
       </div>
       <div><label>Immatriculation</label><input type="text" id="cImmatPret" placeholder="XX-000-XX"></div>
-      <div><label>Couleur</label><input type="text" id="cCouleurPret" placeholder="Gris, Blanc…"></div>
+      <div><label>Couleur véhicule</label><input type="text" id="cCouleurPret" placeholder="Gris, Blanc…"></div>
     </div>
     <div class="btn-row" style="margin-top:20px;">
       <button class="btn-secondary" id="btnCloseContrat">Annuler</button>
       <button class="btn-primary" id="btnImprimerContrat">🖨️ Imprimer le contrat</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESTITUTION -->
+<div class="modal-overlay" id="restitutionModalOverlay">
+  <div class="modal" style="width:420px;">
+    <h2 style="gap:8px;">🔑 Restitution du véhicule</h2>
+    <div id="restitInfo" style="background:#f8f9fa;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.88rem;font-weight:600;color:var(--steel);border:1px solid var(--border);"></div>
+    <label>Date de restitution</label>
+    <input type="date" id="restitDate">
+    <label>Kilométrage retour</label>
+    <input type="number" id="restitKm" placeholder="Ex: 12750">
+    <label>Niveau carburant retour</label>
+    <select id="restitCarburant">
+      <option value="plein">Plein</option>
+      <option value="3/4">3/4</option>
+      <option value="1/2">1/2</option>
+      <option value="1/4">1/4</option>
+    </select>
+    <label>Remarques / État</label>
+    <textarea id="restitRemarques" placeholder="Ex: RAS, rayure sur aile gauche…"></textarea>
+    <div class="btn-row" style="margin-top:20px;">
+      <button class="btn-secondary" id="btnCloseRestitution">Annuler</button>
+      <button class="btn-primary" id="btnSaveRestitution">Enregistrer la restitution</button>
     </div>
   </div>
 </div>
@@ -583,88 +653,96 @@ const firebaseConfig = {
   appId: "1:72223690252:web:1bdb17a61caa960c08a829"
 };
 
-const fbApp     = initializeApp(firebaseConfig);
-const db        = getFirestore(fbApp);
-const docRef    = doc(db, "planning", "main");
-const docConges = doc(db, "planning", "conges");
+const fbApp      = initializeApp(firebaseConfig);
+const db         = getFirestore(fbApp);
+const docRef     = doc(db, "planning", "main");
+const docConges  = doc(db, "planning", "conges");
+const docContrats= doc(db, "planning", "contrats");
 
 const COLORS       = ['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
 const DEFAULT_LOAN   = ['BAYON 01','BAYON 02','BAYON 03','BAYON 04','BAYON 05','BAYON 06','BAYON 07','BAYON 08'];
 const DEFAULT_NOLOAN = ['Poste 1','Poste 2','Poste 3','Poste 4','Poste 5','Poste 6','Poste 7','Poste 8'];
 const JOURS_FR = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 const MOIS_FR  = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-
 const TECHNICIENS = [
-  { id:'fabien',  nom:'Fabien',  color:'#2980b9' },
-  { id:'eric',    nom:'Éric',    color:'#27ae60' },
-  { id:'david',   nom:'David',   color:'#8e44ad' },
-  { id:'alois',   nom:'Aloïs',   color:'#c0392b' },
-  { id:'anthony', nom:'Anthony', color:'#d35400' }
+  {id:'fabien',nom:'Fabien',color:'#2980b9'},{id:'eric',nom:'Éric',color:'#27ae60'},
+  {id:'david',nom:'David',color:'#8e44ad'},{id:'alois',nom:'Aloïs',color:'#c0392b'},
+  {id:'anthony',nom:'Anthony',color:'#d35400'}
 ];
-
 const TYPES_ABSENCE = [
-  { id:'conge',      label:'Congés payés',    color:'#2ecc71', icon:'🏖️' },
-  { id:'maladie',    label:'Arrêt maladie',   color:'#e74c3c', icon:'🤒' },
-  { id:'accident',   label:'Accident travail',color:'#e67e22', icon:'🚑' },
-  { id:'formation',  label:'Formation',       color:'#2980b9', icon:'📚' },
-  { id:'rtt',        label:'RTT',             color:'#8e44ad', icon:'📅' },
-  { id:'sans-solde', label:'Sans solde',      color:'#7f8c8d', icon:'📋' },
-  { id:'ferie',      label:'Jour férié',      color:'#f39c12', icon:'🎉' }
+  {id:'conge',label:'Congés payés',color:'#2ecc71',icon:'🏖️'},
+  {id:'maladie',label:'Arrêt maladie',color:'#e74c3c',icon:'🤒'},
+  {id:'accident',label:'Accident travail',color:'#e67e22',icon:'🚑'},
+  {id:'formation',label:'Formation',color:'#2980b9',icon:'📚'},
+  {id:'rtt',label:'RTT',color:'#8e44ad',icon:'📅'},
+  {id:'sans-solde',label:'Sans solde',color:'#7f8c8d',icon:'📋'},
+  {id:'ferie',label:'Jour férié',color:'#f39c12',icon:'🎉'}
 ];
 
-let state       = { loanNames:[...DEFAULT_LOAN], noLoanNames:[...DEFAULT_NOLOAN], appointments:[], absences:[], weekOffset:0 };
-let congesState = { absences:[] };
-let nbTech      = parseInt(localStorage.getItem('carrosserie_tech') || '3');
-let isSaving = false, isSavingConges = false;
-let contratAppt = null;
-let congesMonth = new Date().getMonth(), congesYear = new Date().getFullYear();
-let pendingConges = null, selectedCongesType = 'conge';
-let currentPage = 'atelier';
-let pendingAppt = null, selectedColor = 0, newPriority = 'moyenne';
-let editingApptId = null, editSelectedColor = 0, editStatus = 'pending', editPieceStatus = 'none', editPriority = 'moyenne';
-let editApptRef = null;
-let pendingAbsence = null, absType = 'conge';
-let dragApptId = null;
-let historyPage = 0;
+let state       = {loanNames:[...DEFAULT_LOAN],noLoanNames:[...DEFAULT_NOLOAN],appointments:[],absences:[],weekOffset:0};
+let congesState = {absences:[]};
+let contratsState = {contrats:[]};
+let nbTech      = parseInt(localStorage.getItem('carrosserie_tech')||'3');
+let isSaving=false, isSavingConges=false, isSavingContrats=false;
+let contratAppt=null;
+let congesMonth=new Date().getMonth(), congesYear=new Date().getFullYear();
+let pendingConges=null, selectedCongesType='conge';
+let currentPage='atelier';
+let pendingAppt=null, selectedColor=0, newPriority='moyenne';
+let editingApptId=null, editSelectedColor=0, editStatus='pending', editPieceStatus='none', editPriority='moyenne';
+let editApptRef=null;
+let pendingAbsence=null, absType='conge';
+let dragApptId=null;
+let historyPage=0;
+let pendingDeleteGroupId=null;
+let restitutionContratId=null;
 
 // ── NAVIGATION ──
-window.switchPage = function(page) {
-  currentPage = page;
-  document.getElementById('pageAtelier').classList.toggle('active', page==='atelier');
-  document.getElementById('pageConges').classList.toggle('active', page==='conges');
-  document.getElementById('navAtelier').classList.toggle('active', page==='atelier');
-  document.getElementById('navConges').classList.toggle('active', page==='conges');
-  document.getElementById('atelierTopRight').style.display = page==='atelier' ? 'flex' : 'none';
-  document.getElementById('congesTopRight').style.display  = page==='conges'  ? 'flex' : 'none';
-  if (page==='conges') renderConges();
+window.switchPage=function(page){
+  currentPage=page;
+  ['atelier','conges','contrats'].forEach(p=>{
+    document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active',p===page);
+    document.getElementById('nav'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active',p===page);
+  });
+  document.getElementById('atelierTopRight').style.display=page==='atelier'?'flex':'none';
+  document.getElementById('congesTopRight').style.display=page==='conges'?'flex':'none';
+  document.getElementById('contratsTopRight').style.display=page==='contrats'?'flex':'none';
+  if(page==='conges') renderConges();
+  if(page==='contrats') renderContrats();
 };
 
 // ── FIREBASE ──
-function setSyncStatus(s) {
+function setSyncStatus(s){
   const el=document.getElementById('syncStatus');
   const map={ok:['✅ Sync','sync-ok'],wait:['⏳ Conn…','sync-wait'],save:['💾 Sauvegarde…','sync-wait'],err:['❌ Hors ligne','sync-err']};
   el.textContent=map[s][0]; el.className='sync-indicator '+map[s][1];
 }
-async function saveToFirebase() {
+async function saveToFirebase(){
   isSaving=true; setSyncStatus('save');
-  try { await setDoc(docRef,{...state,updatedAt:Date.now()}); setSyncStatus('ok'); }
-  catch(e) { console.error(e); setSyncStatus('err'); }
+  try{await setDoc(docRef,{...state,updatedAt:Date.now()});setSyncStatus('ok');}
+  catch(e){console.error(e);setSyncStatus('err');}
   setTimeout(()=>isSaving=false,600);
 }
-function setSyncConges(s) {
+function setSyncConges(s){
   const el=document.getElementById('syncStatusConges');
   const map={ok:['✅ Sync','sync-ok'],wait:['⏳ Conn…','sync-wait'],save:['💾 Sauvegarde…','sync-wait'],err:['❌ Hors ligne','sync-err']};
   el.textContent=map[s][0]; el.className='sync-indicator '+map[s][1];
 }
-async function saveConges() {
+async function saveConges(){
   isSavingConges=true; setSyncConges('save');
-  try { await setDoc(docConges,{...congesState,updatedAt:Date.now()}); setSyncConges('ok'); }
-  catch(e) { console.error(e); setSyncConges('err'); }
+  try{await setDoc(docConges,{...congesState,updatedAt:Date.now()});setSyncConges('ok');}
+  catch(e){console.error(e);setSyncConges('err');}
   setTimeout(()=>isSavingConges=false,600);
 }
+async function saveContratsFirebase(){
+  isSavingContrats=true;
+  try{await setDoc(docContrats,{...contratsState,updatedAt:Date.now()});}
+  catch(e){console.error(e);}
+  setTimeout(()=>isSavingContrats=false,600);
+}
 
-onSnapshot(docRef, snap=>{
-  if(isSaving) return;
+onSnapshot(docRef,snap=>{
+  if(isSaving)return;
   if(snap.exists()){
     const off=state.weekOffset;
     state={...snap.data()};
@@ -675,31 +753,36 @@ onSnapshot(docRef, snap=>{
     while(state.loanNames.length<8)   state.loanNames.push('BAYON 0'+state.loanNames.length);
     while(state.noLoanNames.length<8) state.noLoanNames.push('Poste '+state.noLoanNames.length);
     state.appointments=state.appointments.map(normalizeAppt);
-    state.weekOffset=off;
-    setSyncStatus('ok');
-  } else { setSyncStatus('ok'); }
+    state.weekOffset=off; setSyncStatus('ok');
+  }else{setSyncStatus('ok');}
   render();
 },err=>{console.error(err);setSyncStatus('err');render();});
 
-onSnapshot(docConges, snap=>{
-  if(isSavingConges) return;
-  if(snap.exists()){
-    congesState={...snap.data()};
-    if(!Array.isArray(congesState.absences)) congesState.absences=[];
-  } else { congesState={absences:[]}; }
+onSnapshot(docConges,snap=>{
+  if(isSavingConges)return;
+  if(snap.exists()){congesState={...snap.data()};if(!Array.isArray(congesState.absences))congesState.absences=[];}
+  else{congesState={absences:[]};}
   setSyncConges('ok');
-  if(currentPage==='conges') renderConges();
+  if(currentPage==='conges')renderConges();
 },err=>{console.error(err);setSyncConges('err');});
 
-function normalizeAppt(a) {
+onSnapshot(docContrats,snap=>{
+  if(isSavingContrats)return;
+  if(snap.exists()){contratsState={...snap.data()};if(!Array.isArray(contratsState.contrats))contratsState.contrats=[];}
+  else{contratsState={contrats:[]};}
+  if(currentPage==='contrats')renderContrats();
+},err=>{console.error(err);});
+
+function normalizeAppt(a){
   if(!a.pieceStatus)      a.pieceStatus='none';
   if(!a.pieceFournisseur) a.pieceFournisseur='';
   if(!a.pieceNote)        a.pieceNote='';
   if(!a.priority)         a.priority='moyenne';
   if(!a.tel)              a.tel='';
   if(!a.adresse)          a.adresse='';
+  if(!a.memo)             a.memo='';
   if(a.arrived===undefined) a.arrived=false;
-  if(a.piece===true && a.pieceStatus==='none') a.pieceStatus='ordered';
+  if(a.piece===true&&a.pieceStatus==='none') a.pieceStatus='ordered';
   if(!a.groupId)    a.groupId=a.id;
   if(!a.totalDays)  a.totalDays=a.span||1;
   if(a.segmentIndex===undefined) a.segmentIndex=0;
@@ -708,63 +791,19 @@ function normalizeAppt(a) {
   return a;
 }
 
-// ── CALCUL DATE FIN (jours ouvrés) ──
-function calcDateFin(dateDebut, nbJours) {
-  const fin=new Date(dateDebut);
-  let reste=(nbJours||1)-1;
-  while(reste>0){
-    fin.setDate(fin.getDate()+1);
-    const dow=fin.getDay();
-    if(dow!==0&&dow!==6) reste--;
-  }
-  return fin;
-}
-
-// ── DÉCOUPE EN SEGMENTS PAR SEMAINE ──
-function splitRdvIntoWeeks(startDay, totalDays, weekStartDate) {
-  const segments=[];
-  let remaining=totalDays;
-  let currentDay=startDay;
-  let currentWeekStart=new Date(weekStartDate);
-  let segIdx=0;
-  while(remaining>0){
-    const daysThisWeek=Math.min(remaining,5-currentDay);
-    segments.push({
-      weekStart:new Date(currentWeekStart),
-      day:currentDay,
-      span:daysThisWeek,
-      segmentIndex:segIdx,
-      hasPrev:segIdx>0,
-      hasNext:remaining-daysThisWeek>0
-    });
-    remaining-=daysThisWeek;
-    currentDay=0;
-    currentWeekStart=new Date(currentWeekStart);
-    currentWeekStart.setDate(currentWeekStart.getDate()+7);
-    segIdx++;
-  }
-  return segments;
-}
-
-// ── PREVIEW ──
-function updatePreview(previewId, startDay, weekOff, nbJours) {
-  if(!nbJours||nbJours<1){document.getElementById(previewId).textContent='📅 —';return;}
-  const days=getWeekDays(weekOff);
-  const dateDebut=days[startDay];
-  const dateFin=calcDateFin(dateDebut,nbJours);
-  const segs=splitRdvIntoWeeks(startDay,nbJours,days[0]);
-  let txt=`📅 Du ${formatDateFR(dateDebut)} au ${formatDateFR(dateFin)} (${nbJours}j)`;
-  if(segs.length>1) txt+=` — sur ${segs.length} semaines`;
-  document.getElementById(previewId).textContent=txt;
+// ── HEURES LISSÉES PAR SEGMENT ──
+// Calcule les heures attribuées à un segment en fonction du ratio de jours
+function heuresSegment(totalHours, totalDays, segmentSpan){
+  if(!totalDays||totalDays===0) return totalHours;
+  return Math.round((totalHours * segmentSpan / totalDays) * 10) / 10;
 }
 
 // ── DATES ──
-function getMonday(date) {
+function getMonday(date){
   const d=new Date(date),day=d.getDay();
-  d.setDate(d.getDate()+(day===0?-6:1-day));
-  d.setHours(0,0,0,0); return d;
+  d.setDate(d.getDate()+(day===0?-6:1-day)); d.setHours(0,0,0,0); return d;
 }
-function getWeekDays(offset) {
+function getWeekDays(offset){
   const o=offset!==undefined?offset:state.weekOffset;
   const m=getMonday(new Date()); m.setDate(m.getDate()+o*7);
   return Array.from({length:5},(_,i)=>{const d=new Date(m);d.setDate(d.getDate()+i);return d;});
@@ -774,16 +813,44 @@ function getWeekLabel(days){
   const o={day:'numeric',month:'long'},y=days[0].getFullYear();
   return `Semaine du ${days[0].toLocaleDateString('fr-FR',o)} au ${days[4].toLocaleDateString('fr-FR',o)} ${y}`;
 }
-function formatDateFR(d){
-  return `${JOURS_FR[d.getDay()]} ${d.getDate()} ${MOIS_FR[d.getMonth()]} ${d.getFullYear()}`;
-}
-function dateToKey(d){
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
+function formatDateFR(d){return `${JOURS_FR[d.getDay()]} ${d.getDate()} ${MOIS_FR[d.getMonth()]} ${d.getFullYear()}`;}
+function formatDateShort(d){return `${d.getDate()} ${MOIS_FR[d.getMonth()]} ${d.getFullYear()}`;}
+function dateToKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function getWeekOffset(weekStart){
   const apptMon=getMonday(new Date(weekStart));
   const nowMon=getMonday(new Date());
   return Math.round((apptMon-nowMon)/(7*86400000));
+}
+function calcDateFin(dateDebut,nbJours){
+  const fin=new Date(dateDebut); let reste=(nbJours||1)-1;
+  while(reste>0){fin.setDate(fin.getDate()+1);const dow=fin.getDay();if(dow!==0&&dow!==6)reste--;}
+  return fin;
+}
+
+// ── SEGMENTS ──
+function splitRdvIntoWeeks(startDay,totalDays,weekStartDate){
+  const segments=[]; let remaining=totalDays,currentDay=startDay,segIdx=0;
+  let currentWeekStart=new Date(weekStartDate);
+  while(remaining>0){
+    const daysThisWeek=Math.min(remaining,5-currentDay);
+    segments.push({weekStart:new Date(currentWeekStart),day:currentDay,span:daysThisWeek,segmentIndex:segIdx,hasPrev:segIdx>0,hasNext:remaining-daysThisWeek>0});
+    remaining-=daysThisWeek; currentDay=0;
+    currentWeekStart=new Date(currentWeekStart); currentWeekStart.setDate(currentWeekStart.getDate()+7);
+    segIdx++;
+  }
+  return segments;
+}
+
+// ── PREVIEW ──
+function updatePreview(previewId,startDay,weekOff,nbJours){
+  if(!nbJours||nbJours<1){document.getElementById(previewId).textContent='📅 —';return;}
+  const days=getWeekDays(weekOff);
+  const dateDebut=days[startDay];
+  const dateFin=calcDateFin(dateDebut,nbJours);
+  const segs=splitRdvIntoWeeks(startDay,nbJours,days[0]);
+  let txt=`📅 Du ${formatDateFR(dateDebut)} au ${formatDateFR(dateFin)} (${nbJours}j)`;
+  if(segs.length>1) txt+=` — sur ${segs.length} semaine${segs.length>1?'s':''}`;
+  document.getElementById(previewId).textContent=txt;
 }
 
 // ── TECH ──
@@ -793,11 +860,24 @@ function updateTech(){
   document.getElementById('techCount').textContent=nbTech;
   document.getElementById('totalCapacity').textContent=capacity+'h';
   const days=getWeekDays(),ws=days[0].toDateString();
-  const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws&&a.segmentIndex===0);
-  const used=wa.reduce((s,a)=>s+(a.hours||0),0);
+  // Heures lissées : chaque segment contribue ses heures proportionnelles
+  const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
+  const used=wa.reduce((s,a)=>s+heuresSegment(a.hours||0,a.totalDays||1,a.span||1),0);
   const pct=capacity>0?Math.round((used/capacity)*100):0;
   const el=document.getElementById('fillRate');
   el.textContent=pct+'%'; el.style.color=pct>=100?'#e74c3c':pct>=80?'#f5a623':'#2ecc71';
+}
+
+// ── OCCUPIED CELLS ──
+function getOccupiedCells(days){
+  const ws=days[0].toDateString();
+  const occupied=new Set();
+  state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws).forEach(a=>{
+    for(let d=a.day;d<Math.min(a.day+(a.span||1),5);d++){
+      occupied.add(`${a.type}-${a.row}-${d}`);
+    }
+  });
+  return occupied;
 }
 
 // ── RENDER ──
@@ -805,20 +885,23 @@ function render(){
   const days=getWeekDays();
   document.getElementById('weekLabel').textContent=getWeekLabel(days);
   updateStats();
-  const planner=document.getElementById('planner');
-  planner.innerHTML='';
+  const planner=document.getElementById('planner'); planner.innerHTML='';
+  const occupied=getOccupiedCells(days);
+
   planner.appendChild(mksec('🚗 Véhicules de prêt — HYUNDAI BAYON (8 postes)'));
   const lc=document.createElement('div'); lc.className='grid-container';
   lc.appendChild(buildHeader(days));
   const lb=document.createElement('div'); lb.className='grid-body';
-  state.loanNames.forEach((n,i)=>lb.appendChild(makeRow('loan',i,n,days)));
+  state.loanNames.forEach((n,i)=>lb.appendChild(makeRow('loan',i,n,days,occupied)));
   lc.appendChild(lb); planner.appendChild(lc);
+
   planner.appendChild(mksec('🔩 Postes sans véhicule de prêt'));
   const nc=document.createElement('div'); nc.className='grid-container';
   nc.appendChild(buildHeader(days));
   const nb=document.createElement('div'); nb.className='grid-body';
-  state.noLoanNames.forEach((n,i)=>nb.appendChild(makeRow('noloan',i,n,days)));
+  state.noLoanNames.forEach((n,i)=>nb.appendChild(makeRow('noloan',i,n,days,occupied)));
   nc.appendChild(nb); planner.appendChild(nc);
+
   renderAppts(days);
   renderAbsences(days);
 }
@@ -835,10 +918,9 @@ function buildHeader(days){
   return h;
 }
 
-function makeRow(type,rowIdx,name,days){
+function makeRow(type,rowIdx,name,days,occupied){
   const row=document.createElement('div');
   row.className=`grid-row ${type==='loan'?'has-loan':'no-loan'}`;
-  row.dataset.type=type; row.dataset.row=rowIdx;
   const label=document.createElement('div'); label.className='row-label';
   label.innerHTML=`<span class="vehicle-icon">${type==='loan'?'🚗':'🔧'}</span>`;
   const nameEl=document.createElement('span'); nameEl.className='vehicle-name';
@@ -849,13 +931,17 @@ function makeRow(type,rowIdx,name,days){
   row.appendChild(label);
   days.forEach((d,dayIdx)=>{
     const cell=document.createElement('div');
-    cell.className=`day-cell${isToday(d)?' today-col':''}`;
+    const isOccupied=occupied.has(`${type}-${rowIdx}-${dayIdx}`);
+    cell.className=`day-cell${isToday(d)?' today-col':''}${isOccupied?' occupied':''}`;
     cell.dataset.type=type; cell.dataset.row=rowIdx; cell.dataset.day=dayIdx;
-    cell.addEventListener('click',()=>openModal(type,rowIdx,dayIdx));
+    cell.addEventListener('click',()=>{
+      if(isOccupied) return; // bloque le clic sur cellule occupée
+      openModal(type,rowIdx,dayIdx);
+    });
     cell.addEventListener('contextmenu',e=>{e.preventDefault();openAbsenceModal(type,rowIdx,dayIdx);});
-    cell.addEventListener('dragover',e=>{e.preventDefault();cell.classList.add('drag-over');});
+    cell.addEventListener('dragover',e=>{e.preventDefault();if(!isOccupied)cell.classList.add('drag-over');});
     cell.addEventListener('dragleave',()=>cell.classList.remove('drag-over'));
-    cell.addEventListener('drop',e=>{e.preventDefault();cell.classList.remove('drag-over');handleDrop(type,rowIdx,dayIdx);});
+    cell.addEventListener('drop',e=>{e.preventDefault();cell.classList.remove('drag-over');if(!isOccupied)handleDrop(type,rowIdx,dayIdx);});
     row.appendChild(cell);
   });
   return row;
@@ -873,22 +959,22 @@ function startEditName(el,type,rowIdx){
 function renderAppts(days){
   const ws=days[0].toDateString();
   state.appointments.forEach(appt=>{
-    if(new Date(appt.weekStart).toDateString()!==ws) return;
-    if(appt.row===undefined||appt.day===undefined) return;
+    if(new Date(appt.weekStart).toDateString()!==ws)return;
+    if(appt.row===undefined||appt.day===undefined)return;
     const span=appt.span||1;
     const cell=document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`);
-    if(!cell) return;
+    if(!cell)return;
 
     const prio=appt.priority||'moyenne';
     const isLoanFirst=appt.type==='loan'&&appt.segmentIndex===0;
-
-    // ── Calcul dates pour tooltip et contrat ──
     const firstSeg=state.appointments.find(a=>a.groupId===appt.groupId&&a.segmentIndex===0)||appt;
     const weekOffFirst=getWeekOffset(firstSeg.weekStart);
     const daysFirst=getWeekDays(weekOffFirst);
     const dateDebut=daysFirst[firstSeg.day]||daysFirst[0];
     const totalDays=appt.totalDays||1;
     const dateFin=calcDateFin(dateDebut,totalDays);
+    // Heures lissées pour ce segment
+    const hSeg=heuresSegment(appt.hours||0,totalDays,span);
 
     const el=document.createElement('div');
     el.className=`appt prio-${prio}${appt.arrived?' arrived':''}`;
@@ -899,56 +985,59 @@ function renderAppts(days){
     if(appt.pieceStatus==='delivered') pieceBadge='<span class="badge badge-blue">✅</span>';
     else if(appt.pieceStatus==='ordered') pieceBadge='<span class="badge badge-orange">📦</span>';
 
-    const arrivedBadge=appt.arrived?'<span class="badge badge-green">✔</span>':'';
-    const prioBadge=prio==='haute'?'<span class="badge badge-red">🔴</span>':'';
     const prevBadge=appt.hasPrev?'<span class="badge-prev">◀</span>':'';
     const nextBadge=appt.hasNext?'<span class="badge-next">▶</span>':'';
+    const prioBadge=prio==='haute'?'<span class="badge badge-red">🔴</span>':'';
+    const arrivedBadge=appt.arrived?'<span class="badge badge-green">✔</span>':'';
+    const memoDot=appt.memo?'<span class="appt-memo-dot" title="Mémo">📝</span>':'';
     const telTag=appt.tel?`<span class="appt-tel-tag">📞 ${appt.tel}</span>`:'';
-
-    // ── BOUTON CONTRAT INLINE (dans la ligne du bas, visible uniquement sur lignes prêt segment 0) ──
-    const contratBtn=isLoanFirst
-      ? `<button class="btn-contrat-inline">📄 Contrat</button>`
-      : '';
+    const contratBtn=isLoanFirst?`<button class="btn-contrat-inline">📄 Contrat</button>`:'';
 
     el.innerHTML=`
       <div class="prio-strip"></div>
-      <div class="appt-actions">
-        <button class="btn-action btn-del-action" title="Supprimer">✕</button>
-      </div>
+      <button class="appt-del-btn" title="Supprimer">✕</button>
       <div class="appt-top">
         ${prevBadge}
         <span class="appt-name">${appt.name}</span>
-        ${prioBadge}${arrivedBadge}${pieceBadge}${nextBadge}
+        ${prioBadge}${arrivedBadge}${pieceBadge}${memoDot}${nextBadge}
       </div>
       <div class="appt-bottom">
-        <span class="appt-hours-tag">${appt.hours}h · ${totalDays}j</span>
+        <span class="appt-hours-tag">${hSeg}h · ${span}j</span>
         ${telTag}
         ${contratBtn}
       </div>
     `;
 
-    // Bouton supprimer
-    el.querySelector('.btn-del-action').addEventListener('click',e=>{e.stopPropagation();deleteGroup(appt.groupId);});
+    // Supprimer avec confirmation
+    el.querySelector('.appt-del-btn').addEventListener('click',e=>{
+      e.stopPropagation();
+      confirmDelete(appt.groupId, appt.name);
+    });
 
-    // Bouton contrat inline
+    // Contrat inline
     if(isLoanFirst){
-      el.querySelector('.btn-contrat-inline').addEventListener('click',e=>{e.stopPropagation();openContrat(appt,dateDebut,dateFin,totalDays);});
+      el.querySelector('.btn-contrat-inline').addEventListener('click',e=>{
+        e.stopPropagation();
+        openContrat(appt,dateDebut,dateFin,totalDays);
+      });
     }
 
     // Clic = éditer
     el.addEventListener('click',e=>{
-      if(e.target.closest('.appt-actions')||e.target.classList.contains('btn-contrat-inline')) return;
+      if(e.target.classList.contains('appt-del-btn')||e.target.classList.contains('btn-contrat-inline'))return;
       openEditModal(appt.groupId);
     });
 
     // Tooltip enrichi
     let tip=`${appt.name}\n📅 ${formatDateFR(dateDebut)} → ${formatDateFR(dateFin)} (${totalDays}j)`;
-    if(appt.tel) tip+=`\n📞 ${appt.tel}`;
+    tip+=`\n⏱ ${appt.hours}h total — ${hSeg}h cette semaine`;
+    if(appt.tel)   tip+=`\n📞 ${appt.tel}`;
     if(appt.adresse) tip+=`\n📍 ${appt.adresse}`;
     if(prio==='haute') tip+='\n🔴 PRIORITÉ HAUTE';
     if(appt.pieceStatus==='ordered') tip+=`\n📦 Pièce commandée${appt.pieceFournisseur?' — '+appt.pieceFournisseur:''}`;
     if(appt.pieceStatus==='delivered') tip+='\n✅ Pièce livrée';
     if(appt.pieceNote) tip+=`\n📝 ${appt.pieceNote}`;
+    if(appt.memo) tip+=`\n💬 ${appt.memo}`;
     el.addEventListener('mouseenter',e=>showTooltip(e,tip));
     el.addEventListener('mouseleave',hideTooltip);
     el.addEventListener('mousemove', e=>moveTooltip(e));
@@ -957,7 +1046,7 @@ function renderAppts(days){
     if(appt.segmentIndex===0){
       el.setAttribute('draggable','true');
       el.addEventListener('dragstart',e=>{
-        if(e.target.closest('.appt-actions')||e.target.classList.contains('btn-contrat-inline')){e.preventDefault();return;}
+        if(e.target.classList.contains('appt-del-btn')||e.target.classList.contains('btn-contrat-inline')){e.preventDefault();return;}
         dragApptId=appt.groupId; el.classList.add('dragging');
         const ghost=document.getElementById('dragGhost');
         ghost.style.display='block'; ghost.style.background=appt.color; ghost.textContent=appt.name;
@@ -970,14 +1059,22 @@ function renderAppts(days){
   });
 }
 
+// ── CONFIRMATION SUPPRESSION ──
+function confirmDelete(groupId,name){
+  pendingDeleteGroupId=groupId;
+  document.getElementById('confirmText').textContent=`Supprimer le RDV "${name}" et tous ses segments ?`;
+  document.getElementById('confirmModalOverlay').classList.add('open');
+}
+function closeConfirm(){document.getElementById('confirmModalOverlay').classList.remove('open');pendingDeleteGroupId=null;}
+
 // ── ABSENCES ──
 function renderAbsences(days){
-  if(!state.absences) return;
+  if(!state.absences)return;
   const ws=days[0].toDateString();
   state.absences.forEach(abs=>{
-    if(new Date(abs.weekStart).toDateString()!==ws) return;
+    if(new Date(abs.weekStart).toDateString()!==ws)return;
     const cell=document.querySelector(`[data-type="${abs.type}"][data-row="${abs.row}"][data-day="${abs.day}"]`);
-    if(!cell) return;
+    if(!cell)return;
     const el=document.createElement('div');
     el.className=`absence-block ${abs.absType||'conge'}`;
     el.innerHTML=`${abs.absType==='absence'?'🤒':'🏖️'} ${abs.label||''}<span class="abs-del" title="Supprimer">✕</span>`;
@@ -987,7 +1084,7 @@ function renderAbsences(days){
 }
 
 // ── CONTRAT ──
-function openContrat(appt, dateDebut, dateFin, totalDays) {
+function openContrat(appt,dateDebut,dateFin,totalDays){
   contratAppt=appt;
   document.getElementById('cNom').value    =appt.name   ||'';
   document.getElementById('cTel').value    =appt.tel    ||'';
@@ -999,7 +1096,6 @@ function openContrat(appt, dateDebut, dateFin, totalDays) {
   document.getElementById('cImmatPret').value=immat;
   document.getElementById('contratRdvInfo').textContent=`${appt.name} — HYUNDAI BAYON (${immat})`;
   document.getElementById('contratDatesInfo').textContent=`Du ${formatDateFR(dateDebut)} au ${formatDateFR(dateFin)} — ${totalDays} jour(s)`;
-  // Stocke les dates calculées pour l'impression
   contratAppt._dateDebut=dateDebut;
   contratAppt._dateFin=dateFin;
   contratAppt._totalDays=totalDays;
@@ -1009,7 +1105,7 @@ function openContrat(appt, dateDebut, dateFin, totalDays) {
 function closeContrat(){document.getElementById('contratModalOverlay').classList.remove('open');contratAppt=null;}
 
 function imprimerContrat(){
-  if(!contratAppt) return;
+  if(!contratAppt)return;
   const dateDebut=contratAppt._dateDebut;
   const dateFin=contratAppt._dateFin;
   const totalDays=contratAppt._totalDays;
@@ -1019,12 +1115,30 @@ function imprimerContrat(){
   const numContrat='CBV-'+new Date().getFullYear()+'-'+String(Date.now()).slice(-4);
   const carburantHTML=niveaux.map(n=>`<span><span class="cp-check${carburant===n?' checked':''}"></span> ${n}</span>`).join('');
 
+  // ── Sauvegarde dans historique ──
+  if(!Array.isArray(contratsState.contrats)) contratsState.contrats=[];
+  contratsState.contrats.unshift({
+    id: numContrat,
+    nom: document.getElementById('cNom').value||'',
+    tel: document.getElementById('cTel').value||'',
+    adresse: document.getElementById('cAdresse').value||'',
+    immat,
+    carburant,
+    km: document.getElementById('cKm').value||'',
+    couleur: document.getElementById('cCouleurPret').value||'',
+    dateDebut: dateDebut.toISOString(),
+    dateFin: dateFin.toISOString(),
+    totalDays,
+    dateImpression: new Date().toISOString(),
+    restitue: false,
+    restitDate:'', restitKm:'', restitCarburant:'', restitRemarques:''
+  });
+  saveContratsFirebase();
+
   document.getElementById('contrat-print-zone').innerHTML=`<div class="contrat-print">
     <div class="cp-header">
-      <div>
-        <div class="cp-garage-name">CARROSSERIE BRUN — VALENCE MOTORS</div>
-        <div class="cp-garage-sub">307 avenue de Romans — 26000 Valence<br>Tél : 04 75 55 64 39</div>
-      </div>
+      <div><div class="cp-garage-name">CARROSSERIE BRUN — VALENCE MOTORS</div>
+        <div class="cp-garage-sub">307 avenue de Romans — 26000 Valence<br>Tél : 04 75 55 64 39</div></div>
       <div class="cp-num"><strong>CONTRAT N° ${numContrat}</strong>Date : ${formatDateFR(new Date())}</div>
     </div>
     <div class="cp-title">CONTRAT DE PRÊT DE VÉHICULE</div>
@@ -1046,16 +1160,8 @@ function imprimerContrat(){
       </div>
     </div>
     <div class="cp-dates">
-      <div>
-        <div class="cp-date-label">📅 Remise du véhicule</div>
-        <div class="cp-date-val">${formatDateFR(dateDebut)}</div>
-        <div class="cp-date-sub">Heure : _________ h</div>
-      </div>
-      <div>
-        <div class="cp-date-label">📅 Restitution prévue</div>
-        <div class="cp-date-val">${formatDateFR(dateFin)}</div>
-        <div class="cp-date-sub">Heure : _________ h &nbsp;&nbsp; Km retour : _____________</div>
-      </div>
+      <div><div class="cp-date-label">📅 Remise du véhicule</div><div class="cp-date-val">${formatDateFR(dateDebut)}</div><div class="cp-date-sub">Heure : _________ h</div></div>
+      <div><div class="cp-date-label">📅 Restitution prévue</div><div class="cp-date-val">${formatDateFR(dateFin)}</div><div class="cp-date-sub">Heure : _________ h &nbsp;&nbsp; Km retour : _____________</div></div>
     </div>
     <div class="cp-conditions">
       <div class="cp-conditions-title">📋 Conditions du prêt</div>
@@ -1070,14 +1176,8 @@ function imprimerContrat(){
       </ul>
     </div>
     <div class="cp-signatures">
-      <div>
-        <div class="cp-sig-label">Signature du client<br><small style="font-size:11px;color:#888">(précédée de « Lu et approuvé »)</small></div>
-        <div class="cp-sig-line">Nom : ${document.getElementById('cNom').value||'_______________________________'}</div>
-      </div>
-      <div>
-        <div class="cp-sig-label">Pour la Carrosserie Brun Valence Motors<br><small style="font-size:11px;color:#888">Cachet et signature</small></div>
-        <div class="cp-sig-line">Carrosserie Brun — Valence Motors</div>
-      </div>
+      <div><div class="cp-sig-label">Signature du client<br><small style="font-size:11px;color:#888">(précédée de « Lu et approuvé »)</small></div><div class="cp-sig-line">Nom : ${document.getElementById('cNom').value||'_______________________________'}</div></div>
+      <div><div class="cp-sig-label">Pour la Carrosserie Brun Valence Motors<br><small style="font-size:11px;color:#888">Cachet et signature</small></div><div class="cp-sig-line">Carrosserie Brun — Valence Motors</div></div>
     </div>
     <div class="cp-footer">
       Document établi en deux exemplaires — un exemplaire remis au client, un exemplaire conservé par la carrosserie<br>
@@ -1088,13 +1188,108 @@ function imprimerContrat(){
   setTimeout(()=>{window.print();setTimeout(()=>{document.getElementById('contrat-print-zone').innerHTML='';},3000);},200);
 }
 
+// ── HISTORIQUE CONTRATS ──
+function renderContrats(){
+  const list=document.getElementById('contratsListWrap');
+  const contrats=contratsState.contrats||[];
+  document.getElementById('contratsCount').textContent=`${contrats.length} contrat${contrats.length!==1?'s':''}`;
+  if(!contrats.length){
+    list.innerHTML=`<div style="text-align:center;color:var(--muted);padding:40px;font-size:.9rem;">Aucun contrat généré pour le moment.<br>Les contrats apparaissent ici après impression.</div>`;
+    return;
+  }
+  list.innerHTML='';
+  contrats.forEach(c=>{
+    const dDebut=new Date(c.dateDebut);
+    const dFin=new Date(c.dateFin);
+    const dImp=new Date(c.dateImpression);
+    const item=document.createElement('div'); item.className='contrat-history-item';
+    const restitueHTML=c.restitue
+      ? `<div class="chi-restitue">✅ Restitué le ${formatDateShort(new Date(c.restitDate))} — ${c.restitKm?c.restitKm+' km':''} — Carb: ${c.restitCarburant||'?'}${c.restitRemarques?' — '+c.restitRemarques:''}</div>`
+      : `<button class="btn-restit" data-id="${c.id}">🔑 Saisir restitution</button>`;
+    item.innerHTML=`
+      <div class="chi-info">
+        <div class="chi-nom">👤 ${c.nom||'—'} &nbsp;—&nbsp; 🚗 BAYON ${c.immat||'?'}</div>
+        <div class="chi-meta">📅 Du ${formatDateShort(dDebut)} au ${formatDateShort(dFin)} · ${c.totalDays}j &nbsp;|&nbsp; Imprimé le ${formatDateShort(dImp)} &nbsp;|&nbsp; Départ: ${c.km?c.km+' km':'?'} · Carb: ${c.carburant||'?'}${c.tel?' &nbsp;|&nbsp; 📞 '+c.tel:''}</div>
+        ${restitueHTML}
+      </div>
+      <div class="chi-num">${c.id}</div>
+    `;
+    const btnR=item.querySelector('.btn-restit');
+    if(btnR) btnR.addEventListener('click',()=>openRestitution(c.id,c));
+    list.appendChild(item);
+  });
+}
+
+// ── RESTITUTION ──
+function openRestitution(id,c){
+  restitutionContratId=id;
+  document.getElementById('restitInfo').textContent=`${c.nom} — BAYON ${c.immat} — Restitution prévue le ${formatDateShort(new Date(c.dateFin))}`;
+  document.getElementById('restitDate').value=dateToKey(new Date());
+  document.getElementById('restitKm').value='';
+  document.getElementById('restitCarburant').value='plein';
+  document.getElementById('restitRemarques').value='';
+  document.getElementById('restitutionModalOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('restitKm').focus(),50);
+}
+function closeRestitution(){document.getElementById('restitutionModalOverlay').classList.remove('open');restitutionContratId=null;}
+function saveRestitution(){
+  if(!restitutionContratId)return;
+  const idx=contratsState.contrats.findIndex(c=>c.id===restitutionContratId);
+  if(idx<0)return;
+  contratsState.contrats[idx].restitue=true;
+  contratsState.contrats[idx].restitDate=document.getElementById('restitDate').value;
+  contratsState.contrats[idx].restitKm=document.getElementById('restitKm').value;
+  contratsState.contrats[idx].restitCarburant=document.getElementById('restitCarburant').value;
+  contratsState.contrats[idx].restitRemarques=document.getElementById('restitRemarques').value;
+  saveContratsFirebase(); closeRestitution(); renderContrats();
+}
+
+// ── IMPRESSION PLANNING ──
+function printPlanning(){
+  const days=getWeekDays();
+  const ws=days[0].toDateString();
+  const allAppts=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
+
+  let rows='';
+  const allRows=[
+    ...state.loanNames.map((n,i)=>({type:'loan',row:i,name:n,isLoan:true})),
+    ...state.noLoanNames.map((n,i)=>({type:'noloan',row:i,name:n,isLoan:false}))
+  ];
+
+  allRows.forEach(r=>{
+    const cells=days.map((_,dayIdx)=>{
+      const appts=allAppts.filter(a=>a.type===r.type&&a.row===r.row&&a.day===dayIdx);
+      return `<td>${appts.map(a=>`<div class="pp-appt" style="background:${a.color}22;border-left:3px solid ${a.color}">${a.name} (${heuresSegment(a.hours||0,a.totalDays||1,a.span||1)}h)</div>`).join('')}</td>`;
+    }).join('');
+    rows+=`<tr><td class="pp-label">${r.isLoan?'🚗':'🔧'} ${r.name}</td>${cells}</tr>`;
+  });
+
+  document.getElementById('planning-print-zone').innerHTML=`<div class="planning-print">
+    <div class="pp-header">
+      <div>
+        <div class="pp-title">CARROSSERIE BRUN — VALENCE MOTORS</div>
+        <div class="pp-week">307 avenue de Romans, 26000 Valence — Tél : 04 75 55 64 39</div>
+      </div>
+      <div class="pp-week">${getWeekLabel(days)}</div>
+    </div>
+    <table class="pp-table">
+      <thead><tr>
+        <th style="width:100px;">Poste</th>
+        ${days.map(d=>`<th>${d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'short'})}</th>`).join('')}
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="pp-footer">Imprimé le ${formatDateFR(new Date())} — Planning généré par Carrosserie Brun Valence Motors</div>
+  </div>`;
+  setTimeout(()=>{window.print();setTimeout(()=>{document.getElementById('planning-print-zone').innerHTML='';},3000);},200);
+}
+
 // ── DRAG ──
 document.addEventListener('dragover',e=>{const g=document.getElementById('dragGhost');if(g.style.display==='block'){g.style.left=e.clientX+'px';g.style.top=(e.clientY-20)+'px';}});
-
 function handleDrop(type,row,day){
-  if(!dragApptId) return;
+  if(!dragApptId)return;
   const firstSeg=state.appointments.find(a=>a.groupId===dragApptId&&a.segmentIndex===0);
-  if(!firstSeg) return;
+  if(!firstSeg)return;
   const totalDays=firstSeg.totalDays||firstSeg.span||1;
   const days=getWeekDays();
   state.appointments=state.appointments.filter(a=>a.groupId!==dragApptId);
@@ -1104,10 +1299,10 @@ function handleDrop(type,row,day){
       ...firstSeg,
       id:i===0?firstSeg.id:Date.now().toString(36)+Math.random().toString(36).slice(2)+i,
       weekStart:seg.weekStart.toISOString(),
-      day:seg.day, span:seg.span,
+      day:seg.day,span:seg.span,
       segmentIndex:seg.segmentIndex,
-      hasPrev:seg.hasPrev, hasNext:seg.hasNext,
-      type, row
+      hasPrev:seg.hasPrev,hasNext:seg.hasNext,
+      type,row
     });
   });
   saveToFirebase(); render();
@@ -1124,6 +1319,7 @@ function openModal(type,row,day){
   document.getElementById('apptName').value='';
   document.getElementById('apptTel').value='';
   document.getElementById('apptAdresse').value='';
+  document.getElementById('apptMemo').value='';
   document.getElementById('apptDays').value=1;
   document.getElementById('apptHours').value=4;
   updatePreview('apptPreview',day,state.weekOffset,1);
@@ -1141,10 +1337,11 @@ function setNewPrio(p){
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open');pendingAppt=null;}
 
 function saveAppt(){
-  if(!pendingAppt) return;
+  if(!pendingAppt)return;
   const name=document.getElementById('apptName').value.trim();
   const tel=document.getElementById('apptTel').value.trim();
   const adresse=document.getElementById('apptAdresse').value.trim();
+  const memo=document.getElementById('apptMemo').value.trim();
   const totalDays=parseInt(document.getElementById('apptDays').value)||1;
   const hours=parseFloat(document.getElementById('apptHours').value)||0;
   if(!name){document.getElementById('apptName').focus();return;}
@@ -1155,14 +1352,14 @@ function saveAppt(){
   segs.forEach((seg,i)=>{
     state.appointments.push({
       id:groupId+(i===0?'':'-'+i),
-      groupId, segmentIndex:seg.segmentIndex,
-      hasPrev:seg.hasPrev, hasNext:seg.hasNext,
-      totalDays, type:pendingAppt.type, row:pendingAppt.row,
-      day:seg.day, span:seg.span,
-      name, hours, tel, adresse, color,
+      groupId,segmentIndex:seg.segmentIndex,
+      hasPrev:seg.hasPrev,hasNext:seg.hasNext,
+      totalDays,type:pendingAppt.type,row:pendingAppt.row,
+      day:seg.day,span:seg.span,
+      name,hours,tel,adresse,memo,color,
       weekStart:seg.weekStart.toISOString(),
-      priority:newPriority, arrived:false,
-      pieceStatus:'none', pieceFournisseur:'', pieceNote:''
+      priority:newPriority,arrived:false,
+      pieceStatus:'none',pieceFournisseur:'',pieceNote:''
     });
   });
   saveToFirebase(); closeModal(); render();
@@ -1171,7 +1368,7 @@ function saveAppt(){
 // ── EDIT MODAL ──
 function openEditModal(groupId){
   const first=state.appointments.find(a=>a.groupId===groupId&&a.segmentIndex===0);
-  if(!first) return;
+  if(!first)return;
   editingApptId=groupId; editApptRef=first;
   editStatus=first.arrived?'arrived':'pending';
   editPieceStatus=first.pieceStatus||'none'; editPriority=first.priority||'moyenne';
@@ -1179,6 +1376,7 @@ function openEditModal(groupId){
   document.getElementById('editApptName').value=first.name;
   document.getElementById('editApptTel').value=first.tel||'';
   document.getElementById('editApptAdresse').value=first.adresse||'';
+  document.getElementById('editApptMemo').value=first.memo||'';
   document.getElementById('editApptHours').value=first.hours;
   document.getElementById('editApptDays').value=first.totalDays||first.span||1;
   document.getElementById('editPieceFournisseur').value=first.pieceFournisseur||'';
@@ -1210,12 +1408,12 @@ function setEditPieceStatus(s){
   document.querySelector('.piece-fournisseur').style.display=(s==='none'?'none':'block');
 }
 function closeEditModal(){document.getElementById('editModalOverlay').classList.remove('open');editingApptId=null;editApptRef=null;}
-
 function saveEditAppt(){
-  if(!editingApptId||!editApptRef) return;
+  if(!editingApptId||!editApptRef)return;
   const name=document.getElementById('editApptName').value.trim();
   const tel=document.getElementById('editApptTel').value.trim();
   const adresse=document.getElementById('editApptAdresse').value.trim();
+  const memo=document.getElementById('editApptMemo').value.trim();
   const hours=parseFloat(document.getElementById('editApptHours').value)||0;
   const totalDays=parseInt(document.getElementById('editApptDays').value)||1;
   if(!name){document.getElementById('editApptName').focus();return;}
@@ -1229,14 +1427,14 @@ function saveEditAppt(){
   segs.forEach((seg,i)=>{
     state.appointments.push({
       id:editingApptId+(i===0?'':'-'+i),
-      groupId:editingApptId, segmentIndex:seg.segmentIndex,
-      hasPrev:seg.hasPrev, hasNext:seg.hasNext,
-      totalDays, type:editApptRef.type, row:editApptRef.row,
-      day:seg.day, span:seg.span,
-      name, hours, tel, adresse, color,
+      groupId:editingApptId,segmentIndex:seg.segmentIndex,
+      hasPrev:seg.hasPrev,hasNext:seg.hasNext,
+      totalDays,type:editApptRef.type,row:editApptRef.row,
+      day:seg.day,span:seg.span,
+      name,hours,tel,adresse,memo,color,
       weekStart:seg.weekStart.toISOString(),
-      priority:editPriority, arrived:(editStatus==='arrived'),
-      pieceStatus:editPieceStatus, pieceFournisseur:pf, pieceNote:pn
+      priority:editPriority,arrived:(editStatus==='arrived'),
+      pieceStatus:editPieceStatus,pieceFournisseur:pf,pieceNote:pn
     });
   });
   saveToFirebase(); closeEditModal(); render();
@@ -1261,8 +1459,8 @@ function openAbsenceModal(type,row,day){
 }
 function closeAbsModal(){document.getElementById('absenceModalOverlay').classList.remove('open');pendingAbsence=null;}
 function saveAbsence(){
-  if(!pendingAbsence) return;
-  if(!state.absences) state.absences=[];
+  if(!pendingAbsence)return;
+  if(!state.absences)state.absences=[];
   const weekDays=getWeekDays();
   state.absences.push({
     id:Date.now().toString(36)+Math.random().toString(36).slice(2),
@@ -1277,9 +1475,12 @@ function deleteAbsence(id){state.absences=state.absences.filter(a=>a.id!==id);sa
 // ── STATS ──
 function updateStats(){
   const days=getWeekDays(),ws=days[0].toDateString();
-  const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws&&a.segmentIndex===0);
-  document.getElementById('totalHours').textContent=wa.reduce((s,a)=>s+(a.hours||0),0)+'h';
-  document.getElementById('totalAppts').textContent=wa.length;
+  const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
+  // Heures lissées par segment
+  const totalH=wa.reduce((s,a)=>s+heuresSegment(a.hours||0,a.totalDays||1,a.span||1),0);
+  const nbRdv=wa.filter(a=>a.segmentIndex===0).length;
+  document.getElementById('totalHours').textContent=Math.round(totalH*10)/10+'h';
+  document.getElementById('totalAppts').textContent=nbRdv;
   updateTech();
 }
 function changeWeek(d){state.weekOffset+=d;render();}
@@ -1289,9 +1490,9 @@ function goToday(){state.weekOffset=0;render();}
 function showTooltip(e,t){
   const el=document.getElementById('tooltip');
   el.innerHTML=t.replace(/\n/g,'<br>');
-  el.classList.add('show');moveTooltip(e);
+  el.classList.add('show'); moveTooltip(e);
 }
-function moveTooltip(e){const el=document.getElementById('tooltip');el.style.left=(e.clientX+14)+'px';el.style.top=(e.clientY-40)+'px';}
+function moveTooltip(e){const el=document.getElementById('tooltip');el.style.left=(e.clientX+14)+'px';el.style.top=(e.clientY-50)+'px';}
 function hideTooltip(){document.getElementById('tooltip').classList.remove('show');}
 
 // ── RECHERCHE ──
@@ -1306,7 +1507,6 @@ function doSearch(query){
     const days=getWeekDays(off);
     const dayName=days[a.day]?days[a.day].toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'short'}):'?';
     const rowName=a.type==='loan'?(state.loanNames[a.row]||'?'):(state.noLoanNames[a.row]||'?');
-    const dFin=calcDateFin(days[a.day]||days[0],a.totalDays||1);
     return `<div class="search-result-item" data-groupid="${a.groupId}" data-offset="${off}">
       <span class="sri-name" style="color:${a.color}">● ${a.name}</span>
       <span class="sri-meta">${dayName} — ${rowName} — ${a.hours}h — ${a.totalDays||1}j${a.priority==='haute'?' 🔴':''}${a.tel?' — 📞 '+a.tel:''}</span>
@@ -1321,7 +1521,7 @@ function doSearch(query){
       setTimeout(()=>{
         const groupId=item.dataset.groupid;
         const appt=state.appointments.find(a=>a.groupId===groupId&&a.segmentIndex===0);
-        if(!appt) return;
+        if(!appt)return;
         const cell=document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`);
         if(cell){const el=cell.querySelector('.appt');if(el){el.classList.add('highlight');setTimeout(()=>el.classList.remove('highlight'),3500);}}
       },120);
@@ -1329,24 +1529,25 @@ function doSearch(query){
   });
 }
 
-// ── HISTORIQUE ──
+// ── HISTORIQUE PLANNING ──
 function openHistory(){historyPage=0;document.getElementById('historyModalOverlay').classList.add('open');renderHistory();}
 function closeHistory(){document.getElementById('historyModalOverlay').classList.remove('open');}
 function renderHistory(){
   const startOff=-(historyPage*4),weeks=[];
   for(let i=0;i<4;i++){
     const off=startOff-i,days=getWeekDays(off),ws=days[0].toDateString();
-    const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws&&a.segmentIndex===0);
-    const totalH=wa.reduce((s,a)=>s+(a.hours||0),0);
+    const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
+    const totalH=wa.reduce((s,a)=>s+heuresSegment(a.hours||0,a.totalDays||1,a.span||1),0);
+    const nbRdv=wa.filter(a=>a.segmentIndex===0).length;
     const capacity=nbTech*39,pct=capacity>0?Math.round((totalH/capacity)*100):0;
-    const urgents=wa.filter(a=>a.priority==='haute').length;
-    weeks.push({off,days,wa,totalH,pct,urgents,capacity});
+    const urgents=wa.filter(a=>a.segmentIndex===0&&a.priority==='haute').length;
+    weeks.push({off,days,wa:wa.filter(a=>a.segmentIndex===0),totalH:Math.round(totalH*10)/10,pct,urgents,capacity,nbRdv});
   }
   const first=weeks[weeks.length-1].days[0],last=weeks[0].days[4];
   document.getElementById('historyRangeLabel').textContent=
     `${first.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} → ${last.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}`;
   const content=document.getElementById('historyContent'); content.innerHTML='';
-  weeks.forEach(({off,days,wa,totalH,pct,urgents,capacity})=>{
+  weeks.forEach(({off,days,wa,totalH,pct,urgents,capacity,nbRdv})=>{
     const isCurrent=off===state.weekOffset;
     const div=document.createElement('div'); div.className='history-week';
     div.innerHTML=`
@@ -1356,7 +1557,7 @@ function renderHistory(){
       </div>
       <div class="history-week-body${isCurrent?' open':''}">
         <div class="history-stat-row">
-          <div class="history-stat">📋 <strong>${wa.length}</strong> RDV</div>
+          <div class="history-stat">📋 <strong>${nbRdv}</strong> RDV</div>
           <div class="history-stat">⏱ <strong>${totalH}h</strong></div>
           <div class="history-stat">📊 <strong>${pct}%</strong></div>
           ${urgents?`<div class="history-stat">🔴 <strong>${urgents}</strong> urgent(s)</div>`:''}
@@ -1381,8 +1582,7 @@ function renderConges(){
   const year=congesYear,month=congesMonth;
   const daysInMonth=new Date(year,month+1,0).getDate();
   const today=new Date();
-  document.getElementById('congesMonthLabel').textContent=
-    `${MOIS_FR[month].charAt(0).toUpperCase()+MOIS_FR[month].slice(1)} ${year}`;
+  document.getElementById('congesMonthLabel').textContent=`${MOIS_FR[month].charAt(0).toUpperCase()+MOIS_FR[month].slice(1)} ${year}`;
   const gridCols=`160px repeat(${daysInMonth},1fr)`;
   const grid=document.getElementById('congesGrid'); grid.innerHTML='';
   const header=document.createElement('div'); header.className='conges-grid-header'; header.style.gridTemplateColumns=gridCols;
@@ -1390,14 +1590,12 @@ function renderConges(){
   for(let d=1;d<=daysInMonth;d++){
     const date=new Date(year,month,d),dow=date.getDay(),isWE=dow===0||dow===6,isTod=date.toDateString()===today.toDateString();
     const jc=['D','L','M','M','J','V','S'][dow];
-    hHTML+=`<div class="conges-h-day${isTod?' today':''}${isWE?' weekend':''}" title="${JOURS_FR[dow]} ${d}">
-      <span style="font-size:.65rem;opacity:.7;">${jc}</span><span>${d}</span></div>`;
+    hHTML+=`<div class="conges-h-day${isTod?' today':''}${isWE?' weekend':''}" title="${JOURS_FR[dow]} ${d}"><span style="font-size:.65rem;opacity:.7;">${jc}</span><span>${d}</span></div>`;
   }
   header.innerHTML=hHTML; grid.appendChild(header);
   TECHNICIENS.forEach(tech=>{
     const row=document.createElement('div'); row.className='conges-grid-body-row'; row.style.gridTemplateColumns=gridCols;
-    row.innerHTML=`<div class="conges-tech-label">
-      <div class="conges-tech-avatar" style="background:${tech.color}">${tech.nom.slice(0,2).toUpperCase()}</div>${tech.nom}</div>`;
+    row.innerHTML=`<div class="conges-tech-label"><div class="conges-tech-avatar" style="background:${tech.color}">${tech.nom.slice(0,2).toUpperCase()}</div>${tech.nom}</div>`;
     for(let d=1;d<=daysInMonth;d++){
       const date=new Date(year,month,d),dow=date.getDay(),isWE=dow===0||dow===6,isTod=date.toDateString()===today.toDateString(),dateKey=dateToKey(date);
       const cell=document.createElement('div');
@@ -1418,43 +1616,30 @@ function renderConges(){
   });
   renderCongesStats(year,month);
 }
-
 function renderCongesStats(year,month){
   const statsEl=document.getElementById('congesStats'); statsEl.innerHTML='';
   TECHNICIENS.forEach(tech=>{
-    const absThisMonth=congesState.absences.filter(a=>{
-      if(a.techId!==tech.id) return false;
-      const d=new Date(a.date);
-      return d.getFullYear()===year&&d.getMonth()===month;
-    });
+    const absThisMonth=congesState.absences.filter(a=>{if(a.techId!==tech.id)return false;const d=new Date(a.date);return d.getFullYear()===year&&d.getMonth()===month;});
     const card=document.createElement('div'); card.className='conges-stat-card';
     const counts={}; TYPES_ABSENCE.forEach(t=>counts[t.id]=0);
     absThisMonth.forEach(a=>{if(counts[a.type]!==undefined)counts[a.type]++;});
     const total=absThisMonth.length;
     card.innerHTML=`
-      <div class="conges-stat-name">
-        <div class="conges-tech-avatar" style="background:${tech.color};width:24px;height:24px;font-size:.68rem;">${tech.nom.slice(0,2).toUpperCase()}</div>${tech.nom}
-      </div>
-      ${TYPES_ABSENCE.filter(t=>counts[t.id]>0).map(t=>
-        `<div class="conges-stat-row"><span class="label">${t.icon} ${t.label}</span><span class="val" style="color:${t.color}">${counts[t.id]}j</span></div>`).join('')}
-      ${total===0?'<div style="font-size:.78rem;color:var(--muted);text-align:center;padding:8px 0;">Aucune absence</div>':
-        `<div style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px;">
-          <div class="conges-stat-row"><span class="label" style="font-weight:700;">Total</span><span class="val">${total}j</span></div>
-        </div>`}`;
+      <div class="conges-stat-name"><div class="conges-tech-avatar" style="background:${tech.color};width:24px;height:24px;font-size:.68rem;">${tech.nom.slice(0,2).toUpperCase()}</div>${tech.nom}</div>
+      ${TYPES_ABSENCE.filter(t=>counts[t.id]>0).map(t=>`<div class="conges-stat-row"><span class="label">${t.icon} ${t.label}</span><span class="val" style="color:${t.color}">${counts[t.id]}j</span></div>`).join('')}
+      ${total===0?'<div style="font-size:.78rem;color:var(--muted);text-align:center;padding:8px 0;">Aucune absence</div>':`<div style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px;"><div class="conges-stat-row"><span class="label" style="font-weight:700;">Total</span><span class="val">${total}j</span></div></div>`}`;
     statsEl.appendChild(card);
   });
 }
-
 function openCongesModal(tech,date){
   pendingConges={tech,date}; selectedCongesType='conge';
   document.getElementById('congesNote').value='';
-  document.getElementById('congesModalInfo').textContent=
-    `${tech.nom} — ${JOURS_FR[date.getDay()]} ${date.getDate()} ${MOIS_FR[date.getMonth()]} ${date.getFullYear()}`;
+  document.getElementById('congesModalInfo').textContent=`${tech.nom} — ${JOURS_FR[date.getDay()]} ${date.getDate()} ${MOIS_FR[date.getMonth()]} ${date.getFullYear()}`;
   const tg=document.getElementById('typeGrid'); tg.innerHTML='';
   TYPES_ABSENCE.forEach(t=>{
     const card=document.createElement('div');
     card.className=`type-card${t.id===selectedCongesType?' selected':''}`;
-    if(t.id===selectedCongesType) card.style.background=t.color;
+    if(t.id===selectedCongesType)card.style.background=t.color;
     card.innerHTML=`<div class="type-dot" style="background:${t.color}"></div>${t.icon} ${t.label}`;
     card.addEventListener('click',()=>{
       selectedCongesType=t.id;
@@ -1468,20 +1653,13 @@ function openCongesModal(tech,date){
 }
 function closeCongesModal(){document.getElementById('congesModalOverlay').classList.remove('open');pendingConges=null;}
 function saveCongesAbs(){
-  if(!pendingConges) return;
+  if(!pendingConges)return;
   const dateKey=dateToKey(pendingConges.date);
   congesState.absences=congesState.absences.filter(a=>!(a.techId===pendingConges.tech.id&&a.date===dateKey));
-  congesState.absences.push({
-    id:Date.now().toString(36)+Math.random().toString(36).slice(2),
-    techId:pendingConges.tech.id,date:dateKey,type:selectedCongesType,
-    note:document.getElementById('congesNote').value.trim()
-  });
+  congesState.absences.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2),techId:pendingConges.tech.id,date:dateKey,type:selectedCongesType,note:document.getElementById('congesNote').value.trim()});
   saveConges(); closeCongesModal(); renderConges();
 }
-function deleteCongesAbs(id){
-  congesState.absences=congesState.absences.filter(a=>a.id!==id);
-  saveConges(); renderConges();
-}
+function deleteCongesAbs(id){congesState.absences=congesState.absences.filter(a=>a.id!==id);saveConges();renderConges();}
 
 // ── EVENTS ──
 document.getElementById('btnPrevWeek').addEventListener('click', ()=>changeWeek(-1));
@@ -1490,7 +1668,7 @@ document.getElementById('btnToday').addEventListener('click',    ()=>goToday());
 document.getElementById('btnTechMinus').addEventListener('click',()=>changeTech(-1));
 document.getElementById('btnTechPlus').addEventListener('click', ()=>changeTech(1));
 document.getElementById('btnHistory').addEventListener('click',  ()=>openHistory());
-document.getElementById('btnPrint').addEventListener('click',    ()=>window.print());
+document.getElementById('btnPrintPlanning').addEventListener('click',()=>printPlanning());
 document.getElementById('btnCloseModal').addEventListener('click',     ()=>closeModal());
 document.getElementById('btnSaveAppt').addEventListener('click',       ()=>saveAppt());
 document.getElementById('btnCloseEditModal').addEventListener('click', ()=>closeEditModal());
@@ -1518,31 +1696,35 @@ document.getElementById('btnCongesNext').addEventListener('click',()=>{congesMon
 document.getElementById('btnCongesToday').addEventListener('click',()=>{congesMonth=new Date().getMonth();congesYear=new Date().getFullYear();renderConges();});
 document.getElementById('btnCloseCongesModal').addEventListener('click',()=>closeCongesModal());
 document.getElementById('btnSaveConges').addEventListener('click',     ()=>saveCongesAbs());
+document.getElementById('btnConfirmNon').addEventListener('click',()=>closeConfirm());
+document.getElementById('btnConfirmOui').addEventListener('click',()=>{if(pendingDeleteGroupId){deleteGroup(pendingDeleteGroupId);}closeConfirm();});
+document.getElementById('btnCloseRestitution').addEventListener('click',()=>closeRestitution());
+document.getElementById('btnSaveRestitution').addEventListener('click', ()=>saveRestitution());
 document.getElementById('absTypeConge').addEventListener('click',  ()=>{absType='conge';  document.getElementById('absTypeConge').className='status-btn active-arrived';document.getElementById('absTypeAbsence').className='status-btn';});
 document.getElementById('absTypeAbsence').addEventListener('click',()=>{absType='absence';document.getElementById('absTypeConge').className='status-btn';document.getElementById('absTypeAbsence').className='status-btn active-pending';});
 document.getElementById('searchInput').addEventListener('input',e=>doSearch(e.target.value));
 document.getElementById('searchInput').addEventListener('blur', ()=>setTimeout(()=>document.getElementById('searchResults').classList.remove('open'),200));
-document.getElementById('modalOverlay').addEventListener('click',       function(e){if(e.target===this)closeModal();});
-document.getElementById('editModalOverlay').addEventListener('click',   function(e){if(e.target===this)closeEditModal();});
-document.getElementById('absenceModalOverlay').addEventListener('click',function(e){if(e.target===this)closeAbsModal();});
-document.getElementById('historyModalOverlay').addEventListener('click',function(e){if(e.target===this)closeHistory();});
-document.getElementById('contratModalOverlay').addEventListener('click',function(e){if(e.target===this)closeContrat();});
-document.getElementById('congesModalOverlay').addEventListener('click', function(e){if(e.target===this)closeCongesModal();});
+document.getElementById('modalOverlay').addEventListener('click',        function(e){if(e.target===this)closeModal();});
+document.getElementById('editModalOverlay').addEventListener('click',    function(e){if(e.target===this)closeEditModal();});
+document.getElementById('absenceModalOverlay').addEventListener('click', function(e){if(e.target===this)closeAbsModal();});
+document.getElementById('historyModalOverlay').addEventListener('click', function(e){if(e.target===this)closeHistory();});
+document.getElementById('contratModalOverlay').addEventListener('click', function(e){if(e.target===this)closeContrat();});
+document.getElementById('congesModalOverlay').addEventListener('click',  function(e){if(e.target===this)closeCongesModal();});
+document.getElementById('confirmModalOverlay').addEventListener('click', function(e){if(e.target===this)closeConfirm();});
+document.getElementById('restitutionModalOverlay').addEventListener('click',function(e){if(e.target===this)closeRestitution();});
 
 document.getElementById('apptDays').addEventListener('input',e=>{
   if(pendingAppt) updatePreview('apptPreview',pendingAppt.day,state.weekOffset,parseInt(e.target.value)||1);
 });
 document.getElementById('editApptDays').addEventListener('input',e=>{
-  if(editApptRef){
-    const weekOff=getWeekOffset(editApptRef.weekStart);
-    updatePreview('editApptPreview',editApptRef.day,weekOff,parseInt(e.target.value)||1);
-  }
+  if(editApptRef){const weekOff=getWeekOffset(editApptRef.weekStart);updatePreview('editApptPreview',editApptRef.day,weekOff,parseInt(e.target.value)||1);}
 });
 
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){closeModal();closeEditModal();closeAbsModal();closeHistory();closeContrat();closeCongesModal();document.getElementById('searchResults').classList.remove('open');}
+  if(e.key==='Escape'){closeModal();closeEditModal();closeAbsModal();closeHistory();closeContrat();closeCongesModal();closeConfirm();closeRestitution();document.getElementById('searchResults').classList.remove('open');}
   if(e.key==='Enter'&&document.getElementById('modalOverlay').classList.contains('open'))saveAppt();
   if(e.key==='Enter'&&document.getElementById('congesModalOverlay').classList.contains('open'))saveCongesAbs();
+  if(e.key==='Enter'&&document.getElementById('restitutionModalOverlay').classList.contains('open'))saveRestitution();
 });
 
 buildColorPicker('colorPicker',i=>selectedColor=i);
