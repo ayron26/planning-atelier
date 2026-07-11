@@ -344,9 +344,23 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .mobile-filter-chips::-webkit-scrollbar{display:none;}
 @media print{
   body>*:not(#contrat-print-zone):not(#planning-print-zone){display:none !important;}
-  #contrat-print-zone,#planning-print-zone{display:block !important;}
-  @page{margin:1cm;size:A4 landscape;}
+  #contrat-print-zone{display:block !important;}
+  #planning-print-zone{display:block !important;}
+  @page{margin:0.6cm;size:A4 portrait;}
   *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important;}
+  .contrat-print{font-size:11px !important;padding:10px !important;}
+  .cp-garage-name{font-size:15px !important;}
+  .cp-title{font-size:13px !important;padding:6px !important;margin-bottom:12px !important;}
+  .cp-grid{gap:8px !important;margin-bottom:8px !important;}
+  .cp-box{padding:8px !important;}
+  .cp-row{margin-bottom:3px !important;}
+  .cp-dates{padding:8px !important;margin-bottom:8px !important;}
+  .cp-date-val{font-size:12px !important;}
+  .cp-conditions{padding:8px !important;margin-bottom:8px !important;}
+  .cp-conditions ul li{margin-bottom:2px !important;font-size:11px !important;}
+  .cp-signatures{gap:20px !important;margin-top:8px !important;}
+  .cp-sig-label{margin-bottom:35px !important;}
+  .cp-footer{margin-top:8px !important;padding-top:6px !important;}
 }
 #contrat-print-zone,#planning-print-zone{display:none;}
 .planning-print{font-family:'Segoe UI',Arial,sans-serif;color:#1e2a38;padding:16px;}
