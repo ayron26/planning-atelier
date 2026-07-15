@@ -707,7 +707,18 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <label>Téléphone</label><input type="text" id="editApptTel">
     <label>Adresse</label><input type="text" id="editApptAdresse">
     <label>Heures de travail (total)</label><input type="number" id="editApptHours" min="0.5" max="999" step="0.5">
-    <label>Nombre de jours</label><input type="number" id="editApptDays" min="1" max="20">
+<label>Jour de départ (dans la semaine)</label>
+<select id="editApptDay">
+  <option value="0">Lundi</option>
+  <option value="1">Mardi</option>
+  <option value="2">Mercredi</option>
+  <option value="3">Jeudi</option>
+  <option value="4">Vendredi</option>
+</select>
+<label>Semaine</label>
+<input type="week" id="editApptWeek">
+<label>Nombre de jours</label>
+<input type="number" id="editApptDays" min="1" max="20">
     <div class="preview-note" id="editApptPreview" style="margin-top:6px;">📅 —</div>
     <label>Mémo</label><textarea id="editApptMemo"></textarea>
     <label>Priorité</label>
@@ -1451,13 +1462,94 @@ function closeMobileCongesModal(){document.getElementById('mobileCongesModalOver
 function saveMobileConges(){if(isRO()){showRO();return;}if(!mPendingConges)return;const dk=dKey(mPendingConges.date);cState.absences=cState.absences.filter(a=>!(a.techId===mPendingConges.tech.id&&a.date===dk));cState.absences.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2),techId:mPendingConges.tech.id,date:dk,type:mSelCongesType,note:document.getElementById('mCongesNote').value.trim()});saveCG();closeMobileCongesModal();renderMobileConges();}
 
 // ── EDIT MODAL PC ──
-function openEditModal(gid){const fs=state.appointments.find(a=>a.groupId===gid&&a.segmentIndex===0);if(!fs)return;editId=gid;editRef=fs;editStat=fs.arrived?'arrived':'pending';editPieceStat=fs.pieceStatus||'none';editPrio=fs.priority||'moyenne';editSelColor=Math.max(0,COLORS.indexOf(fs.color));document.getElementById('editApptName').value=fs.name;document.getElementById('editApptTel').value=fs.tel||'';document.getElementById('editApptAdresse').value=fs.adresse||'';document.getElementById('editApptMemo').value=fs.memo||'';document.getElementById('editApptHours').value=fs.hours;document.getElementById('editApptDays').value=fs.totalDays||fs.span||1;document.getElementById('editPieceFournisseur').value=fs.pieceFournisseur||'';document.getElementById('editPieceNote').value=fs.pieceNote||'';const wo=gWO(fs.weekStart);upPrev('editApptPreview',fs.day,wo,fs.totalDays||fs.span||1);setES(editStat);setEPS(editPieceStat);setEP(editPrio);buildCP('editColorPicker',i=>editSelColor=i);document.querySelectorAll('#editColorPicker .color-swatch').forEach((s,i)=>s.classList.toggle('selected',i===editSelColor));document.getElementById('editModalOverlay').classList.add('open');setTimeout(()=>document.getElementById('editApptName').focus(),50);}
-function setEP(p){editPrio=p;['editPrioBasse','editPrioMoyenne','editPrioHaute'].forEach(id=>document.getElementById(id).className='status-btn');const ids={basse:'editPrioBasse',moyenne:'editPrioMoyenne',haute:'editPrioHaute'};document.getElementById(ids[p]).className=`status-btn active-${p}`;}
+function openEditModal(gid){
+  const fs=state.appointments.find(a=>a.groupId===gid&&a.segmentIndex===0);
+  if(!fs)return;
+  editId=gid;editRef=fs;
+  editStat=fs.arrived?'arrived':'pending';
+  editPieceStat=fs.pieceStatus||'none';
+  editPrio=fs.priority||'moyenne';
+  editSelColor=Math.max(0,COLORS.indexOf(fs.color));
+  document.getElementById('editApptName').value=fs.name;
+  document.getElementById('editApptTel').value=fs.tel||'';
+  document.getElementById('editApptAdresse').value=fs.adresse||'';
+  document.getElementById('editApptMemo').value=fs.memo||'';
+  document.getElementById('editApptHours').value=fs.hours;
+  document.getElementById('editApptDays').value=fs.totalDays||fs.span||1;
+  document.getElementById('editApptDay').value=fs.day||0;
+  // Calcul de la semaine courante du RDV
+  const wo=gWO(fs.weekStart);
+  const days=gWD(wo);
+  const monday=days[0];
+  // Format YYYY-Www pour input type=week
+  const jan4=new Date(monday.getFullYear(),0,4);
+  const weekNum=Math.ceil(((monday-jan4)/86400000+jan4.getDay()+1)/7);
+  document.getElementById('editApptWeek').value=`${monday.getFullYear()}-W${String(weekNum).padStart(2,'0')}`;
+  const wo2=gWO(fs.weekStart);
+  upPrev('editApptPreview',fs.day,wo2,fs.totalDays||fs.span||1);
+  setES(editStat);setEPS(editPieceStat);setEP(editPrio);
+  buildCP('editColorPicker',i=>editSelColor=i);
+  document.querySelectorAll('#editColorPicker .color-swatch').forEach((s,i)=>s.classList.toggle('selected',i===editSelColor));
+  document.getElementById('editModalOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('editApptName').focus(),50);
+}
+    function setEP(p){editPrio=p;['editPrioBasse','editPrioMoyenne','editPrioHaute'].forEach(id=>document.getElementById(id).className='status-btn');const ids={basse:'editPrioBasse',moyenne:'editPrioMoyenne',haute:'editPrioHaute'};document.getElementById(ids[p]).className=`status-btn active-${p}`;}
 function setES(s){editStat=s;document.getElementById('btnPending').className='status-btn'+(s==='pending'?' active-pending':'');document.getElementById('btnArrived').className='status-btn'+(s==='arrived'?' active-arrived':'');}
 function setEPS(s){editPieceStat=s;document.getElementById('btnPieceNon').className='status-btn'+(s==='none'?' active-pending':'');document.getElementById('btnPieceOui').className='status-btn'+(s==='ordered'?' active-ordered':'');document.getElementById('btnPieceLivree').className='status-btn'+(s==='delivered'?' active-delivered':'');document.querySelector('.piece-fournisseur').style.display=s==='none'?'none':'block';}
 function closeEditModal(){document.getElementById('editModalOverlay').classList.remove('open');editId=null;editRef=null;}
-function saveEditAppt(){if(isRO()){showRO();return;}if(!editId||!editRef)return;const name=document.getElementById('editApptName').value.trim();if(!name){document.getElementById('editApptName').focus();return;}const tel=document.getElementById('editApptTel').value.trim();const adresse=document.getElementById('editApptAdresse').value.trim();const memo=document.getElementById('editApptMemo').value.trim();const hours=parseFloat(document.getElementById('editApptHours').value)||0;const td=parseInt(document.getElementById('editApptDays').value)||1;const color=COLORS[editSelColor];const pf=document.getElementById('editPieceFournisseur').value.trim();const pn=document.getElementById('editPieceNote').value.trim();state.appointments=state.appointments.filter(a=>a.groupId!==editId);const wo=gWO(editRef.weekStart);const days=gWD(wo);const segs=split(editRef.day,td,days[0]);segs.forEach((seg,i)=>{state.appointments.push({id:editId+(i===0?'':'-'+i),groupId:editId,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:editRef.type,row:editRef.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:editPrio,arrived:(editStat==='arrived'),pieceStatus:editPieceStat,pieceFournisseur:pf,pieceNote:pn});});saveFB();closeEditModal();render();if(isMobile())renderMobile();}
+function saveEditAppt(){
+  if(isRO()){showRO();return;}
+  if(!editId||!editRef)return;
+  const name=document.getElementById('editApptName').value.trim();
+  if(!name){document.getElementById('editApptName').focus();return;}
+  const tel=document.getElementById('editApptTel').value.trim();
+  const adresse=document.getElementById('editApptAdresse').value.trim();
+  const memo=document.getElementById('editApptMemo').value.trim();
+  const hours=parseFloat(document.getElementById('editApptHours').value)||0;
+  const td=parseInt(document.getElementById('editApptDays').value)||1;
+  const newDay=parseInt(document.getElementById('editApptDay').value)||0;
+  const color=COLORS[editSelColor];
+  const pf=document.getElementById('editPieceFournisseur').value.trim();
+  const pn=document.getElementById('editPieceNote').value.trim();
 
+  // Récupérer la semaine choisie
+  const weekVal=document.getElementById('editApptWeek').value; // format YYYY-Www
+  let newWeekStart;
+  if(weekVal){
+    const [year,week]=weekVal.split('-W');
+    // Calculer le lundi de cette semaine ISO
+    const jan4=new Date(parseInt(year),0,4);
+    const jan4Day=jan4.getDay()||7;
+    const monday=new Date(jan4);
+    monday.setDate(jan4.getDate()-(jan4Day-1)+(parseInt(week)-1)*7);
+    monday.setHours(0,0,0,0);
+    newWeekStart=monday;
+  }else{
+    // Garder la semaine d'origine
+    newWeekStart=gWD(gWO(editRef.weekStart))[0];
+  }
+
+  state.appointments=state.appointments.filter(a=>a.groupId!==editId);
+  const segs=split(newDay,td,newWeekStart);
+  segs.forEach((seg,i)=>{
+    state.appointments.push({
+      id:editId+(i===0?'':'-'+i),
+      groupId:editId,
+      segmentIndex:seg.segmentIndex,
+      hasPrev:seg.hasPrev,hasNext:seg.hasNext,
+      totalDays:td,
+      type:editRef.type,row:editRef.row,
+      day:seg.day,span:seg.span,
+      name,hours,tel,adresse,memo,color,
+      weekStart:seg.weekStart.toISOString(),
+      priority:editPrio,
+      arrived:(editStat==='arrived'),
+      pieceStatus:editPieceStat,
+      pieceFournisseur:pf,pieceNote:pn
+    });
+  });
+  saveFB();closeEditModal();render();if(isMobile())renderMobile();
+}
 function buildCP(id,onPick){const cp=document.getElementById(id);cp.innerHTML='';COLORS.forEach((c,i)=>{const sw=document.createElement('div');sw.className=`color-swatch${i===0?' selected':''}`;sw.style.background=c;sw.addEventListener('click',()=>{cp.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));sw.classList.add('selected');onPick(i);});cp.appendChild(sw);});}
 function buildMCP(onPick){const cp=document.getElementById('mColorPicker');cp.innerHTML='';COLORS.forEach((c,i)=>{const sw=document.createElement('div');sw.className=`mobile-color-swatch${i===0?' selected':''}`;sw.style.background=c;sw.addEventListener('click',()=>{cp.querySelectorAll('.mobile-color-swatch').forEach(s=>s.classList.remove('selected'));sw.classList.add('selected');onPick(i);});cp.appendChild(sw);});}
 
@@ -1493,6 +1585,28 @@ function renderHistory(){const so=-(histPage*4);const weeks=[];for(let i=0;i<4;i
 
 // ── EVENTS ──
 function setupEvents(){
+  document.getElementById('editApptDay').addEventListener('change',()=>{
+  const day=parseInt(document.getElementById('editApptDay').value)||0;
+  const td=parseInt(document.getElementById('editApptDays').value)||1;
+  const weekVal=document.getElementById('editApptWeek').value;
+  if(weekVal){
+    const[year,week]=weekVal.split('-W');
+    const jan4=new Date(parseInt(year),0,4);
+    const jan4Day=jan4.getDay()||7;
+    const monday=new Date(jan4);
+    monday.setDate(jan4.getDate()-(jan4Day-1)+(parseInt(week)-1)*7);
+    monday.setHours(0,0,0,0);
+    const days=[0,1,2,3,4].map(i=>{const d=new Date(monday);d.setDate(d.getDate()+i);return d;});
+    const dd=days[day];const df=calcFin(dd,td);
+    const s=split(day,td,monday);
+    let t=`📅 Du ${fFR(dd)} au ${fFR(df)} (${td}j)`;
+    if(s.length>1)t+=` — ${s.length} sem.`;
+    document.getElementById('editApptPreview').textContent=t;
+  }
+});
+document.getElementById('editApptWeek').addEventListener('change',()=>{
+  document.getElementById('editApptDay').dispatchEvent(new Event('change'));
+});
   document.getElementById('btnPrevWeek').addEventListener('click',()=>changeWeek(-1));
   document.getElementById('btnNextWeek').addEventListener('click',()=>changeWeek(1));
   document.getElementById('btnToday').addEventListener('click',()=>goToday());
