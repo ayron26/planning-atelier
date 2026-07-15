@@ -478,6 +478,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 @media(min-width:769px){
   .mobile-topbar,.mobile-bottom-nav,.mobile-planning,.mobile-conges,.mobile-contrats,.mobile-modal-overlay{display:none !important;}
 }
+</style>
+</head>
+<body>
   <div id="loginPage">
   <div class="login-card">
     <div class="login-logo">
@@ -865,7 +868,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 
 <div id="contrat-print-zone"></div>
 <div id="planning-print-zone"></div>
-  <script type="module">
+<script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getFirestore,doc,onSnapshot,setDoc,getDoc,collection,getDocs,deleteDoc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -1517,6 +1520,3 @@ function setupEvents(){
 </script>
 </body>
 </html>
-</style>
-</head>
-<body>
