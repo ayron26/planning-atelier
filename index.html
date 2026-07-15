@@ -8,7 +8,6 @@
 :root{--steel:#1e2a38;--steel-mid:#2c3e52;--accent:#e84c1e;--amber:#f5a623;--surface:#f0f2f5;--card:#ffffff;--border:#d0d6df;--text:#1e2a38;--muted:#6b7a8d;--loan-bg:#e8f4fd;--loan-hd:#1a5276;--noloan-bg:#fef9f0;--slot-h:58px;--col-label:160px;--col-day:1fr;--header-h:48px;--bottom-nav-h:64px;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color:var(--text);min-height:100vh;}
-/* LOGIN */
 #loginPage{position:fixed;inset:0;background:var(--steel);display:flex;align-items:center;justify-content:center;z-index:9999;}
 #loginPage.hidden{display:none;}
 .login-card{background:#fff;border-radius:16px;padding:40px 36px;width:380px;box-shadow:0 20px 60px rgba(0,0,0,.4);}
@@ -25,7 +24,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .btn-login{width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:20px;font-family:inherit;transition:background .15s;}
 .btn-login:hover{background:#c43f18;}
 .btn-login:disabled{background:var(--muted);cursor:not-allowed;}
-/* ADMIN PANEL */
 #adminPanel{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;}
 #adminPanel.open{display:flex;}
 .admin-card{background:#fff;border-radius:14px;padding:28px 30px;width:520px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
@@ -45,7 +43,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .add-user-form input:focus,.add-user-form select:focus{border-color:var(--accent);}
 .readonly-overlay{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#e74c3c;color:#fff;border-radius:10px;padding:10px 20px;font-size:.85rem;font-weight:700;z-index:9000;display:none;box-shadow:0 4px 16px rgba(0,0,0,.3);white-space:nowrap;}
 .readonly-overlay.show{display:block;}
-/* TOPBAR PC */
 .topbar{background:var(--steel);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3);}
 .topbar .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1rem;letter-spacing:.04em;line-height:1.2;}
 .topbar .logo span{color:var(--accent);}
@@ -237,6 +234,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .btn-restit:hover{background:#aed6f1;}
 .btn-print-restit{font-size:.78rem;background:#eafaf1;color:#1e8449;border:1px solid #a9dfbf;border-radius:6px;padding:5px 12px;cursor:pointer;font-family:inherit;font-weight:700;white-space:nowrap;}
 .btn-print-restit:hover{background:#a9dfbf;}
+.btn-del-contrat{font-size:.78rem;background:#fde8e8;color:#c0392b;border:1px solid #f1948a;border-radius:6px;padding:5px 12px;cursor:pointer;font-family:inherit;font-weight:700;white-space:nowrap;}
+.btn-del-contrat:hover{background:#f1948a;color:#fff;}
 .no-results-contrats{text-align:center;color:var(--muted);padding:40px;font-size:.9rem;}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
@@ -374,15 +373,20 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .mci-btn{font-size:.75rem;border-radius:6px;padding:7px 12px;cursor:pointer;font-family:inherit;font-weight:700;border:1px solid;}
 .mci-btn-blue{background:#e8f4fd;color:#1a5276;border-color:#aed6f1;}
 .mci-btn-green{background:#eafaf1;color:#1e8449;border-color:#a9dfbf;}
+.mci-btn-red{background:#fde8e8;color:#c0392b;border-color:#f1948a;}
 .mci-restitue{font-size:.75rem;color:#1e8449;font-weight:600;background:#eafaf1;border-radius:5px;padding:4px 10px;margin-bottom:8px;display:block;}
 .mobile-search-contrats{margin-bottom:12px;position:relative;}
 .mobile-search-contrats input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px 9px 36px;font-size:.9rem;font-family:inherit;outline:none;background:#fff;}
 .mobile-search-contrats .ms-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:.85rem;pointer-events:none;}
 .mobile-filter-chips{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;}
 .mobile-filter-chips::-webkit-scrollbar{display:none;}
+/* PRINT - CORRIGE PAGE BLANCHE */
 @media print{
-  body>*:not(#contrat-print-zone):not(#planning-print-zone){display:none !important;}
+  #loginPage{display:none !important;}
+  #appRoot{display:block !important;}
+  #appRoot>*{display:none !important;}
   #contrat-print-zone,#planning-print-zone{display:block !important;}
+  .mobile-bottom-nav,.mobile-topbar{display:none !important;}
   @page{margin:0.6cm;size:A4 portrait;}
   *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important;}
   .contrat-print{font-size:11px !important;padding:10px !important;}
@@ -476,8 +480,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 </style>
 </head>
 <body>
-  <!-- PAGE LOGIN -->
-<div id="loginPage">
+  <div id="loginPage">
   <div class="login-card">
     <div class="login-logo">
       <div class="ll-icon">🔧</div>
@@ -493,10 +496,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<!-- APP ROOT -->
 <div id="appRoot" style="display:none;">
 
-<!-- TOPBAR PC -->
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:20px;">
     <div class="logo">🔧 <div><span>CARROSSERIE BRUN</span><small>Valence Motors</small></div></div>
@@ -541,7 +542,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   <div id="contratsTopRight" style="display:none;align-items:center;gap:10px;">
     <span style="font-size:.82rem;color:rgba(255,255,255,.7);">Historique & recherche des contrats</span>
   </div>
-  <!-- USER INFO + DECONNEXION -->
   <div style="display:flex;align-items:center;gap:10px;margin-left:10px;border-left:1px solid var(--steel-mid);padding-left:14px;">
     <div style="display:flex;flex-direction:column;align-items:flex-end;line-height:1.3;">
       <span id="userEmail" style="font-size:.72rem;color:rgba(255,255,255,.8);font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
@@ -552,7 +552,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<!-- TOPBAR MOBILE -->
 <div class="mobile-topbar" id="mobileTopbar">
   <div class="mtb-logo">🔧 <span>CARROSSERIE BRUN</span><small>Valence Motors</small></div>
   <span class="sync-indicator sync-wait mtb-sync" id="syncStatusMobile">⏳</span>
@@ -564,7 +563,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   <button class="toolbar-btn" id="mBtnLogout" style="background:#e74c3c;height:28px;font-size:.7rem;">🚪</button>
 </div>
 
-<!-- PAGE ATELIER -->
 <div class="page active" id="pageAtelier">
   <div class="search-bar">
     <div class="search-wrap">
@@ -586,7 +584,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<!-- PAGE CONGES -->
 <div class="page" id="pageConges">
   <div class="conges-wrap">
     <div class="conges-header">
@@ -621,7 +618,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<!-- PAGE CONTRATS -->
 <div class="page" id="pageContrats">
   <div style="padding:20px;max-width:1000px;margin:0 auto;">
     <div style="font-size:1.3rem;font-weight:700;color:var(--steel);margin-bottom:16px;">📄 Contrats de prêt</div>
@@ -647,7 +643,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<!-- BOTTOM NAV MOBILE -->
 <div class="mobile-bottom-nav">
   <div class="mbn-inner">
     <button class="mbn-tab active" id="mbnAtelier" onclick="switchPage('atelier')"><div class="mbn-icon-wrap"><div class="mbn-icon">🔧</div></div><span>Planning</span></button>
@@ -656,7 +651,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<!-- PANEL ADMIN -->
 <div id="adminPanel">
   <div class="admin-card">
     <h2>👥 Gestion des utilisateurs</h2>
@@ -682,11 +676,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<!-- MESSAGE LECTURE SEULE -->
 <div class="readonly-overlay" id="readonlyMsg">🔒 Accès en lecture seule — contactez l'admin</div>
-
-<div id="contrat-print-zone"></div>
-<div id="planning-print-zone"></div>
 
 <!-- MODALS PC -->
 <div class="modal-overlay" id="modalOverlay">
@@ -878,6 +868,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 <div id="dragGhost" style="display:none"></div>
 
 </div><!-- fin appRoot -->
+
+<!-- ZONES IMPRESSION HORS APPROOT -->
+<div id="contrat-print-zone"></div>
+<div id="planning-print-zone"></div>
   <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getFirestore,doc,onSnapshot,setDoc,getDoc,collection,getDocs,deleteDoc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -965,7 +959,7 @@ function logout(){signOut(auth);}
 document.getElementById('btnLogout').addEventListener('click',logout);
 document.getElementById('mBtnLogout').addEventListener('click',logout);
 
-// ── ADMIN PANEL ──
+// ── ADMIN ──
 document.getElementById('btnAdminPanel').addEventListener('click',()=>{document.getElementById('adminPanel').classList.add('open');loadUsers();});
 document.getElementById('btnCloseAdmin').addEventListener('click',()=>document.getElementById('adminPanel').classList.remove('open'));
 document.getElementById('adminPanel').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
@@ -975,7 +969,7 @@ async function loadUsers(){
   try{
     const snap=await getDocs(collection(db,'users'));
     list.innerHTML='';
-    if(snap.empty){list.innerHTML='<div style="color:var(--muted);font-size:.85rem;padding:10px;">Aucun utilisateur. Créez-en un ci-dessous.</div>';return;}
+    if(snap.empty){list.innerHTML='<div style="color:var(--muted);font-size:.85rem;padding:10px;">Aucun utilisateur.</div>';return;}
     snap.forEach(d=>{
       const data=d.data();
       const item=document.createElement('div');item.className='user-list-item';
@@ -1011,7 +1005,7 @@ document.getElementById('btnAddUser').addEventListener('click',async()=>{
   btn.disabled=false;btn.textContent="➕ Créer l'utilisateur";
 });
 
-// ── INIT APP ──
+// ── INIT ──
 function initApp(){
   buildCP('colorPicker',i=>selColor=i);
   buildMCP(i=>mSelColor=i);
@@ -1235,7 +1229,7 @@ function renderMobileConges(){
   outer.appendChild(hdr);
   TECHS.forEach(tech=>{
     const row=document.createElement('div');row.style.cssText=`display:grid;grid-template-columns:${gc};width:${tW}px;border-bottom:1px solid var(--border);min-height:36px;`;
-    row.innerHTML=`<div style="display:flex;align-items:center;padding:0 3px;font-weight:700;font-size:.6rem;background:var(--card);border-right:2px solid var(--border);"><div style="width:18px;height:18px;border-radius:50%;background:${tech.color};display:flex;align-items:center;justify-content:center;color:#fff;font-size:.5rem;font-weight:700;flex-shrink:0;">${tech.nom.slice(0,2).toUpperCase()}</div></div>`;
+    row.innerHTML=`<div style="display:flex;align-items:center;padding:0 3px;background:var(--card);border-right:2px solid var(--border);"><div style="width:18px;height:18px;border-radius:50%;background:${tech.color};display:flex;align-items:center;justify-content:center;color:#fff;font-size:.5rem;font-weight:700;">${tech.nom.slice(0,2).toUpperCase()}</div></div>`;
     for(let d=1;d<=dim;d++){
       const date=new Date(year,month,d);const dow=date.getDay();const isWE=dow===0||dow===6;const isTod=date.toDateString()===today.toDateString();const dk=dKey(date);
       const cell=document.createElement('div');cell.style.cssText=`border-right:1px solid var(--border);position:relative;cursor:${isWE?'default':'pointer'};${isWE?'background:#fafafa;':''}${isTod?'background:rgba(232,76,30,.05);':''}`;
@@ -1258,34 +1252,79 @@ function renderMobileConges(){
   });
 }
 
+// ── CONTRATS PC ──
+function renderContrats(){
+  const contrats=ctState.contrats||[];const q=ctSearch.toLowerCase().trim();const today=new Date();
+  const filtered=contrats.filter(c=>{if(ctFilter==='en-cours'&&c.restitue)return false;if(ctFilter==='restitue'&&!c.restitue)return false;if(!q)return true;return[c.nom,c.immat,c.tel,c.id,c.dateDebut?fSh(new Date(c.dateDebut)):'',c.dateFin?fSh(new Date(c.dateFin)):'',...(c.adresse?[c.adresse]:[])].some(f=>(f||'').toLowerCase().includes(q));});
+  const total=contrats.length;const enC=contrats.filter(c=>!c.restitue).length;const rest=contrats.filter(c=>c.restitue).length;
+  const retard=contrats.filter(c=>!c.restitue&&new Date(c.dateFin)<today).length;
+  const ic={};contrats.forEach(c=>{if(c.immat)ic[c.immat]=(ic[c.immat]||0)+1;});
+  document.getElementById('contratsStatsBar').innerHTML=`<div class="cstat"><div class="cv">${total}</div><div class="cl">Total</div></div><div class="cstat"><div class="cv" style="color:var(--amber)">${enC}</div><div class="cl">En cours</div></div><div class="cstat"><div class="cv" style="color:#2ecc71">${rest}</div><div class="cl">Restitués</div></div>${retard?`<div class="cstat"><div class="cv" style="color:#e74c3c">${retard}</div><div class="cl">En retard</div></div>`:''}${Object.entries(ic).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([im,n])=>`<div class="cstat"><div class="cv" style="font-size:.85rem">${im}</div><div class="cl">${n} prêt${n>1?'s':''}</div></div>`).join('')}`;
+  const list=document.getElementById('contratsListWrap');
+  const hl=txt=>{if(!q||!txt)return txt||'';return txt.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'),'<mark style="background:#fff3cd;border-radius:2px;padding:0 2px;">$1</mark>');};
+  if(!filtered.length){list.innerHTML=`<div class="no-results-contrats">${q?`Aucun résultat pour "<strong>${q}</strong>"`:'Aucun contrat.'}</div>`;return;}
+  list.innerHTML='';
+  filtered.forEach(c=>{
+    const dD=new Date(c.dateDebut);const dF=new Date(c.dateFin);const dI=new Date(c.dateImpression);const isR=!c.restitue&&dF<today;
+    const item=document.createElement('div');item.className=`contrat-history-item ${c.restitue?'restitue-ok':isR?'en-retard':'en-cours'}`;
+    const rH=c.restitue
+      ?`<div class="chi-restitue-info">✅ Restitué le ${fSh(new Date(c.restitDate))} · ${c.restitKm?c.restitKm+' km':'—'} · Carb: ${c.restitCarburant||'?'}${c.restitRemarques?' · '+c.restitRemarques:''}</div>
+         <div class="chi-actions">
+           <button class="btn-print-restit">🖨️ Imprimer reçu</button>
+           <button class="btn-del-contrat">🗑️ Supprimer</button>
+         </div>`
+      :`<div class="chi-actions">
+           <button class="btn-restit">🔑 Saisir restitution</button>
+           <button class="btn-del-contrat">🗑️ Supprimer</button>
+         </div>`;
+    item.innerHTML=`<div class="chi-info"><div class="chi-header"><span class="chi-nom">${hl(c.nom)||'—'}</span><span class="chi-immat">${hl(c.immat)||'?'}</span><span class="chi-status-badge ${c.restitue?'restitue':isR?'en-retard':'en-cours'}">${c.restitue?'✅ Restitué':isR?'⚠️ En retard':'⏳ En cours'}</span></div><div class="chi-meta">📅 <strong>Prêt :</strong> ${fSh(dD)} → ${fSh(dF)} (${c.totalDays}j) &nbsp; 🖨️ ${fSh(dI)} &nbsp; ${c.tel?`📞 ${hl(c.tel)} &nbsp;`:''} ${c.km?`🚗 ${c.km} km &nbsp;`:''}Carb: ${c.carburant||'?'}</div>${rH}</div><div class="chi-num">${c.id}</div>`;
+    item.querySelector('.btn-restit')?.addEventListener('click',()=>openRestitution(c.id,c));
+    item.querySelector('.btn-print-restit')?.addEventListener('click',()=>printRestitution(c));
+    item.querySelector('.btn-del-contrat').addEventListener('click',()=>{
+      if(confirm(`Supprimer le contrat ${c.id} — ${c.nom} ?`)){
+        ctState.contrats=ctState.contrats.filter(x=>x.id!==c.id);
+        saveCT();renderContrats();if(isMobile())renderMobileContrats();
+      }
+    });
+    list.appendChild(item);
+  });
+}
+
 // ── MOBILE CONTRATS ──
 function renderMobileContrats(){
   const list=document.getElementById('mobileContratsList');list.innerHTML='';
   const contrats=ctState.contrats||[];const q=mCtSearch.toLowerCase().trim();const today=new Date();
-  const filtered=contrats.filter(c=>{
-    if(mCtFilter==='en-cours'&&c.restitue)return false;
-    if(mCtFilter==='restitue'&&!c.restitue)return false;
-    if(!q)return true;
-    return[c.nom,c.immat,c.tel,c.id,c.dateDebut?fSh(new Date(c.dateDebut)):''].some(f=>(f||'').toLowerCase().includes(q));
-  });
+  const filtered=contrats.filter(c=>{if(mCtFilter==='en-cours'&&c.restitue)return false;if(mCtFilter==='restitue'&&!c.restitue)return false;if(!q)return true;return[c.nom,c.immat,c.tel,c.id,c.dateDebut?fSh(new Date(c.dateDebut)):''].some(f=>(f||'').toLowerCase().includes(q));});
   if(!filtered.length){list.innerHTML=`<div style="text-align:center;color:var(--muted);padding:30px;font-size:.85rem;">Aucun contrat trouvé</div>`;return;}
   filtered.forEach(c=>{
     const dF=new Date(c.dateFin);const isR=!c.restitue&&dF<today;
     const item=document.createElement('div');item.className=`mobile-contrat-item ${c.restitue?'restitue-ok':isR?'en-retard':'en-cours'}`;
     const rH=c.restitue
       ?`<div class="mci-restitue">✅ Restitué le ${fSh(new Date(c.restitDate))}${c.restitKm?' · '+c.restitKm+' km':''}</div>
-         <div class="mci-actions"><button class="mci-btn mci-btn-green" id="mpr_${c.id}">🖨️ Reçu restitution</button></div>`
-      :`<div class="mci-actions"><button class="mci-btn mci-btn-blue" id="mr_${c.id}">🔑 Restitution</button></div>`;
+         <div class="mci-actions">
+           <button class="mci-btn mci-btn-green" id="mpr_${c.id}">🖨️ Reçu</button>
+           <button class="mci-btn mci-btn-red" id="mdel_${c.id}">🗑️</button>
+         </div>`
+      :`<div class="mci-actions">
+           <button class="mci-btn mci-btn-blue" id="mr_${c.id}">🔑 Restitution</button>
+           <button class="mci-btn mci-btn-red" id="mdel_${c.id}">🗑️</button>
+         </div>`;
     item.innerHTML=`<div class="mci-header"><span class="mci-nom">${c.nom||'—'}</span><span class="mci-immat">${c.immat||'?'}</span></div>
       <div class="mci-meta">📅 ${fSh(new Date(c.dateDebut))} → ${fSh(dF)} (${c.totalDays}j)<br>${c.tel?'📞 '+c.tel+' ':''} ${c.km?'🚗 '+c.km+' km':''}</div>
       ${isR?'<div style="color:#e74c3c;font-size:.75rem;font-weight:700;margin-bottom:6px;">⚠️ En retard !</div>':''}${rH}`;
     list.appendChild(item);
     document.getElementById(`mr_${c.id}`)?.addEventListener('click',()=>openMobileRestitution(c.id,c));
     document.getElementById(`mpr_${c.id}`)?.addEventListener('click',()=>printRestitution(c));
+    document.getElementById(`mdel_${c.id}`)?.addEventListener('click',()=>{
+      if(confirm(`Supprimer ${c.nom} ?`)){
+        ctState.contrats=ctState.contrats.filter(x=>x.id!==c.id);
+        saveCT();renderMobileContrats();renderContrats();
+      }
+    });
   });
 }
 
-// ── CONTRAT ──
+// ── CONTRAT IMPRESSION ──
 function openContrat(appt,dd,df,td){contratAppt=appt;document.getElementById('cNom').value=appt.name||'';document.getElementById('cTel').value=appt.tel||'';document.getElementById('cAdresse').value=appt.adresse||'';document.getElementById('cKm').value='';document.getElementById('cCarburant').value='plein';document.getElementById('cCouleurPret').value='';const immat=state.loanNames[appt.row]||'';document.getElementById('cImmatPret').value=immat;document.getElementById('contratRdvInfo').textContent=`${appt.name} — HYUNDAI BAYON (${immat})`;document.getElementById('contratDatesInfo').textContent=`Du ${fFR(dd)} au ${fFR(df)} — ${td} jour(s)`;contratAppt._dd=dd;contratAppt._df=df;contratAppt._td=td;document.getElementById('contratModalOverlay').classList.add('open');setTimeout(()=>document.getElementById('cNom').focus(),50);}
 function closeContrat(){document.getElementById('contratModalOverlay').classList.remove('open');contratAppt=null;}
 
@@ -1300,9 +1339,11 @@ function imprimerContrat(){
   if(!Array.isArray(ctState.contrats))ctState.contrats=[];
   ctState.contrats.unshift({id:num,nom:document.getElementById('cNom').value||'',tel:document.getElementById('cTel').value||'',adresse:document.getElementById('cAdresse').value||'',immat,carburant:carb,km:document.getElementById('cKm').value||'',couleur:document.getElementById('cCouleurPret').value||'',dateDebut:dd.toISOString(),dateFin:df.toISOString(),totalDays:td,dateImpression:new Date().toISOString(),restitue:false,restitDate:'',restitKm:'',restitCarburant:'',restitRemarques:''});
   saveCT();
-  document.getElementById('contrat-print-zone').innerHTML=buildContratHTML(num,document.getElementById('cNom').value,document.getElementById('cTel').value,document.getElementById('cAdresse').value,immat,document.getElementById('cCouleurPret').value,document.getElementById('cKm').value,cH,dd,df);
+  const zone=document.getElementById('contrat-print-zone');
+  zone.innerHTML=buildContratHTML(num,document.getElementById('cNom').value,document.getElementById('cTel').value,document.getElementById('cAdresse').value,immat,document.getElementById('cCouleurPret').value,document.getElementById('cKm').value,cH,dd,df);
+  zone.style.display='block';
   closeContrat();
-  setTimeout(()=>{window.print();setTimeout(()=>{document.getElementById('contrat-print-zone').innerHTML='';},3000);},200);
+  setTimeout(()=>{window.print();setTimeout(()=>{zone.innerHTML='';zone.style.display='none';},3000);},200);
 }
 
 function buildContratHTML(num,nom,tel,adresse,immat,couleur,km,cH,dd,df){
@@ -1326,7 +1367,8 @@ function printRestitution(c){
   const niv=['plein','3/4','1/2','1/4'];
   const cDH=niv.map(n=>`<span><span class="cp-check${c.carburant===n?' checked':''}"></span> ${n}</span>`).join('');
   const cRH=niv.map(n=>`<span><span class="cp-check${c.restitCarburant===n?' checked':''}"></span> ${n}</span>`).join('');
-  document.getElementById('contrat-print-zone').innerHTML=`<div class="restit-print">
+  const zone=document.getElementById('contrat-print-zone');
+  zone.innerHTML=`<div class="restit-print">
     <div class="restit-header"><div><div class="cp-garage-name">CARROSSERIE BRUN — VALENCE MOTORS</div><div class="cp-garage-sub">307 avenue de Romans — 26000 Valence — Tél : 04 75 55 64 39</div></div><div class="cp-num"><strong>CONTRAT N° ${c.id}</strong>Restitution : ${fFR(dr)}</div></div>
     <div class="restit-title-box">✅ REÇU DE RESTITUTION DE VÉHICULE DE PRÊT</div>
     <div class="restit-grid">
@@ -1341,33 +1383,8 @@ function printRestitution(c){
     <div class="restit-signatures"><div><div class="restit-sig-label">Signature du client<br><small>(bon pour accord)</small></div><div class="restit-sig-line">Nom : ${c.nom||'_______________________________'}</div></div><div><div class="restit-sig-label">Pour la Carrosserie Brun<br><small>Cachet et signature</small></div><div class="restit-sig-line">Carrosserie Brun — Valence Motors</div></div></div>
     <div class="restit-footer">Reçu de restitution — Contrat N° ${c.id} — Carrosserie Brun Valence Motors, 307 avenue de Romans, 26000 Valence</div>
   </div>`;
-  setTimeout(()=>{window.print();setTimeout(()=>{document.getElementById('contrat-print-zone').innerHTML='';},3000);},200);
-}
-
-// ── CONTRATS PC ──
-function renderContrats(){
-  const contrats=ctState.contrats||[];const q=ctSearch.toLowerCase().trim();const today=new Date();
-  const filtered=contrats.filter(c=>{if(ctFilter==='en-cours'&&c.restitue)return false;if(ctFilter==='restitue'&&!c.restitue)return false;if(!q)return true;return[c.nom,c.immat,c.tel,c.id,c.dateDebut?fSh(new Date(c.dateDebut)):'',c.dateFin?fSh(new Date(c.dateFin)):'',...(c.adresse?[c.adresse]:[])].some(f=>(f||'').toLowerCase().includes(q));});
-  const total=contrats.length;const enC=contrats.filter(c=>!c.restitue).length;const rest=contrats.filter(c=>c.restitue).length;
-  const retard=contrats.filter(c=>!c.restitue&&new Date(c.dateFin)<today).length;
-  const ic={};contrats.forEach(c=>{if(c.immat)ic[c.immat]=(ic[c.immat]||0)+1;});
-  document.getElementById('contratsStatsBar').innerHTML=`<div class="cstat"><div class="cv">${total}</div><div class="cl">Total</div></div><div class="cstat"><div class="cv" style="color:var(--amber)">${enC}</div><div class="cl">En cours</div></div><div class="cstat"><div class="cv" style="color:#2ecc71">${rest}</div><div class="cl">Restitués</div></div>${retard?`<div class="cstat"><div class="cv" style="color:#e74c3c">${retard}</div><div class="cl">En retard</div></div>`:''}${Object.entries(ic).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([im,n])=>`<div class="cstat"><div class="cv" style="font-size:.85rem">${im}</div><div class="cl">${n} prêt${n>1?'s':''}</div></div>`).join('')}`;
-  const list=document.getElementById('contratsListWrap');
-  const hl=txt=>{if(!q||!txt)return txt||'';return txt.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'),'<mark style="background:#fff3cd;border-radius:2px;padding:0 2px;">$1</mark>');};
-  if(!filtered.length){list.innerHTML=`<div class="no-results-contrats">${q?`Aucun résultat pour "<strong>${q}</strong>"`:'Aucun contrat. Les contrats apparaissent après impression.'}</div>`;return;}
-  list.innerHTML='';
-  filtered.forEach(c=>{
-    const dD=new Date(c.dateDebut);const dF=new Date(c.dateFin);const dI=new Date(c.dateImpression);const isR=!c.restitue&&dF<today;
-    const item=document.createElement('div');item.className=`contrat-history-item ${c.restitue?'restitue-ok':isR?'en-retard':'en-cours'}`;
-    const rH=c.restitue
-      ?`<div class="chi-restitue-info">✅ Restitué le ${fSh(new Date(c.restitDate))} · ${c.restitKm?c.restitKm+' km':'—'} · Carb: ${c.restitCarburant||'?'}${c.restitRemarques?' · '+c.restitRemarques:''}</div>
-         <div class="chi-actions"><button class="btn-print-restit">🖨️ Imprimer reçu restitution</button></div>`
-      :`<div class="chi-actions"><button class="btn-restit">🔑 Saisir restitution</button></div>`;
-    item.innerHTML=`<div class="chi-info"><div class="chi-header"><span class="chi-nom">${hl(c.nom)||'—'}</span><span class="chi-immat">${hl(c.immat)||'?'}</span><span class="chi-status-badge ${c.restitue?'restitue':isR?'en-retard':'en-cours'}">${c.restitue?'✅ Restitué':isR?'⚠️ En retard':'⏳ En cours'}</span></div><div class="chi-meta">📅 <strong>Prêt :</strong> ${fSh(dD)} → ${fSh(dF)} (${c.totalDays}j) &nbsp; 🖨️ ${fSh(dI)} &nbsp; ${c.tel?`📞 ${hl(c.tel)} &nbsp;`:''} ${c.km?`🚗 ${c.km} km &nbsp;`:''}Carb: ${c.carburant||'?'}</div>${rH}</div><div class="chi-num">${c.id}</div>`;
-    item.querySelector('.btn-restit')?.addEventListener('click',()=>openRestitution(c.id,c));
-    item.querySelector('.btn-print-restit')?.addEventListener('click',()=>printRestitution(c));
-    list.appendChild(item);
-  });
+  zone.style.display='block';
+  setTimeout(()=>{window.print();setTimeout(()=>{zone.innerHTML='';zone.style.display='none';},3000);},200);
 }
 
 // ── RESTITUTION ──
@@ -1386,8 +1403,10 @@ function printPlanning(){
   const nbRdv=all.filter(a=>a.segmentIndex===0).length;const cap=nbTech*39;const pct=cap>0?Math.round((totalH/cap)*100):0;
   let rows='';let fl=true,fn=true;
   rows2.forEach(r=>{if(r.isLoan&&fl){rows+=`<tr><td colspan="6" class="pp-section-header">🚗 VÉHICULES DE PRÊT — HYUNDAI BAYON</td></tr>`;fl=false;}if(!r.isLoan&&fn){rows+=`<tr><td colspan="6" class="pp-section-header">🔧 POSTES SANS VÉHICULE</td></tr>`;fn=false;}const cells=days.map((_,di)=>{const appts=all.filter(a=>a.type===r.type&&a.row===r.row&&a.day===di);return `<td>${appts.map(a=>`<div class="pp-appt-block" style="background:${a.color} !important;"><span class="pp-appt-name">${a.name}</span><span class="pp-appt-info">${hSeg(a.hours||0,a.totalDays||1,a.span||1)}h${a.totalDays>1?' · '+a.span+'j/'+a.totalDays:''}${a.tel?' · '+a.tel:''}</span></div>`).join('')}</td>`;}).join('');rows+=`<tr class="${r.isLoan?'pp-loan-row':''}"><td class="pp-label-cell">${r.isLoan?'🚗':'🔧'} ${r.name}</td>${cells}</tr>`;});
-  document.getElementById('planning-print-zone').innerHTML=`<div class="planning-print"><div class="pp-header"><div><div class="pp-garage">CARROSSERIE BRUN — VALENCE MOTORS<small>307 avenue de Romans, 26000 Valence · Tél : 04 75 55 64 39</small></div></div><div class="pp-week-title">${gWL(days)}<small>Imprimé le ${fFR(new Date())}</small></div></div><div class="pp-stats"><div class="pp-stat">📋 RDV : <span>${nbRdv}</span></div><div class="pp-stat">⏱ Heures : <span>${totalH}h</span></div><div class="pp-stat">📊 <span>${pct}%</span></div><div class="pp-stat">👷 <span>${nbTech}</span> tech.</div><div class="pp-stat">⚡ Capacité : <span>${cap}h</span></div></div><table class="pp-table"><thead><tr><th style="width:90px;text-align:left;padding-left:6px;">Poste</th>${days.map(d=>`<th${isToday(d)?' class="today-th"':''}>${d.toLocaleDateString('fr-FR',{weekday:'long'})}<br><span style="font-weight:400;font-size:9px;">${d.toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}</span></th>`).join('')}</tr></thead><tbody>${rows}</tbody></table><div class="pp-footer"><span>Carrosserie Brun Valence Motors — 307 avenue de Romans, 26000 Valence</span><span>${gWL(days)}</span></div></div>`;
-  setTimeout(()=>{window.print();setTimeout(()=>{document.getElementById('planning-print-zone').innerHTML='';},3000);},200);
+  const zone=document.getElementById('planning-print-zone');
+  zone.innerHTML=`<div class="planning-print"><div class="pp-header"><div><div class="pp-garage">CARROSSERIE BRUN — VALENCE MOTORS<small>307 avenue de Romans, 26000 Valence · Tél : 04 75 55 64 39</small></div></div><div class="pp-week-title">${gWL(days)}<small>Imprimé le ${fFR(new Date())}</small></div></div><div class="pp-stats"><div class="pp-stat">📋 RDV : <span>${nbRdv}</span></div><div class="pp-stat">⏱ Heures : <span>${totalH}h</span></div><div class="pp-stat">📊 <span>${pct}%</span></div><div class="pp-stat">👷 <span>${nbTech}</span> tech.</div><div class="pp-stat">⚡ Capacité : <span>${cap}h</span></div></div><table class="pp-table"><thead><tr><th style="width:90px;text-align:left;padding-left:6px;">Poste</th>${days.map(d=>`<th${isToday(d)?' class="today-th"':''}>${d.toLocaleDateString('fr-FR',{weekday:'long'})}<br><span style="font-weight:400;font-size:9px;">${d.toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}</span></th>`).join('')}</tr></thead><tbody>${rows}</tbody></table><div class="pp-footer"><span>Carrosserie Brun Valence Motors — 307 avenue de Romans, 26000 Valence</span><span>${gWL(days)}</span></div></div>`;
+  zone.style.display='block';
+  setTimeout(()=>{window.print();setTimeout(()=>{zone.innerHTML='';zone.style.display='none';},3000);},200);
 }
 
 // ── DRAG ──
@@ -1397,7 +1416,7 @@ function delGroup(gid){if(isRO()){showRO();return;}state.appointments=state.appo
 function confirmDel(gid,name){pendingDelId=gid;document.getElementById('confirmText').textContent=`Supprimer le RDV "${name}" ?`;document.getElementById('confirmModalOverlay').classList.add('open');}
 function closeConfirm(){document.getElementById('confirmModalOverlay').classList.remove('open');pendingDelId=null;}
 
-// ── MODALS RDV PC ──
+// ── MODAL RDV PC ──
 function openModal(type,row,day){if(isRO()){showRO();return;}pendingAppt={type,row,day};selColor=0;newPrio='moyenne';['apptName','apptTel','apptAdresse','apptMemo'].forEach(id=>document.getElementById(id).value='');document.getElementById('apptDays').value=1;document.getElementById('apptHours').value=4;upPrev('apptPreview',day,state.weekOffset,1);setNP('moyenne');buildCP('colorPicker',i=>selColor=i);document.getElementById('modalOverlay').classList.add('open');setTimeout(()=>document.getElementById('apptName').focus(),50);}
 function setNP(p){newPrio=p;['newPrioBasse','newPrioMoyenne','newPrioHaute'].forEach(id=>document.getElementById(id).className='status-btn');const ids={basse:'newPrioBasse',moyenne:'newPrioMoyenne',haute:'newPrioHaute'};document.getElementById(ids[p]).className=`status-btn active-${p}`;}
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open');pendingAppt=null;}
@@ -1520,7 +1539,6 @@ function setupEvents(){
   document.querySelectorAll('.filter-chip[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{ctFilter=btn.dataset.filter;document.querySelectorAll('.filter-chip[data-filter]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderContrats();}));
   document.getElementById('apptDays').addEventListener('input',e=>{if(pendingAppt)upPrev('apptPreview',pendingAppt.day,state.weekOffset,parseInt(e.target.value)||1);});
   document.getElementById('editApptDays').addEventListener('input',e=>{if(editRef){const wo=gWO(editRef.weekStart);upPrev('editApptPreview',editRef.day,wo,parseInt(e.target.value)||1);}});
-  // Mobile
   document.getElementById('mBtnPrev').addEventListener('click',()=>changeWeek(-1));
   document.getElementById('mBtnNext').addEventListener('click',()=>changeWeek(1));
   document.getElementById('mBtnToday').addEventListener('click',()=>goToday());
