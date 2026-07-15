@@ -685,18 +685,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <label>Client / Véhicule</label><input type="text" id="apptName" placeholder="Ex: DUPONT – Peugeot 308">
     <label>Téléphone</label><input type="text" id="apptTel" placeholder="06 XX XX XX XX">
     <label>Adresse</label><input type="text" id="apptAdresse" placeholder="12 rue des Lilas, 26000 Valence">
-   <label>Jour de départ (dans la semaine)</label>
-<select id="editApptDay">
-  <option value="0">Lundi</option>
-  <option value="1">Mardi</option>
-  <option value="2">Mercredi</option>
-  <option value="3">Jeudi</option>
-  <option value="4">Vendredi</option>
-</select>
-<label>Semaine</label>
-<input type="week" id="editApptWeek">
-<label>Nombre de jours</label>
-<input type="number" id="editApptDays" min="1" max="20">
+    <label>Nombre de jours</label><input type="number" id="apptDays" value="1" min="1" max="20">
     <div class="preview-note" id="apptPreview">📅 1 jour</div>
     <label>Heures de travail (total)</label><input type="number" id="apptHours" value="4" min="0.5" max="999" step="0.5">
     <label>Mémo</label><textarea id="apptMemo" placeholder="Attente accord assurance…"></textarea>
@@ -1457,7 +1446,7 @@ function saveMobileAppt(){
 }
 
 // ── MOBILE CONGES MODAL ──
-
+function openMobileCongesModal(tech,date){if(isRO()){showRO();return;}mPendingConges={tech,date};mSelCongesType='conge';document.getElementById('mCongesInfo').textContent=`${tech.nom} — ${JF[date.getDay()]} ${date.getDate()} ${MF[date.getMonth()]} ${date.getFullYear()}`;document.getElementById('mCongesNote').value='';const tg=document.getElementById('mTypeGrid');tg.innerHTML='';TABS.forEach(t=>{const card=document.createElement('div');card.className=`type-card${t.id===mSelCongesType?' selected':''}`;if(t.id===mSelCongesType)card.style.background=t.color;card.innerHTML=`<div class="type-dot" style="background:${t.color}"></div>${t.icon} ${t.label}`;card.addEventListener('click',()=>{mSelCongesType=t.id;tg.querySelectorAll('.type-card').forEach(c=>{c.classList.remove('selected');c.style.background='';});card.classList.add('selected');card.style.background=t.color;});tg.appendChild(card);});document.getElementById('mobileCongesModalOverlay').classList.add('open');}
 function closeMobileCongesModal(){document.getElementById('mobileCongesModalOverlay').classList.remove('open');mPendingConges=null;}
 function saveMobileConges(){if(isRO()){showRO();return;}if(!mPendingConges)return;const dk=dKey(mPendingConges.date);cState.absences=cState.absences.filter(a=>!(a.techId===mPendingConges.tech.id&&a.date===dk));cState.absences.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2),techId:mPendingConges.tech.id,date:dk,type:mSelCongesType,note:document.getElementById('mCongesNote').value.trim()});saveCG();closeMobileCongesModal();renderMobileConges();}
 
@@ -1467,90 +1456,8 @@ function setEP(p){editPrio=p;['editPrioBasse','editPrioMoyenne','editPrioHaute']
 function setES(s){editStat=s;document.getElementById('btnPending').className='status-btn'+(s==='pending'?' active-pending':'');document.getElementById('btnArrived').className='status-btn'+(s==='arrived'?' active-arrived':'');}
 function setEPS(s){editPieceStat=s;document.getElementById('btnPieceNon').className='status-btn'+(s==='none'?' active-pending':'');document.getElementById('btnPieceOui').className='status-btn'+(s==='ordered'?' active-ordered':'');document.getElementById('btnPieceLivree').className='status-btn'+(s==='delivered'?' active-delivered':'');document.querySelector('.piece-fournisseur').style.display=s==='none'?'none':'block';}
 function closeEditModal(){document.getElementById('editModalOverlay').classList.remove('open');editId=null;editRef=null;}
-function saveEditAppt(){
-  if(isRO()){showRO();return;}
-  if(!editId||!editRef)return;
-  const name=document.getElementById('editApptName').value.trim();
-  if(!name){document.getElementById('editApptName').focus();return;}
-  const tel=document.getElementById('editApptTel').value.trim();
-  const adresse=document.getElementById('editApptAdresse').value.trim();
-  const memo=document.getElementById('editApptMemo').value.trim();
-  const hours=parseFloat(document.getElementById('editApptHours').value)||0;
-  const td=parseInt(document.getElementById('editApptDays').value)||1;
-  const newDay=parseInt(document.getElementById('editApptDay').value)||0;
-  const color=COLORS[editSelColor];
-  const pf=document.getElementById('editPieceFournisseur').value.trim();
-  const pn=document.getElementById('editPieceNote').value.trim();
+function saveEditAppt(){if(isRO()){showRO();return;}if(!editId||!editRef)return;const name=document.getElementById('editApptName').value.trim();if(!name){document.getElementById('editApptName').focus();return;}const tel=document.getElementById('editApptTel').value.trim();const adresse=document.getElementById('editApptAdresse').value.trim();const memo=document.getElementById('editApptMemo').value.trim();const hours=parseFloat(document.getElementById('editApptHours').value)||0;const td=parseInt(document.getElementById('editApptDays').value)||1;const color=COLORS[editSelColor];const pf=document.getElementById('editPieceFournisseur').value.trim();const pn=document.getElementById('editPieceNote').value.trim();state.appointments=state.appointments.filter(a=>a.groupId!==editId);const wo=gWO(editRef.weekStart);const days=gWD(wo);const segs=split(editRef.day,td,days[0]);segs.forEach((seg,i)=>{state.appointments.push({id:editId+(i===0?'':'-'+i),groupId:editId,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:editRef.type,row:editRef.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:editPrio,arrived:(editStat==='arrived'),pieceStatus:editPieceStat,pieceFournisseur:pf,pieceNote:pn});});saveFB();closeEditModal();render();if(isMobile())renderMobile();}
 
-  // Récupérer la semaine choisie
-  const weekVal=document.getElementById('editApptWeek').value; // format YYYY-Www
-  let newWeekStart;
-  if(weekVal){
-    const [year,week]=weekVal.split('-W');
-    // Calculer le lundi de cette semaine ISO
-    const jan4=new Date(parseInt(year),0,4);
-    const jan4Day=jan4.getDay()||7;
-    const monday=new Date(jan4);
-    monday.setDate(jan4.getDate()-(jan4Day-1)+(parseInt(week)-1)*7);
-    monday.setHours(0,0,0,0);
-    newWeekStart=monday;
-  }else{
-    // Garder la semaine d'origine
-    newWeekStart=gWD(gWO(editRef.weekStart))[0];
-  }
-
-  state.appointments=state.appointments.filter(a=>a.groupId!==editId);
-  const segs=split(newDay,td,newWeekStart);
-  segs.forEach((seg,i)=>{
-    state.appointments.push({
-      id:editId+(i===0?'':'-'+i),
-      groupId:editId,
-      segmentIndex:seg.segmentIndex,
-      hasPrev:seg.hasPrev,hasNext:seg.hasNext,
-      totalDays:td,
-      type:editRef.type,row:editRef.row,
-      day:seg.day,span:seg.span,
-      name,hours,tel,adresse,memo,color,
-      weekStart:seg.weekStart.toISOString(),
-      priority:editPrio,
-      arrived:(editStat==='arrived'),
-      pieceStatus:editPieceStat,
-      pieceFournisseur:pf,pieceNote:pn
-    });
-  });
-  saveFB();closeEditModal();render();if(isMobile())renderMobile();
-}
-    function openEditModal(gid){
-  const fs=state.appointments.find(a=>a.groupId===gid&&a.segmentIndex===0);
-  if(!fs)return;
-  editId=gid;editRef=fs;
-  editStat=fs.arrived?'arrived':'pending';
-  editPieceStat=fs.pieceStatus||'none';
-  editPrio=fs.priority||'moyenne';
-  editSelColor=Math.max(0,COLORS.indexOf(fs.color));
-  document.getElementById('editApptName').value=fs.name;
-  document.getElementById('editApptTel').value=fs.tel||'';
-  document.getElementById('editApptAdresse').value=fs.adresse||'';
-  document.getElementById('editApptMemo').value=fs.memo||'';
-  document.getElementById('editApptHours').value=fs.hours;
-  document.getElementById('editApptDays').value=fs.totalDays||fs.span||1;
-  document.getElementById('editApptDay').value=fs.day||0;
-  // Calcul de la semaine courante du RDV
-  const wo=gWO(fs.weekStart);
-  const days=gWD(wo);
-  const monday=days[0];
-  // Format YYYY-Www pour input type=week
-  const jan4=new Date(monday.getFullYear(),0,4);
-  const weekNum=Math.ceil(((monday-jan4)/86400000+jan4.getDay()+1)/7);
-  document.getElementById('editApptWeek').value=`${monday.getFullYear()}-W${String(weekNum).padStart(2,'0')}`;
-  const wo2=gWO(fs.weekStart);
-  upPrev('editApptPreview',fs.day,wo2,fs.totalDays||fs.span||1);
-  setES(editStat);setEPS(editPieceStat);setEP(editPrio);
-  buildCP('editColorPicker',i=>editSelColor=i);
-  document.querySelectorAll('#editColorPicker .color-swatch').forEach((s,i)=>s.classList.toggle('selected',i===editSelColor));
-  document.getElementById('editModalOverlay').classList.add('open');
-  setTimeout(()=>document.getElementById('editApptName').focus(),50);
-}
 function buildCP(id,onPick){const cp=document.getElementById(id);cp.innerHTML='';COLORS.forEach((c,i)=>{const sw=document.createElement('div');sw.className=`color-swatch${i===0?' selected':''}`;sw.style.background=c;sw.addEventListener('click',()=>{cp.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));sw.classList.add('selected');onPick(i);});cp.appendChild(sw);});}
 function buildMCP(onPick){const cp=document.getElementById('mColorPicker');cp.innerHTML='';COLORS.forEach((c,i)=>{const sw=document.createElement('div');sw.className=`mobile-color-swatch${i===0?' selected':''}`;sw.style.background=c;sw.addEventListener('click',()=>{cp.querySelectorAll('.mobile-color-swatch').forEach(s=>s.classList.remove('selected'));sw.classList.add('selected');onPick(i);});cp.appendChild(sw);});}
 
@@ -1653,28 +1560,6 @@ function setupEvents(){
   [['modalOverlay',closeModal],['editModalOverlay',closeEditModal],['absenceModalOverlay',closeAbsModal],['historyModalOverlay',closeHistory],['contratModalOverlay',closeContrat],['restitutionModalOverlay',closeRestitution],['congesModalOverlay',closeCongesModal],['confirmModalOverlay',closeConfirm],['mobileModalOverlay',closeMobileModal],['mobileCongesModalOverlay',closeMobileCongesModal],['mobileRestitutionOverlay',closeMobileRestitution]].forEach(([id,fn])=>{document.getElementById(id).addEventListener('click',function(e){if(e.target===this)fn();});});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeEditModal();closeAbsModal();closeHistory();closeContrat();closeRestitution();closeCongesModal();closeConfirm();closeMobileModal();closeMobileCongesModal();closeMobileRestitution();document.getElementById('searchResults').classList.remove('open');}});
   window.addEventListener('resize',()=>{if(isMobile()){renderMobile();if(curPage==='conges')renderMobileConges();if(curPage==='contrats')renderMobileContrats();}});
-  document.getElementById('editApptDay').addEventListener('change',()=>{
-  const day=parseInt(document.getElementById('editApptDay').value)||0;
-  const td=parseInt(document.getElementById('editApptDays').value)||1;
-  const weekVal=document.getElementById('editApptWeek').value;
-  if(weekVal){
-    const[year,week]=weekVal.split('-W');
-    const jan4=new Date(parseInt(year),0,4);
-    const jan4Day=jan4.getDay()||7;
-    const monday=new Date(jan4);
-    monday.setDate(jan4.getDate()-(jan4Day-1)+(parseInt(week)-1)*7);
-    monday.setHours(0,0,0,0);
-    const days=[0,1,2,3,4].map(i=>{const d=new Date(monday);d.setDate(d.getDate()+i);return d;});
-    const dd=days[day];const df=calcFin(dd,td);
-    const s=split(day,td,monday);
-    let t=`📅 Du ${fFR(dd)} au ${fFR(df)} (${td}j)`;
-    if(s.length>1)t+=` — ${s.length} sem.`;
-    document.getElementById('editApptPreview').textContent=t;
-  }
-});
-document.getElementById('editApptWeek').addEventListener('change',()=>{
-  document.getElementById('editApptDay').dispatchEvent(new Event('change'));
-});
 }
 </script>
 </body>
