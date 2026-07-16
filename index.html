@@ -1200,8 +1200,24 @@ async function saveFB(){if(isRO()){showRO();return;}isSav=true;ss('save');try{aw
 function ssc(s){const el=document.getElementById('syncStatusConges');if(!el)return;const m={ok:['✅','sync-ok'],wait:['⏳','sync-wait'],save:['💾','sync-wait'],err:['❌','sync-err']};el.textContent=m[s][0];el.className='sync-indicator '+m[s][1];}
 async function saveCG(){if(isRO()){showRO();return;}isSavC=true;ssc('save');try{await setDoc(docConges,{...cState,updatedAt:Date.now()});ssc('ok');}catch(e){console.error(e);ssc('err');}setTimeout(()=>isSavC=false,600);}
 async function saveCT(){isSavCt=true;try{await setDoc(docContrats,{...ctState,updatedAt:Date.now()});}catch(e){console.error(e);}setTimeout(()=>isSavCt=false,600);}
-
-function na(a){if(!a.pieceStatus)a.pieceStatus='none';if(!a.pieceFournisseur)a.pieceFournisseur='';if(!a.pieceNote)a.pieceNote='';if(!a.priority)a.priority='moyenne';if(!a.tel)a.tel='';if(!a.adresse)a.adresse='';if(!a.memo)a.memo='';if(a.arrived===undefined)a.arrived=false;if(a.piece===true&&a.pieceStatus==='none')a.pieceStatus='ordered';if(!a.groupId)a.groupId=a.id;if(!a.totalDays)a.totalDays=a.span||1;if(a.segmentIndex===undefined)a.segmentIndex=0;if(!a.hasPrev)a.hasPrev=false;if(!a.hasNext)a.hasNext=false;if(!a.technicien)a.technicien='';return a;}
+function na(a){
+  if(!a.pieceStatus)a.pieceStatus='none';
+  if(!a.pieceFournisseur)a.pieceFournisseur='';
+  if(!a.pieceNote)a.pieceNote='';
+  if(!a.priority)a.priority='moyenne';
+  if(!a.tel)a.tel='';
+  if(!a.adresse)a.adresse='';
+  if(!a.memo)a.memo='';
+  if(a.arrived===undefined)a.arrived=false;
+  if(a.piece===true&&a.pieceStatus==='none')a.pieceStatus='ordered';
+  if(!a.groupId)a.groupId=a.id;
+  if(!a.totalDays)a.totalDays=a.span||1;
+  if(a.segmentIndex===undefined)a.segmentIndex=0;
+  if(!a.hasPrev)a.hasPrev=false;
+  if(!a.hasNext)a.hasNext=false;
+  if(a.technicien===undefined||a.technicien===null)a.technicien='';
+  return a;
+}
 function hSeg(h,td,sp){if(!td||td===0)return h;return Math.round((h*sp/td)*10)/10;}
 
 // ── DATES ──
