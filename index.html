@@ -147,7 +147,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .badge-blue{background:rgba(41,128,185,.8);}
 .badge-red{background:rgba(231,76,60,.8);}
 .badge-prev,.badge-next{font-size:.55rem;font-weight:800;background:rgba(0,0,0,.25);color:#fff;border-radius:3px;padding:1px 4px;flex-shrink:0;}
-.tech-badge-appt{font-size:.55rem;font-weight:800;background:rgba(255,255,255,.3);color:#fff;border-radius:3px;padding:1px 5px;flex-shrink:0;letter-spacing:.04em;}
 .appt.arrived{outline:2.5px solid #2ecc71;outline-offset:-2px;}
 #dragGhost{position:fixed;pointer-events:none;z-index:999;border-radius:6px;padding:4px 10px;font-size:.78rem;font-weight:700;color:#fff;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.3);opacity:.88;transform:translate(-50%,-50%);}
 .conges-wrap{padding:20px;max-width:1400px;margin:0 auto;}
@@ -294,33 +293,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .confirm-modal p{font-size:.88rem;color:var(--muted);margin-bottom:20px;}
 .btn-danger{background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;}
 .btn-danger:hover{background:#c0392b;}
-/* ── VUE TECHNICIEN MOBILE ── */
-.tech-view{display:none;padding:0 0 var(--bottom-nav-h) 0;background:var(--surface);min-height:100vh;}
-.tech-view-header{background:var(--steel);color:#fff;padding:16px;text-align:center;}
-.tech-view-name{font-size:1.1rem;font-weight:700;}
-.tech-view-sub{font-size:.75rem;opacity:.7;margin-top:2px;}
-.tech-week-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px;}
-.tech-week-nav button{background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:1rem;}
-.tech-week-nav .twl{font-size:.8rem;font-weight:600;min-width:140px;text-align:center;}
-.tech-rdv-list{padding:12px;}
-.tech-rdv-empty{text-align:center;color:var(--muted);padding:40px 20px;font-size:.9rem;}
-.tech-rdv-card{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);}
-.tech-rdv-card.urgent{border-left:4px solid #e74c3c;}
-.tech-rdv-card.today{border-left:4px solid var(--accent);}
-.tech-rdv-card.done{border-left:4px solid #2ecc71;opacity:.75;}
-.tech-rdv-card-header{padding:12px 14px;display:flex;align-items:center;gap:10px;}
-.tech-rdv-color{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
-.tech-rdv-nom{font-size:1rem;font-weight:700;color:var(--steel);flex:1;}
-.tech-rdv-poste{font-size:.72rem;background:var(--steel);color:#fff;border-radius:4px;padding:2px 8px;font-weight:700;}
-.tech-rdv-body{padding:0 14px 12px;}
-.tech-rdv-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.85rem;color:var(--text);}
-.tech-rdv-row svg{flex-shrink:0;opacity:.5;}
-.tech-rdv-deadline{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;font-weight:700;padding:6px 12px;border-radius:8px;margin-top:4px;}
-.tech-rdv-deadline.red{background:#fde8e8;color:#c0392b;}
-.tech-rdv-deadline.orange{background:#fef9e7;color:#9a6a00;}
-.tech-rdv-deadline.green{background:#eafaf1;color:#1e8449;}
-.tech-rdv-memo{background:var(--surface);border-radius:6px;padding:8px 10px;font-size:.8rem;color:var(--muted);margin-top:6px;border-left:3px solid var(--border);}
-/* ── MOBILE GENERAL ── */
 .mobile-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--bottom-nav-h);background:var(--steel);z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.2);border-top:1px solid var(--steel-mid);}
 .mobile-bottom-nav .mbn-inner{display:grid;grid-template-columns:repeat(3,1fr);height:100%;}
 .mbn-tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:rgba(255,255,255,.55);font-size:.65rem;font-weight:600;border:none;background:transparent;font-family:inherit;transition:color .15s;-webkit-tap-highlight-color:transparent;}
@@ -351,18 +323,17 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .mobile-grid-header .mg-day .mgd-name{font-size:.58rem;text-transform:uppercase;opacity:.8;}
 .mobile-grid-header .mg-day .mgd-date{font-size:.82rem;font-weight:800;}
 .mg-section-header{background:var(--steel-mid);color:rgba(255,255,255,.7);font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:4px 8px;}
-.mobile-grid-row{display:grid;border-bottom:1px solid var(--border);height:60px;position:relative;overflow:hidden;}
-.mg-label{display:flex;align-items:center;padding:0 4px;gap:4px;font-size:.68rem;font-weight:700;white-space:nowrap;overflow:hidden;border-right:2px solid var(--border);background:var(--card);height:60px;}
+.mobile-grid-row{display:grid;border-bottom:1px solid var(--border);min-height:52px;position:relative;}
+.mg-label{display:flex;align-items:center;padding:0 4px;gap:4px;font-size:.68rem;font-weight:700;white-space:nowrap;overflow:hidden;border-right:2px solid var(--border);background:var(--card);}
 .mg-label.loan-lbl{background:var(--loan-bg);}
 .mg-label.noloan-lbl{background:var(--noloan-bg);}
-.mg-cell{border-right:1px solid var(--border);position:relative;cursor:pointer;height:60px;overflow:hidden;-webkit-tap-highlight-color:transparent;}
+.mg-cell{border-right:1px solid var(--border);position:relative;cursor:pointer;min-height:52px;-webkit-tap-highlight-color:transparent;}
 .mg-cell:last-child{border-right:none;}
 .mg-cell.today-col{background:rgba(232,76,30,.05);}
 .mg-cell.occ{background:rgba(231,76,60,.07) !important;cursor:not-allowed;}
-.mg-appt{position:absolute;top:2px;left:2px;right:2px;bottom:2px;border-radius:5px;padding:3px 5px 3px 9px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2);overflow:hidden;z-index:5;}
-.mg-appt-prio{position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:5px 0 0 5px;}
-.mg-appt-name{font-size:.64rem;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3;}
-.mg-appt-info{font-size:.55rem;color:rgba(255,255,255,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;margin-top:1px;}
+.mg-appt{position:absolute;inset:2px;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.15);overflow:hidden;}
+.mg-appt-name{font-size:.64rem;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mg-appt-info{font-size:.56rem;color:rgba(255,255,255,.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mobile-search-bar{padding:8px 12px;background:var(--card);border-bottom:1px solid var(--border);}
 .mobile-search-bar input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:.9rem;font-family:inherit;outline:none;}
 .mobile-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:flex-end;justify-content:center;}
@@ -409,6 +380,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .mobile-search-contrats .ms-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:.85rem;pointer-events:none;}
 .mobile-filter-chips{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;}
 .mobile-filter-chips::-webkit-scrollbar{display:none;}
+/* PRINT - CORRIGE PAGE BLANCHE */
 @media print{
   #loginPage{display:none !important;}
   #appRoot{display:block !important;}
@@ -503,7 +475,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   .mobile-contrats{display:block;}
 }
 @media(min-width:769px){
-  .mobile-topbar,.mobile-bottom-nav,.mobile-planning,.mobile-conges,.mobile-contrats,.mobile-modal-overlay,.tech-view{display:none !important;}
+  .mobile-topbar,.mobile-bottom-nav,.mobile-planning,.mobile-conges,.mobile-contrats,.mobile-modal-overlay{display:none !important;}
 }
 </style>
 </head>
@@ -564,8 +536,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
       <button class="toolbar-btn" id="btnPrintPlanning">🖨️ Imprimer</button>
     </div>
   </div>
-  <div id="congesTopRight" style="display:none;align-items:center;gap:10px;"><span class="sync-indicator sync-wait" id="syncStatusConges">⏳ Sync</span></div>
-  <div id="contratsTopRight" style="display:none;align-items:center;gap:10px;"><span style="font-size:.82rem;color:rgba(255,255,255,.7);">Historique & recherche des contrats</span></div>
+  <div id="congesTopRight" style="display:none;align-items:center;gap:10px;">
+    <span class="sync-indicator sync-wait" id="syncStatusConges">⏳ Sync</span>
+  </div>
+  <div id="contratsTopRight" style="display:none;align-items:center;gap:10px;">
+    <span style="font-size:.82rem;color:rgba(255,255,255,.7);">Historique & recherche des contrats</span>
+  </div>
   <div style="display:flex;align-items:center;gap:10px;margin-left:10px;border-left:1px solid var(--steel-mid);padding-left:14px;">
     <div style="display:flex;flex-direction:column;align-items:flex-end;line-height:1.3;">
       <span id="userEmail" style="font-size:.72rem;color:rgba(255,255,255,.8);font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
@@ -585,26 +561,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <button id="mBtnNext">›</button>
   </div>
   <button class="toolbar-btn" id="mBtnLogout" style="background:#e74c3c;height:28px;font-size:.7rem;">🚪</button>
-</div>
-
-<!-- VUE TECHNICIEN MOBILE -->
-<div class="tech-view" id="techView">
-  <div class="tech-view-header">
-    <div class="tech-view-name" id="techViewName">Mes RDV</div>
-    <div class="tech-view-sub" id="techViewSub">Lecture seule</div>
-    <div class="tech-week-nav">
-      <button id="tvBtnPrev">‹</button>
-      <div class="twl" id="tvWeekLabel"></div>
-      <button id="tvBtnNext">›</button>
-      <button id="tvBtnToday" style="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:6px;padding:0 10px;height:32px;font-size:.75rem;cursor:pointer;font-family:inherit;">Auj.</button>
-    </div>
-  </div>
-  <div class="tech-rdv-list" id="techRdvList"></div>
-  <div class="mobile-bottom-nav">
-    <div class="mbn-inner" style="grid-template-columns:1fr;">
-      <button class="mbn-tab active" style="color:#fff;" onclick="logout()"><div class="mbn-icon-wrap" style="background:var(--accent);"><div class="mbn-icon">🚪</div></div><span>Déconnexion</span></button>
-    </div>
-  </div>
 </div>
 
 <div class="page active" id="pageAtelier">
@@ -687,7 +643,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<div class="mobile-bottom-nav" id="mainBottomNav">
+<div class="mobile-bottom-nav">
   <div class="mbn-inner">
     <button class="mbn-tab active" id="mbnAtelier" onclick="switchPage('atelier')"><div class="mbn-icon-wrap"><div class="mbn-icon">🔧</div></div><span>Planning</span></button>
     <button class="mbn-tab" id="mbnConges" onclick="switchPage('conges')"><div class="mbn-icon-wrap"><div class="mbn-icon">🏖️</div></div><span>Congés</span></button>
@@ -711,21 +667,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
           </select>
         </div>
       </div>
-      <div class="full" style="margin-top:8px;">
-        <label>Technicien associé (optionnel)</label>
-        <select id="newUserTech">
-          <option value="">— Aucun (accès planning complet) —</option>
-          <option value="fabien">Fabien</option>
-          <option value="eric">Éric</option>
-          <option value="david">David</option>
-          <option value="alois">Aloïs</option>
-          <option value="anthony">Anthony</option>
-        </select>
-      </div>
       <div id="addUserError" style="color:#e74c3c;font-size:.82rem;margin-top:8px;display:none;"></div>
       <button class="btn-primary" id="btnAddUser" style="margin-top:12px;">➕ Créer l'utilisateur</button>
     </div>
-    <div class="btn-row" style="margin-top:16px;"><button class="btn-secondary" id="btnCloseAdmin">Fermer</button></div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn-secondary" id="btnCloseAdmin">Fermer</button>
+    </div>
   </div>
 </div>
 
@@ -738,15 +685,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <label>Client / Véhicule</label><input type="text" id="apptName" placeholder="Ex: DUPONT – Peugeot 308">
     <label>Téléphone</label><input type="text" id="apptTel" placeholder="06 XX XX XX XX">
     <label>Adresse</label><input type="text" id="apptAdresse" placeholder="12 rue des Lilas, 26000 Valence">
-    <label>Technicien assigné</label>
-    <select id="apptTech">
-      <option value="">— Aucun —</option>
-      <option value="fabien">Fabien</option>
-      <option value="eric">Éric</option>
-      <option value="david">David</option>
-      <option value="alois">Aloïs</option>
-      <option value="anthony">Anthony</option>
-    </select>
     <label>Nombre de jours</label><input type="number" id="apptDays" value="1" min="1" max="20">
     <div class="preview-note" id="apptPreview">📅 1 jour</div>
     <label>Heures de travail (total)</label><input type="number" id="apptHours" value="4" min="0.5" max="999" step="0.5">
@@ -768,26 +706,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <label>Client / Véhicule</label><input type="text" id="editApptName">
     <label>Téléphone</label><input type="text" id="editApptTel">
     <label>Adresse</label><input type="text" id="editApptAdresse">
-    <label>Technicien assigné</label>
-    <select id="editApptTech">
-      <option value="">— Aucun —</option>
-      <option value="fabien">Fabien</option>
-      <option value="eric">Éric</option>
-      <option value="david">David</option>
-      <option value="alois">Aloïs</option>
-      <option value="anthony">Anthony</option>
-    </select>
     <label>Heures de travail (total)</label><input type="number" id="editApptHours" min="0.5" max="999" step="0.5">
-    <label>📅 Semaine</label><input type="week" id="editApptWeek">
-    <label>Jour de départ</label>
-    <select id="editApptDay">
-      <option value="0">Lundi</option>
-      <option value="1">Mardi</option>
-      <option value="2">Mercredi</option>
-      <option value="3">Jeudi</option>
-      <option value="4">Vendredi</option>
-    </select>
-    <label>Nombre de jours de travaux</label><input type="number" id="editApptDays" min="1" max="20">
+    <label>Nombre de jours</label><input type="number" id="editApptDays" min="1" max="20">
     <div class="preview-note" id="editApptPreview" style="margin-top:6px;">📅 —</div>
     <label>Mémo</label><textarea id="editApptMemo"></textarea>
     <label>Priorité</label>
@@ -905,15 +825,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <label>Client / Véhicule</label><input type="text" id="mApptName" placeholder="DUPONT – Peugeot 308">
     <label>Téléphone</label><input type="text" id="mApptTel" placeholder="06 XX XX XX XX">
     <label>Adresse</label><input type="text" id="mApptAdresse" placeholder="12 rue des Lilas">
-    <label>Technicien assigné</label>
-    <select id="mApptTech">
-      <option value="">— Aucun —</option>
-      <option value="fabien">Fabien</option>
-      <option value="eric">Éric</option>
-      <option value="david">David</option>
-      <option value="alois">Aloïs</option>
-      <option value="anthony">Anthony</option>
-    </select>
     <label>Nombre de jours</label><input type="number" id="mApptDays" value="1" min="1" max="20">
     <div class="mobile-preview-note" id="mApptPreview">📅 1 jour</div>
     <label>Heures total</label><input type="number" id="mApptHours" value="4" min="0.5" max="999" step="0.5">
@@ -958,9 +869,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 
 </div><!-- fin appRoot -->
 
+<!-- ZONES IMPRESSION HORS APPROOT -->
 <div id="contrat-print-zone"></div>
 <div id="planning-print-zone"></div>
-<script type="module">
+  <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getFirestore,doc,onSnapshot,setDoc,getDoc,collection,getDocs,deleteDoc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -986,7 +898,7 @@ let cState={absences:[]};
 let ctState={contrats:[]};
 let nbTech=parseInt(localStorage.getItem('carrosserie_tech')||'3');
 let isSav=false,isSavC=false,isSavCt=false;
-let currentUser=null,currentRole=null,currentTech=null;
+let currentUser=null,currentRole=null;
 let contratAppt=null,pendingConges=null,selCongesType='conge';
 let curPage='atelier',pendingAppt=null,selColor=0,newPrio='moyenne';
 let editId=null,editSelColor=0,editStat='pending',editPieceStat='none',editPrio='moyenne',editRef=null;
@@ -996,7 +908,6 @@ let mPendingAppt=null,mSelColor=0,mNewPrio='moyenne';
 let mPendingConges=null,mSelCongesType='conge';
 let mRestitId=null,isEditing=false;
 let congesYear=new Date().getFullYear(),congesMonth=new Date().getMonth();
-let tvWeekOffset=0;
 
 const isMobile=()=>window.innerWidth<=768;
 const isRO=()=>currentRole==='lecteur';
@@ -1029,99 +940,24 @@ onAuthStateChanged(auth,async user=>{
     currentUser=user;
     try{
       const snap=await getDoc(doc(db,'users',user.uid));
-      if(snap.exists()){currentRole=snap.data().role||'lecteur';currentTech=snap.data().tech||null;}
-      else{currentRole='lecteur';currentTech=null;}
-    }catch(e){currentRole='lecteur';currentTech=null;}
+      currentRole=snap.exists()?snap.data().role||'lecteur':'lecteur';
+    }catch(e){currentRole='lecteur';}
     document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('appRoot').style.display='block';
     document.getElementById('userEmail').textContent=user.email;
-    document.getElementById('userRole').textContent=currentRole==='admin'?'👑 Admin':currentTech?'🔧 '+currentTech.charAt(0).toUpperCase()+currentTech.slice(1):'👁️ Lecteur';
+    document.getElementById('userRole').textContent=currentRole==='admin'?'👑 Admin':'👁️ Lecteur';
     document.getElementById('btnAdminPanel').style.display=currentRole==='admin'?'flex':'none';
-    if(isMobile()&&currentTech){showTechView();}
-    else{initApp();}
+    initApp();
   }else{
-    currentUser=null;currentRole=null;currentTech=null;
+    currentUser=null;currentRole=null;
     document.getElementById('loginPage').classList.remove('hidden');
     document.getElementById('appRoot').style.display='none';
   }
 });
 
 function logout(){signOut(auth);}
-window.logout=logout;
 document.getElementById('btnLogout').addEventListener('click',logout);
 document.getElementById('mBtnLogout').addEventListener('click',logout);
-
-// ── VUE TECHNICIEN ──
-function showTechView(){
-  document.getElementById('mobileTopbar').style.display='none';
-  document.getElementById('mainBottomNav').style.display='none';
-  document.getElementById('pageAtelier').style.display='none';
-  document.getElementById('techView').style.display='block';
-  const tech=TECHS.find(t=>t.id===currentTech);
-  document.getElementById('techViewName').textContent=tech?'👋 Bonjour '+tech.nom:'Mes RDV';
-  document.getElementById('techViewSub').textContent='Carrosserie Brun — Valence Motors';
-  onSnapshot(docRef,snap=>{
-    if(snap.exists()){state={...snap.data()};if(!Array.isArray(state.appointments))state.appointments=[];state.appointments=state.appointments.map(na);}
-    renderTechView();
-  });
-  document.getElementById('tvBtnPrev').addEventListener('click',()=>{tvWeekOffset--;renderTechView();});
-  document.getElementById('tvBtnNext').addEventListener('click',()=>{tvWeekOffset++;renderTechView();});
-  document.getElementById('tvBtnToday').addEventListener('click',()=>{tvWeekOffset=0;renderTechView();});
-}
-
-function renderTechView(){
-  const days=gWD(tvWeekOffset);
-  const ws=days[0];const we=days[4];
-  document.getElementById('tvWeekLabel').textContent=`${ws.getDate()} ${MF[ws.getMonth()].slice(0,3)} → ${we.getDate()} ${MF[we.getMonth()].slice(0,3)} ${we.getFullYear()}`;
-  const today=new Date();today.setHours(0,0,0,0);
-  const myAppts=state.appointments.filter(a=>{
-    if(a.technicien!==currentTech)return false;
-    if(a.segmentIndex!==0)return false;
-    const aStart=new Date(a.weekStart);aStart.setHours(0,0,0,0);
-    const aEnd=calcFin(new Date(aStart),a.totalDays||1);aEnd.setHours(23,59,59,0);
-    return aStart<=we&&aEnd>=ws;
-  });
-  myAppts.sort((a,b)=>{
-    const fa=calcFin(new Date(a.weekStart),a.totalDays||1);
-    const fb=calcFin(new Date(b.weekStart),b.totalDays||1);
-    return fa-fb;
-  });
-  const list=document.getElementById('techRdvList');
-  if(!myAppts.length){list.innerHTML=`<div class="tech-rdv-empty">✅ Aucun RDV assigné cette semaine</div>`;return;}
-  list.innerHTML='';
-  myAppts.forEach(appt=>{
-    const startDay=gWD(gWO(appt.weekStart))[appt.day]||new Date(appt.weekStart);
-    const endDate=calcFin(new Date(startDay),appt.totalDays||1);
-    endDate.setHours(0,0,0,0);
-    const diff=Math.round((endDate-today)/86400000);
-    let cardClass='tech-rdv-card';
-    let deadlineClass='green',deadlineText='';
-    if(diff<0){deadlineClass='green';deadlineText='✅ Terminé';}
-    else if(diff===0){cardClass+=' today';deadlineClass='orange';deadlineText='⚠️ À terminer AUJOURD\'HUI';}
-    else if(diff===1){cardClass+=' urgent';deadlineClass='orange';deadlineText='⏰ À terminer demain';}
-    else{deadlineClass='green';deadlineText=`📅 À terminer le ${fFR(endDate)}`;}
-    const posteNom=appt.type==='loan'?(state.loanNames?.[appt.row]||'BAYON'):(state.noLoanNames?.[appt.row]||'Poste');
-    const card=document.createElement('div');
-    card.className=cardClass;
-    card.innerHTML=`
-      <div class="tech-rdv-card-header">
-        <div class="tech-rdv-color" style="background:${appt.color||'#2980b9'}"></div>
-        <div class="tech-rdv-nom">${appt.name}</div>
-        <div class="tech-rdv-poste">${posteNom}</div>
-      </div>
-      <div class="tech-rdv-body">
-        <div class="tech-rdv-row">📅 <span>Du <strong>${fFR(startDay)}</strong> au <strong>${fFR(endDate)}</strong></span></div>
-        <div class="tech-rdv-row">⏱ <span><strong>${appt.hours||0}h</strong> de travail · <strong>${appt.totalDays||1}j</strong></span></div>
-        ${appt.tel?`<div class="tech-rdv-row">📞 <span><a href="tel:${appt.tel}" style="color:var(--accent);font-weight:700;text-decoration:none;">${appt.tel}</a></span></div>`:''}
-        ${appt.adresse?`<div class="tech-rdv-row">📍 <span>${appt.adresse}</span></div>`:''}
-        ${appt.pieceStatus==='ordered'?`<div class="tech-rdv-row">📦 <span style="color:#e67e22;font-weight:600;">Pièce commandée${appt.pieceFournisseur?' chez '+appt.pieceFournisseur:''}</span></div>`:''}
-        ${appt.pieceStatus==='delivered'?`<div class="tech-rdv-row">✅ <span style="color:#27ae60;font-weight:600;">Pièce livrée</span></div>`:''}
-        <div class="tech-rdv-deadline ${deadlineClass}">${deadlineText}</div>
-        ${appt.memo?`<div class="tech-rdv-memo">💬 ${appt.memo}</div>`:''}
-      </div>`;
-    list.appendChild(card);
-  });
-}
 
 // ── ADMIN ──
 document.getElementById('btnAdminPanel').addEventListener('click',()=>{document.getElementById('adminPanel').classList.add('open');loadUsers();});
@@ -1131,12 +967,13 @@ document.getElementById('adminPanel').addEventListener('click',function(e){if(e.
 async function loadUsers(){
   const list=document.getElementById('adminUserList');list.innerHTML='<div style="color:var(--muted);font-size:.85rem;">Chargement…</div>';
   try{
-    const snap=await getDocs(collection(db,'users'));list.innerHTML='';
+    const snap=await getDocs(collection(db,'users'));
+    list.innerHTML='';
     if(snap.empty){list.innerHTML='<div style="color:var(--muted);font-size:.85rem;padding:10px;">Aucun utilisateur.</div>';return;}
     snap.forEach(d=>{
-      const data=d.data();const item=document.createElement('div');item.className='user-list-item';
-      const techLabel=data.tech?' · 🔧 '+data.tech:'';
-      item.innerHTML=`<span class="uli-email">${data.email||d.id}${techLabel}</span><span class="uli-role ${data.role||'lecteur'}">${data.role==='admin'?'👑 Admin':'👁️ Lecteur'}</span>${d.id!==currentUser.uid?`<button class="uli-del" data-uid="${d.id}">🗑️</button>`:'<span style="font-size:.72rem;color:var(--muted);">(vous)</span>'}`;
+      const data=d.data();
+      const item=document.createElement('div');item.className='user-list-item';
+      item.innerHTML=`<span class="uli-email">${data.email||d.id}</span><span class="uli-role ${data.role||'lecteur'}">${data.role==='admin'?'👑 Admin':'👁️ Lecteur'}</span>${d.id!==currentUser.uid?`<button class="uli-del" data-uid="${d.id}">🗑️</button>`:'<span style="font-size:.72rem;color:var(--muted);">(vous)</span>'}`;
       item.querySelector('.uli-del')?.addEventListener('click',async()=>{if(!confirm(`Supprimer ${data.email} ?`))return;await deleteDoc(doc(db,'users',d.id));loadUsers();});
       list.appendChild(item);
     });
@@ -1147,19 +984,22 @@ document.getElementById('btnAddUser').addEventListener('click',async()=>{
   const email=document.getElementById('newUserEmail').value.trim();
   const pw=document.getElementById('newUserPassword').value;
   const role=document.getElementById('newUserRole').value;
-  const tech=document.getElementById('newUserTech').value;
-  const errEl=document.getElementById('addUserError');errEl.style.display='none';
+  const errEl=document.getElementById('addUserError');
+  errEl.style.display='none';
   if(!email||!pw){errEl.textContent='Remplissez email et mot de passe.';errEl.style.display='block';return;}
   if(pw.length<6){errEl.textContent='Mot de passe minimum 6 caractères.';errEl.style.display='block';return;}
   const btn=document.getElementById('btnAddUser');btn.disabled=true;btn.textContent='Création…';
   try{
-    const res=await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA472wEsqwdcO6rf6fRybUA3Zy2vHR0z3I`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pw,returnSecureToken:true})});
+    const res=await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA472wEsqwdcO6rf6fRybUA3Zy2vHR0z3I`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,password:pw,returnSecureToken:true})
+    });
     const data=await res.json();
     if(data.error){errEl.textContent=data.error.message==='EMAIL_EXISTS'?'Cet email existe déjà.':'Erreur: '+data.error.message;errEl.style.display='block';btn.disabled=false;btn.textContent="➕ Créer l'utilisateur";return;}
-    const userData={email,role,createdAt:Date.now()};
-    if(tech)userData.tech=tech;
-    await setDoc(doc(db,'users',data.localId),userData);
-    document.getElementById('newUserEmail').value='';document.getElementById('newUserPassword').value='';document.getElementById('newUserRole').value='lecteur';document.getElementById('newUserTech').value='';
+    await setDoc(doc(db,'users',data.localId),{email,role,createdAt:Date.now()});
+    document.getElementById('newUserEmail').value='';
+    document.getElementById('newUserPassword').value='';
+    document.getElementById('newUserRole').value='lecteur';
     loadUsers();
   }catch(e){errEl.textContent='Erreur réseau.';errEl.style.display='block';}
   btn.disabled=false;btn.textContent="➕ Créer l'utilisateur";
@@ -1167,8 +1007,11 @@ document.getElementById('btnAddUser').addEventListener('click',async()=>{
 
 // ── INIT ──
 function initApp(){
-  buildCP('colorPicker',i=>selColor=i);buildMCP(i=>mSelColor=i);upTech();
-  setupFirebaseListeners();setupEvents();
+  buildCP('colorPicker',i=>selColor=i);
+  buildMCP(i=>mSelColor=i);
+  upTech();
+  setupFirebaseListeners();
+  setupEvents();
   if(isMobile())renderMobile();
 }
 
@@ -1183,9 +1026,11 @@ window.switchPage=function(page){
   curPage=page;
   ['atelier','conges','contrats'].forEach(p=>{document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active',p===page);});
   ['navAtelier','navConges','navContrats'].forEach(b=>document.getElementById(b)?.classList.remove('active'));
-  const nm={atelier:'navAtelier',conges:'navConges',contrats:'navContrats'};document.getElementById(nm[page])?.classList.add('active');
+  const nm={atelier:'navAtelier',conges:'navConges',contrats:'navContrats'};
+  document.getElementById(nm[page])?.classList.add('active');
   ['mbnAtelier','mbnConges','mbnContrats'].forEach(b=>document.getElementById(b)?.classList.remove('active'));
-  const mb={atelier:'mbnAtelier',conges:'mbnConges',contrats:'mbnContrats'};document.getElementById(mb[page])?.classList.add('active');
+  const mb={atelier:'mbnAtelier',conges:'mbnConges',contrats:'mbnContrats'};
+  document.getElementById(mb[page])?.classList.add('active');
   document.getElementById('atelierTopRight').style.display=page==='atelier'?'flex':'none';
   document.getElementById('congesTopRight').style.display=page==='conges'?'flex':'none';
   document.getElementById('contratsTopRight').style.display=page==='contrats'?'flex':'none';
@@ -1200,24 +1045,8 @@ async function saveFB(){if(isRO()){showRO();return;}isSav=true;ss('save');try{aw
 function ssc(s){const el=document.getElementById('syncStatusConges');if(!el)return;const m={ok:['✅','sync-ok'],wait:['⏳','sync-wait'],save:['💾','sync-wait'],err:['❌','sync-err']};el.textContent=m[s][0];el.className='sync-indicator '+m[s][1];}
 async function saveCG(){if(isRO()){showRO();return;}isSavC=true;ssc('save');try{await setDoc(docConges,{...cState,updatedAt:Date.now()});ssc('ok');}catch(e){console.error(e);ssc('err');}setTimeout(()=>isSavC=false,600);}
 async function saveCT(){isSavCt=true;try{await setDoc(docContrats,{...ctState,updatedAt:Date.now()});}catch(e){console.error(e);}setTimeout(()=>isSavCt=false,600);}
-function na(a){
-  if(!a.pieceStatus)a.pieceStatus='none';
-  if(!a.pieceFournisseur)a.pieceFournisseur='';
-  if(!a.pieceNote)a.pieceNote='';
-  if(!a.priority)a.priority='moyenne';
-  if(!a.tel)a.tel='';
-  if(!a.adresse)a.adresse='';
-  if(!a.memo)a.memo='';
-  if(a.arrived===undefined)a.arrived=false;
-  if(a.piece===true&&a.pieceStatus==='none')a.pieceStatus='ordered';
-  if(!a.groupId)a.groupId=a.id;
-  if(!a.totalDays)a.totalDays=a.span||1;
-  if(a.segmentIndex===undefined)a.segmentIndex=0;
-  if(!a.hasPrev)a.hasPrev=false;
-  if(!a.hasNext)a.hasNext=false;
-  if(a.technicien===undefined||a.technicien===null)a.technicien='';
-  return a;
-}
+
+function na(a){if(!a.pieceStatus)a.pieceStatus='none';if(!a.pieceFournisseur)a.pieceFournisseur='';if(!a.pieceNote)a.pieceNote='';if(!a.priority)a.priority='moyenne';if(!a.tel)a.tel='';if(!a.adresse)a.adresse='';if(!a.memo)a.memo='';if(a.arrived===undefined)a.arrived=false;if(a.piece===true&&a.pieceStatus==='none')a.pieceStatus='ordered';if(!a.groupId)a.groupId=a.id;if(!a.totalDays)a.totalDays=a.span||1;if(a.segmentIndex===undefined)a.segmentIndex=0;if(!a.hasPrev)a.hasPrev=false;if(!a.hasNext)a.hasNext=false;return a;}
 function hSeg(h,td,sp){if(!td||td===0)return h;return Math.round((h*sp/td)*10)/10;}
 
 // ── DATES ──
@@ -1232,7 +1061,6 @@ function gWO(ws){const a=gMon(new Date(ws)),b=gMon(new Date());return Math.round
 function calcFin(dd,n){const f=new Date(dd);let r=(n||1)-1;while(r>0){f.setDate(f.getDate()+1);const dow=f.getDay();if(dow!==0&&dow!==6)r--;}return f;}
 function split(sd,td,wsDate){const segs=[];let rem=td,cur=sd,idx=0;let ws=new Date(wsDate);while(rem>0){const d=Math.min(rem,5-cur);segs.push({weekStart:new Date(ws),day:cur,span:d,segmentIndex:idx,hasPrev:idx>0,hasNext:rem-d>0});rem-=d;cur=0;ws=new Date(ws);ws.setDate(ws.getDate()+7);idx++;}return segs;}
 function upPrev(id,sd,wo,n){if(!n||n<1){document.getElementById(id).textContent='📅 —';return;}const days=gWD(wo);const dd=days[sd];const df=calcFin(dd,n);const s=split(sd,n,days[0]);let t=`📅 Du ${fFR(dd)} au ${fFR(df)} (${n}j)`;if(s.length>1)t+=` — ${s.length} sem.`;document.getElementById(id).textContent=t;}
-function getTechInfo(techId){return TECHS.find(t=>t.id===techId)||null;}
 
 // ── TECH ──
 function chTech(d){if(isRO()){showRO();return;}nbTech=Math.max(1,Math.min(20,nbTech+d));localStorage.setItem('carrosserie_tech',nbTech);upTech();}
@@ -1241,8 +1069,11 @@ function getOcc(days){const ws=days[0].toDateString();const occ=new Set();state.
 
 // ── PC RENDER ──
 function render(){
-  const days=gWD();document.getElementById('weekLabel').textContent=gWL(days);upStats();
-  const planner=document.getElementById('planner');planner.innerHTML='';const occ=getOcc(days);
+  const days=gWD();
+  document.getElementById('weekLabel').textContent=gWL(days);
+  upStats();
+  const planner=document.getElementById('planner');planner.innerHTML='';
+  const occ=getOcc(days);
   planner.appendChild(mksec('🚗 Véhicules de prêt — HYUNDAI BAYON'));
   const lc=document.createElement('div');lc.className='grid-container';lc.appendChild(bldHdr(days));
   const lb=document.createElement('div');lb.className='grid-body';
@@ -1260,8 +1091,9 @@ function bldHdr(days){const h=document.createElement('div');h.className='grid-he
 function mkRow(type,ri,name,days,occ){
   const row=document.createElement('div');row.className=`grid-row ${type==='loan'?'has-loan':'no-loan'}`;
   const label=document.createElement('div');label.className='row-label';label.innerHTML=`<span class="vehicle-icon">${type==='loan'?'🚗':'🔧'}</span>`;
-  const ne=document.createElement('span');ne.className='vehicle-name';ne.textContent=name;
-  ne.addEventListener('click',()=>{if(isRO()){showRO();return;}startEditName(ne,type,ri);});label.appendChild(ne);
+  const ne=document.createElement('span');ne.className='vehicle-name';ne.textContent=name;ne.title='Cliquer pour modifier';
+  ne.addEventListener('click',()=>{if(isRO()){showRO();return;}startEditName(ne,type,ri);});
+  label.appendChild(ne);
   if(type==='loan'){const b=document.createElement('span');b.className='loan-badge';b.textContent='PRÊT';label.appendChild(b);}
   row.appendChild(label);
   days.forEach((d,di)=>{
@@ -1287,24 +1119,28 @@ function renderAppts(days){
     const span=appt.span||1;
     const cell=document.querySelector(`[data-type="${appt.type}"][data-row="${appt.row}"][data-day="${appt.day}"]`);
     if(!cell)return;
-    const prio=appt.priority||'moyenne';const isLF=appt.type==='loan'&&appt.segmentIndex===0;
+    const prio=appt.priority||'moyenne';
+    const isLF=appt.type==='loan'&&appt.segmentIndex===0;
     const fs=state.appointments.find(a=>a.groupId===appt.groupId&&a.segmentIndex===0)||appt;
-    const dF=gWD(gWO(fs.weekStart));const dd=dF[fs.day]||dF[0];const td=appt.totalDays||1;const df=calcFin(dd,td);const hS=hSeg(appt.hours||0,td,span);
-    const el=document.createElement('div');el.className=`appt prio-${prio}${appt.arrived?' arrived':''}`;el.style.background=appt.color||'#2980b9';
+    const dF=gWD(gWO(fs.weekStart));const dd=dF[fs.day]||dF[0];
+    const td=appt.totalDays||1;const df=calcFin(dd,td);const hS=hSeg(appt.hours||0,td,span);
+    const el=document.createElement('div');
+    el.className=`appt prio-${prio}${appt.arrived?' arrived':''}`;
+    el.style.background=appt.color||'#2980b9';
     if(span>1){el.style.right=`calc(-${(span-1)*100}% - ${span-1}px)`;el.style.zIndex=15;}
-    let pb='';if(appt.pieceStatus==='delivered')pb='<span class="badge badge-blue">✅</span>';else if(appt.pieceStatus==='ordered')pb='<span class="badge badge-orange">📦</span>';
+    let pb='';
+    if(appt.pieceStatus==='delivered')pb='<span class="badge badge-blue">✅</span>';
+    else if(appt.pieceStatus==='ordered')pb='<span class="badge badge-orange">📦</span>';
     const cb=isLF?`<button class="btn-contrat-inline">📄 Contrat</button>`:'';
-    const techInfo=getTechInfo(appt.technicien);
-    const techBadge=techInfo?`<span class="tech-badge-appt" style="background:${techInfo.color}88;">${techInfo.nom.slice(0,3).toUpperCase()}</span>`:'';
     el.innerHTML=`<div class="prio-strip"></div><button class="appt-del-btn">✕</button>
-      <div class="appt-top">${appt.hasPrev?'<span class="badge-prev">◀</span>':''}<span class="appt-name">${appt.name}</span>${techBadge}${prio==='haute'?'<span class="badge badge-red">🔴</span>':''}${appt.arrived?'<span class="badge badge-green">✔</span>':''}${pb}${appt.memo?'<span class="appt-memo-dot">📝</span>':''}${appt.hasNext?'<span class="badge-next">▶</span>':''}</div>
+      <div class="appt-top">${appt.hasPrev?'<span class="badge-prev">◀</span>':''}<span class="appt-name">${appt.name}</span>${prio==='haute'?'<span class="badge badge-red">🔴</span>':''}${appt.arrived?'<span class="badge badge-green">✔</span>':''}${pb}${appt.memo?'<span class="appt-memo-dot">📝</span>':''}${appt.hasNext?'<span class="badge-next">▶</span>':''}</div>
       <div class="appt-bottom"><span class="appt-hours-tag">${hS}h·${span}j</span>${appt.tel?`<span class="appt-tel-tag">📞 ${appt.tel}</span>`:''}${cb}</div>`;
     el.querySelector('.appt-del-btn').addEventListener('click',e=>{e.stopPropagation();if(isRO()){showRO();return;}confirmDel(appt.groupId,appt.name);});
     if(isLF)el.querySelector('.btn-contrat-inline').addEventListener('click',e=>{e.stopPropagation();openContrat(appt,dd,df,td);});
     el.addEventListener('click',e=>{if(e.target.classList.contains('appt-del-btn')||e.target.classList.contains('btn-contrat-inline'))return;openEditModal(appt.groupId);});
     let tip=`${appt.name}\n📅 ${fFR(dd)} → ${fFR(df)} (${td}j)\n⏱ ${appt.hours}h — ${hS}h sem.`;
-    if(techInfo)tip+=`\n🔧 ${techInfo.nom}`;
-    if(appt.tel)tip+=`\n📞 ${appt.tel}`;if(appt.adresse)tip+=`\n📍 ${appt.adresse}`;if(prio==='haute')tip+='\n🔴 HAUTE';if(appt.memo)tip+=`\n💬 ${appt.memo}`;
+    if(appt.tel)tip+=`\n📞 ${appt.tel}`;if(appt.adresse)tip+=`\n📍 ${appt.adresse}`;
+    if(prio==='haute')tip+='\n🔴 HAUTE';if(appt.memo)tip+=`\n💬 ${appt.memo}`;
     el.addEventListener('mouseenter',e=>showTip(e,tip));el.addEventListener('mouseleave',hideTip);el.addEventListener('mousemove',e=>moveTip(e));
     if(appt.segmentIndex===0){
       el.setAttribute('draggable',isRO()?'false':'true');
@@ -1316,26 +1152,35 @@ function renderAppts(days){
 }
 
 function renderAbs(days){
-  if(!state.absences)return;const ws=days[0].toDateString();
+  if(!state.absences)return;
+  const ws=days[0].toDateString();
   state.absences.forEach(abs=>{
     if(new Date(abs.weekStart).toDateString()!==ws)return;
-    const cell=document.querySelector(`[data-type="${abs.type}"][data-row="${abs.row}"][data-day="${abs.day}"]`);if(!cell)return;
+    const cell=document.querySelector(`[data-type="${abs.type}"][data-row="${abs.row}"][data-day="${abs.day}"]`);
+    if(!cell)return;
     const el=document.createElement('div');el.className=`absence-block ${abs.absType||'conge'}`;
     el.innerHTML=`${abs.absType==='absence'?'🤒':'🏖️'} ${abs.label||''}<span class="abs-del">✕</span>`;
-    el.querySelector('.abs-del').addEventListener('click',e=>{e.stopPropagation();if(isRO()){showRO();return;}delAbs(abs.id);});cell.appendChild(el);
+    el.querySelector('.abs-del').addEventListener('click',e=>{e.stopPropagation();if(isRO()){showRO();return;}delAbs(abs.id);});
+    cell.appendChild(el);
   });
 }
 
 // ── MOBILE RENDER ──
 function renderMobile(){
-  const days=gWD();document.getElementById('mobileWeekLabel').textContent=gWL(days);
-  const ws=days[0].toDateString();const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
+  const days=gWD();
+  document.getElementById('mobileWeekLabel').textContent=gWL(days);
+  const ws=days[0].toDateString();
+  const wa=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
   const totalH=Math.round(wa.reduce((s,a)=>s+hSeg(a.hours||0,a.totalDays||1,a.span||1),0)*10)/10;
-  const nbRdv=wa.filter(a=>a.segmentIndex===0).length;const cap=nbTech*39;const pct=cap>0?Math.round((totalH/cap)*100):0;
-  document.getElementById('mTotalHours').textContent=totalH+'h';document.getElementById('mTotalAppts').textContent=nbRdv;
+  const nbRdv=wa.filter(a=>a.segmentIndex===0).length;
+  const cap=nbTech*39;const pct=cap>0?Math.round((totalH/cap)*100):0;
+  document.getElementById('mTotalHours').textContent=totalH+'h';
+  document.getElementById('mTotalAppts').textContent=nbRdv;
   const fr=document.getElementById('mFillRate');fr.textContent=pct+'%';fr.style.color=pct>=100?'#e74c3c':pct>=80?'#f5a623':'#2ecc71';
-  const occ=getOcc(days);const grid=document.getElementById('mobileGrid');grid.innerHTML='';
-  const lW=80;const dW=Math.max(68,(window.innerWidth-lW-16)/5);const tW=lW+5*dW;const gc=`${lW}px repeat(5,${dW}px)`;
+  const occ=getOcc(days);
+  const grid=document.getElementById('mobileGrid');grid.innerHTML='';
+  const lW=80;const dW=Math.max(68,(window.innerWidth-lW-16)/5);
+  const tW=lW+5*dW;const gc=`${lW}px repeat(5,${dW}px)`;
   const hdr=document.createElement('div');hdr.className='mobile-grid-header';hdr.style.cssText=`grid-template-columns:${gc};width:${tW}px;`;
   hdr.innerHTML=`<div class="mg-corner">Poste</div>`+days.map(d=>`<div class="mg-day${isToday(d)?' today':''}"><div class="mgd-name">${d.toLocaleDateString('fr-FR',{weekday:'short'}).toUpperCase()}</div><div class="mgd-date">${d.getDate()}</div></div>`).join('');
   grid.appendChild(hdr);
@@ -1346,7 +1191,8 @@ function renderMobile(){
 }
 
 function renderMobileRow(type,ri,name,days,occ,gc,tW){
-  const grid=document.getElementById('mobileGrid');const ws=days[0].toDateString();
+  const grid=document.getElementById('mobileGrid');
+  const ws=days[0].toDateString();
   const row=document.createElement('div');row.className='mobile-grid-row';row.style.cssText=`grid-template-columns:${gc};width:${tW}px;`;
   const lbl=document.createElement('div');lbl.className=`mg-label ${type==='loan'?'loan-lbl':'noloan-lbl'}`;
   lbl.innerHTML=`<span style="font-size:.75rem;">${type==='loan'?'🚗':'🔧'}</span><span style="font-size:.64rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</span>`;
@@ -1358,12 +1204,9 @@ function renderMobileRow(type,ri,name,days,occ,gc,tW){
     const appts=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws&&a.type===type&&a.row===ri&&a.day===di);
     appts.forEach(appt=>{
       const span=appt.span||1;const td=appt.totalDays||1;const hS=hSeg(appt.hours||0,td,span);
-      const prioColor=appt.priority==='haute'?'#e74c3c':appt.priority==='basse'?'#2ecc71':'rgba(255,255,255,.25)';
-      const techInfo=getTechInfo(appt.technicien);
       const ea=document.createElement('div');ea.className='mg-appt';ea.style.background=appt.color||'#2980b9';
-      ea.innerHTML=`<div class="mg-appt-prio" style="background:${prioColor}"></div>
-        <div class="mg-appt-name">${appt.hasPrev?'◀ ':''}<b>${appt.name}</b>${appt.hasNext?' ▶':''}${techInfo?` <span style="font-size:.5rem;opacity:.85;">${techInfo.nom.slice(0,3).toUpperCase()}</span>`:''}</div>
-        <div class="mg-appt-info">${hS}h${span>1?'·'+span+'j':''}${appt.tel?' · '+appt.tel:''}</div>`;
+      if(span>1){ea.style.width=`calc(${span*100}% + ${span-1}px)`;ea.style.zIndex=10;}
+      ea.innerHTML=`<div class="mg-appt-name">${appt.hasPrev?'◀ ':''}<b>${appt.name}</b>${appt.hasNext?' ▶':''}</div><div class="mg-appt-info">${hS}h${appt.tel?' · '+appt.tel:''}</div>`;
       ea.addEventListener('click',e=>{e.stopPropagation();openMobileEditModal(appt.groupId);});
       cell.appendChild(ea);
     });
@@ -1371,7 +1214,8 @@ function renderMobileRow(type,ri,name,days,occ,gc,tW){
   });
   grid.appendChild(row);
 }
-  // ── MOBILE CONGES ──
+
+// ── MOBILE CONGES ──
 function renderMobileConges(){
   const year=congesYear,month=congesMonth;const dim=new Date(year,month+1,0).getDate();const today=new Date();
   document.getElementById('mCongesMonth').textContent=`${MF[month].charAt(0).toUpperCase()+MF[month].slice(1)} ${year}`;
@@ -1418,18 +1262,30 @@ function renderContrats(){
   document.getElementById('contratsStatsBar').innerHTML=`<div class="cstat"><div class="cv">${total}</div><div class="cl">Total</div></div><div class="cstat"><div class="cv" style="color:var(--amber)">${enC}</div><div class="cl">En cours</div></div><div class="cstat"><div class="cv" style="color:#2ecc71">${rest}</div><div class="cl">Restitués</div></div>${retard?`<div class="cstat"><div class="cv" style="color:#e74c3c">${retard}</div><div class="cl">En retard</div></div>`:''}${Object.entries(ic).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([im,n])=>`<div class="cstat"><div class="cv" style="font-size:.85rem">${im}</div><div class="cl">${n} prêt${n>1?'s':''}</div></div>`).join('')}`;
   const list=document.getElementById('contratsListWrap');
   const hl=txt=>{if(!q||!txt)return txt||'';return txt.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'),'<mark style="background:#fff3cd;border-radius:2px;padding:0 2px;">$1</mark>');};
-  if(!filtered.length){list.innerHTML=`<div class="no-results-contrats">${q?`Aucun résultat`:'Aucun contrat.'}</div>`;return;}
+  if(!filtered.length){list.innerHTML=`<div class="no-results-contrats">${q?`Aucun résultat pour "<strong>${q}</strong>"`:'Aucun contrat.'}</div>`;return;}
   list.innerHTML='';
   filtered.forEach(c=>{
     const dD=new Date(c.dateDebut);const dF=new Date(c.dateFin);const dI=new Date(c.dateImpression);const isR=!c.restitue&&dF<today;
     const item=document.createElement('div');item.className=`contrat-history-item ${c.restitue?'restitue-ok':isR?'en-retard':'en-cours'}`;
     const rH=c.restitue
-      ?`<div class="chi-restitue-info">✅ Restitué le ${fSh(new Date(c.restitDate))} · ${c.restitKm?c.restitKm+' km':'—'} · Carb: ${c.restitCarburant||'?'}${c.restitRemarques?' · '+c.restitRemarques:''}</div><div class="chi-actions"><button class="btn-print-restit">🖨️ Imprimer reçu</button><button class="btn-del-contrat">🗑️ Supprimer</button></div>`
-      :`<div class="chi-actions"><button class="btn-restit">🔑 Saisir restitution</button><button class="btn-del-contrat">🗑️ Supprimer</button></div>`;
+      ?`<div class="chi-restitue-info">✅ Restitué le ${fSh(new Date(c.restitDate))} · ${c.restitKm?c.restitKm+' km':'—'} · Carb: ${c.restitCarburant||'?'}${c.restitRemarques?' · '+c.restitRemarques:''}</div>
+         <div class="chi-actions">
+           <button class="btn-print-restit">🖨️ Imprimer reçu</button>
+           <button class="btn-del-contrat">🗑️ Supprimer</button>
+         </div>`
+      :`<div class="chi-actions">
+           <button class="btn-restit">🔑 Saisir restitution</button>
+           <button class="btn-del-contrat">🗑️ Supprimer</button>
+         </div>`;
     item.innerHTML=`<div class="chi-info"><div class="chi-header"><span class="chi-nom">${hl(c.nom)||'—'}</span><span class="chi-immat">${hl(c.immat)||'?'}</span><span class="chi-status-badge ${c.restitue?'restitue':isR?'en-retard':'en-cours'}">${c.restitue?'✅ Restitué':isR?'⚠️ En retard':'⏳ En cours'}</span></div><div class="chi-meta">📅 <strong>Prêt :</strong> ${fSh(dD)} → ${fSh(dF)} (${c.totalDays}j) &nbsp; 🖨️ ${fSh(dI)} &nbsp; ${c.tel?`📞 ${hl(c.tel)} &nbsp;`:''} ${c.km?`🚗 ${c.km} km &nbsp;`:''}Carb: ${c.carburant||'?'}</div>${rH}</div><div class="chi-num">${c.id}</div>`;
     item.querySelector('.btn-restit')?.addEventListener('click',()=>openRestitution(c.id,c));
     item.querySelector('.btn-print-restit')?.addEventListener('click',()=>printRestitution(c));
-    item.querySelector('.btn-del-contrat').addEventListener('click',()=>{if(confirm(`Supprimer le contrat ${c.id} — ${c.nom} ?`)){ctState.contrats=ctState.contrats.filter(x=>x.id!==c.id);saveCT();renderContrats();if(isMobile())renderMobileContrats();}});
+    item.querySelector('.btn-del-contrat').addEventListener('click',()=>{
+      if(confirm(`Supprimer le contrat ${c.id} — ${c.nom} ?`)){
+        ctState.contrats=ctState.contrats.filter(x=>x.id!==c.id);
+        saveCT();renderContrats();if(isMobile())renderMobileContrats();
+      }
+    });
     list.appendChild(item);
   });
 }
@@ -1444,17 +1300,31 @@ function renderMobileContrats(){
     const dF=new Date(c.dateFin);const isR=!c.restitue&&dF<today;
     const item=document.createElement('div');item.className=`mobile-contrat-item ${c.restitue?'restitue-ok':isR?'en-retard':'en-cours'}`;
     const rH=c.restitue
-      ?`<div class="mci-restitue">✅ Restitué le ${fSh(new Date(c.restitDate))}${c.restitKm?' · '+c.restitKm+' km':''}</div><div class="mci-actions"><button class="mci-btn mci-btn-green" id="mpr_${c.id}">🖨️ Reçu</button><button class="mci-btn mci-btn-red" id="mdel_${c.id}">🗑️</button></div>`
-      :`<div class="mci-actions"><button class="mci-btn mci-btn-blue" id="mr_${c.id}">🔑 Restitution</button><button class="mci-btn mci-btn-red" id="mdel_${c.id}">🗑️</button></div>`;
-    item.innerHTML=`<div class="mci-header"><span class="mci-nom">${c.nom||'—'}</span><span class="mci-immat">${c.immat||'?'}</span></div><div class="mci-meta">📅 ${fSh(new Date(c.dateDebut))} → ${fSh(dF)} (${c.totalDays}j)<br>${c.tel?'📞 '+c.tel+' ':''} ${c.km?'🚗 '+c.km+' km':''}</div>${isR?'<div style="color:#e74c3c;font-size:.75rem;font-weight:700;margin-bottom:6px;">⚠️ En retard !</div>':''}${rH}`;
+      ?`<div class="mci-restitue">✅ Restitué le ${fSh(new Date(c.restitDate))}${c.restitKm?' · '+c.restitKm+' km':''}</div>
+         <div class="mci-actions">
+           <button class="mci-btn mci-btn-green" id="mpr_${c.id}">🖨️ Reçu</button>
+           <button class="mci-btn mci-btn-red" id="mdel_${c.id}">🗑️</button>
+         </div>`
+      :`<div class="mci-actions">
+           <button class="mci-btn mci-btn-blue" id="mr_${c.id}">🔑 Restitution</button>
+           <button class="mci-btn mci-btn-red" id="mdel_${c.id}">🗑️</button>
+         </div>`;
+    item.innerHTML=`<div class="mci-header"><span class="mci-nom">${c.nom||'—'}</span><span class="mci-immat">${c.immat||'?'}</span></div>
+      <div class="mci-meta">📅 ${fSh(new Date(c.dateDebut))} → ${fSh(dF)} (${c.totalDays}j)<br>${c.tel?'📞 '+c.tel+' ':''} ${c.km?'🚗 '+c.km+' km':''}</div>
+      ${isR?'<div style="color:#e74c3c;font-size:.75rem;font-weight:700;margin-bottom:6px;">⚠️ En retard !</div>':''}${rH}`;
     list.appendChild(item);
     document.getElementById(`mr_${c.id}`)?.addEventListener('click',()=>openMobileRestitution(c.id,c));
     document.getElementById(`mpr_${c.id}`)?.addEventListener('click',()=>printRestitution(c));
-    document.getElementById(`mdel_${c.id}`)?.addEventListener('click',()=>{if(confirm(`Supprimer ${c.nom} ?`)){ctState.contrats=ctState.contrats.filter(x=>x.id!==c.id);saveCT();renderMobileContrats();renderContrats();}});
+    document.getElementById(`mdel_${c.id}`)?.addEventListener('click',()=>{
+      if(confirm(`Supprimer ${c.nom} ?`)){
+        ctState.contrats=ctState.contrats.filter(x=>x.id!==c.id);
+        saveCT();renderMobileContrats();renderContrats();
+      }
+    });
   });
 }
 
-// ── CONTRAT ──
+// ── CONTRAT IMPRESSION ──
 function openContrat(appt,dd,df,td){contratAppt=appt;document.getElementById('cNom').value=appt.name||'';document.getElementById('cTel').value=appt.tel||'';document.getElementById('cAdresse').value=appt.adresse||'';document.getElementById('cKm').value='';document.getElementById('cCarburant').value='plein';document.getElementById('cCouleurPret').value='';const immat=state.loanNames[appt.row]||'';document.getElementById('cImmatPret').value=immat;document.getElementById('contratRdvInfo').textContent=`${appt.name} — HYUNDAI BAYON (${immat})`;document.getElementById('contratDatesInfo').textContent=`Du ${fFR(dd)} au ${fFR(df)} — ${td} jour(s)`;contratAppt._dd=dd;contratAppt._df=df;contratAppt._td=td;document.getElementById('contratModalOverlay').classList.add('open');setTimeout(()=>document.getElementById('cNom').focus(),50);}
 function closeContrat(){document.getElementById('contratModalOverlay').classList.remove('open');contratAppt=null;}
 
@@ -1471,21 +1341,48 @@ function imprimerContrat(){
   saveCT();
   const zone=document.getElementById('contrat-print-zone');
   zone.innerHTML=buildContratHTML(num,document.getElementById('cNom').value,document.getElementById('cTel').value,document.getElementById('cAdresse').value,immat,document.getElementById('cCouleurPret').value,document.getElementById('cKm').value,cH,dd,df);
-  zone.style.display='block';closeContrat();
+  zone.style.display='block';
+  closeContrat();
   setTimeout(()=>{window.print();setTimeout(()=>{zone.innerHTML='';zone.style.display='none';},3000);},200);
 }
 
 function buildContratHTML(num,nom,tel,adresse,immat,couleur,km,cH,dd,df){
-  return `<div class="contrat-print"><div class="cp-header"><div><div class="cp-garage-name">CARROSSERIE BRUN — VALENCE MOTORS</div><div class="cp-garage-sub">307 avenue de Romans — 26000 Valence<br>Tél : 04 75 55 64 39</div></div><div class="cp-num"><strong>CONTRAT N° ${num}</strong>Date : ${fFR(new Date())}</div></div><div class="cp-title">CONTRAT DE PRÊT DE VÉHICULE</div><div class="cp-grid"><div class="cp-box"><div class="cp-box-title">👤 Emprunteur</div><div class="cp-row"><span class="cp-label">Nom complet</span><span class="cp-val">${nom||'____________________'}</span></div><div class="cp-row"><span class="cp-label">Adresse</span><span class="cp-val">${adresse||'____________________'}</span></div><div class="cp-row"><span class="cp-label">Téléphone</span><span class="cp-val">${tel||'____________________'}</span></div><div class="cp-row"><span class="cp-label">Permis de conduire</span><span class="cp-val">Photocopie fournie <span class="cp-check"></span></span></div></div><div class="cp-box"><div class="cp-box-title">🚗 Véhicule de prêt</div><div class="cp-row"><span class="cp-label">Marque / Modèle</span><span class="cp-val">HYUNDAI BAYON</span></div><div class="cp-row"><span class="cp-label">Immatriculation</span><span class="cp-val">${immat}</span></div><div class="cp-row"><span class="cp-label">Couleur</span><span class="cp-val">${couleur||'____________________'}</span></div><div class="cp-row"><span class="cp-label">Kilométrage départ</span><span class="cp-val">${km?km+' km':'____________________'}</span></div><div class="cp-row"><span class="cp-label">Carburant</span><span class="cp-val"><span class="cp-carburant">${cH}</span></span></div></div></div><div class="cp-dates"><div><div class="cp-date-label">📅 Remise du véhicule</div><div class="cp-date-val">${fFR(dd)}</div><div class="cp-date-sub">Heure : _____ h</div></div><div><div class="cp-date-label">📅 Restitution prévue</div><div class="cp-date-val">${fFR(df)}</div><div class="cp-date-sub">Heure : _____ h &nbsp; Km retour : ___________</div></div></div><div class="cp-conditions"><div class="cp-conditions-title">📋 Conditions du prêt</div><ul><li>L'emprunteur reconnaît avoir pris possession du véhicule en bon état apparent et s'engage à le restituer dans le même état.</li><li>Le véhicule est restitué avec le même niveau de carburant qu'à la remise.</li><li>L'emprunteur est responsable de toute infraction au Code de la Route commise pendant la durée du prêt.</li><li>En cas d'accident ou de sinistre, l'emprunteur s'engage à prévenir immédiatement la carrosserie.</li><li>Le véhicule ne peut être confié à un tiers. Usage limité au territoire français uniquement.</li><li>Il est strictement interdit de fumer dans le véhicule.</li><li>Toute dégradation constatée à la restitution sera facturée au client.</li></ul></div><div class="cp-signatures"><div><div class="cp-sig-label">Signature du client<br><small>(précédée de « Lu et approuvé »)</small></div><div class="cp-sig-line">Nom : ${nom||'_______________________________'}</div></div><div><div class="cp-sig-label">Pour la Carrosserie Brun<br><small>Cachet et signature</small></div><div class="cp-sig-line">Carrosserie Brun — Valence Motors</div></div></div><div class="cp-footer">Document établi en deux exemplaires — Carrosserie Brun Valence Motors — 307 avenue de Romans, 26000 Valence — Tél : 04 75 55 64 39</div></div>`;
+  return `<div class="contrat-print">
+    <div class="cp-header"><div><div class="cp-garage-name">CARROSSERIE BRUN — VALENCE MOTORS</div><div class="cp-garage-sub">307 avenue de Romans — 26000 Valence<br>Tél : 04 75 55 64 39</div></div><div class="cp-num"><strong>CONTRAT N° ${num}</strong>Date : ${fFR(new Date())}</div></div>
+    <div class="cp-title">CONTRAT DE PRÊT DE VÉHICULE</div>
+    <div class="cp-grid">
+      <div class="cp-box"><div class="cp-box-title">👤 Emprunteur</div><div class="cp-row"><span class="cp-label">Nom complet</span><span class="cp-val">${nom||'____________________'}</span></div><div class="cp-row"><span class="cp-label">Adresse</span><span class="cp-val">${adresse||'____________________'}</span></div><div class="cp-row"><span class="cp-label">Téléphone</span><span class="cp-val">${tel||'____________________'}</span></div><div class="cp-row"><span class="cp-label">Permis de conduire</span><span class="cp-val">Photocopie fournie <span class="cp-check"></span></span></div></div>
+      <div class="cp-box"><div class="cp-box-title">🚗 Véhicule de prêt</div><div class="cp-row"><span class="cp-label">Marque / Modèle</span><span class="cp-val">HYUNDAI BAYON</span></div><div class="cp-row"><span class="cp-label">Immatriculation</span><span class="cp-val">${immat}</span></div><div class="cp-row"><span class="cp-label">Couleur</span><span class="cp-val">${couleur||'____________________'}</span></div><div class="cp-row"><span class="cp-label">Kilométrage départ</span><span class="cp-val">${km?km+' km':'____________________'}</span></div><div class="cp-row"><span class="cp-label">Carburant</span><span class="cp-val"><span class="cp-carburant">${cH}</span></span></div></div>
+    </div>
+    <div class="cp-dates"><div><div class="cp-date-label">📅 Remise du véhicule</div><div class="cp-date-val">${fFR(dd)}</div><div class="cp-date-sub">Heure : _____ h</div></div><div><div class="cp-date-label">📅 Restitution prévue</div><div class="cp-date-val">${fFR(df)}</div><div class="cp-date-sub">Heure : _____ h &nbsp; Km retour : ___________</div></div></div>
+    <div class="cp-conditions"><div class="cp-conditions-title">📋 Conditions du prêt</div><ul><li>L'emprunteur reconnaît avoir pris possession du véhicule en bon état apparent et s'engage à le restituer dans le même état.</li><li>Le véhicule est restitué avec le même niveau de carburant qu'à la remise.</li><li>L'emprunteur est responsable de toute infraction au Code de la Route commise pendant la durée du prêt.</li><li>En cas d'accident ou de sinistre, l'emprunteur s'engage à prévenir immédiatement la carrosserie.</li><li>Le véhicule ne peut être confié à un tiers. Usage limité au territoire français uniquement.</li><li>Il est strictement interdit de fumer dans le véhicule.</li><li>Toute dégradation constatée à la restitution sera facturée au client.</li></ul></div>
+    <div class="cp-signatures"><div><div class="cp-sig-label">Signature du client<br><small>(précédée de « Lu et approuvé »)</small></div><div class="cp-sig-line">Nom : ${nom||'_______________________________'}</div></div><div><div class="cp-sig-label">Pour la Carrosserie Brun<br><small>Cachet et signature</small></div><div class="cp-sig-line">Carrosserie Brun — Valence Motors</div></div></div>
+    <div class="cp-footer">Document établi en deux exemplaires — Carrosserie Brun Valence Motors — 307 avenue de Romans, 26000 Valence — Tél : 04 75 55 64 39</div>
+  </div>`;
 }
 
+// ── RECU RESTITUTION ──
 function printRestitution(c){
   const dd=new Date(c.dateDebut);const df=new Date(c.dateFin);const dr=new Date(c.restitDate);
   const niv=['plein','3/4','1/2','1/4'];
   const cDH=niv.map(n=>`<span><span class="cp-check${c.carburant===n?' checked':''}"></span> ${n}</span>`).join('');
   const cRH=niv.map(n=>`<span><span class="cp-check${c.restitCarburant===n?' checked':''}"></span> ${n}</span>`).join('');
   const zone=document.getElementById('contrat-print-zone');
-  zone.innerHTML=`<div class="restit-print"><div class="restit-header"><div><div class="cp-garage-name">CARROSSERIE BRUN — VALENCE MOTORS</div><div class="cp-garage-sub">307 avenue de Romans — 26000 Valence — Tél : 04 75 55 64 39</div></div><div class="cp-num"><strong>CONTRAT N° ${c.id}</strong>Restitution : ${fFR(dr)}</div></div><div class="restit-title-box">✅ REÇU DE RESTITUTION DE VÉHICULE DE PRÊT</div><div class="restit-grid"><div class="restit-box"><div class="restit-box-title">👤 Emprunteur</div><div class="cp-row"><span class="cp-label">Nom complet</span><span class="cp-val">${c.nom||'—'}</span></div><div class="cp-row"><span class="cp-label">Téléphone</span><span class="cp-val">${c.tel||'—'}</span></div><div class="cp-row"><span class="cp-label">Adresse</span><span class="cp-val">${c.adresse||'—'}</span></div></div><div class="restit-box"><div class="restit-box-title">🚗 Véhicule</div><div class="cp-row"><span class="cp-label">Marque / Modèle</span><span class="cp-val">HYUNDAI BAYON</span></div><div class="cp-row"><span class="cp-label">Immatriculation</span><span class="cp-val">${c.immat||'—'}</span></div><div class="cp-row"><span class="cp-label">Couleur</span><span class="cp-val">${c.couleur||'—'}</span></div></div></div><div class="restit-grid"><div class="restit-box" style="background:#e8f4fd !important;"><div class="restit-box-title" style="color:#1a5276;">📅 Remise du véhicule</div><div class="cp-row"><span class="cp-label">Date remise</span><span class="cp-val">${fFR(dd)}</span></div><div class="cp-row"><span class="cp-label">Km départ</span><span class="cp-val">${c.km?c.km+' km':'—'}</span></div><div class="cp-row"><span class="cp-label">Carburant départ</span><span class="cp-val"><span class="cp-carburant">${cDH}</span></span></div><div class="cp-row"><span class="cp-label">Restitution prévue</span><span class="cp-val">${fFR(df)}</span></div></div><div class="restit-box" style="background:#eafaf1 !important;"><div class="restit-box-title" style="color:#1e8449;">✅ Restitution effective</div><div class="cp-row"><span class="cp-label">Date restitution</span><span class="cp-val" style="color:#1e8449;font-weight:800;">${fFR(dr)}</span></div><div class="cp-row"><span class="cp-label">Km retour</span><span class="cp-val" style="font-weight:800;">${c.restitKm?c.restitKm+' km':'—'}</span></div><div class="cp-row"><span class="cp-label">Carburant retour</span><span class="cp-val"><span class="cp-carburant">${cRH}</span></span></div><div class="cp-row"><span class="cp-label">Km parcourus</span><span class="cp-val">${c.km&&c.restitKm?parseInt(c.restitKm)-parseInt(c.km)+' km':'—'}</span></div></div></div>${c.restitRemarques?`<div class="restit-box" style="margin-bottom:14px;"><div class="restit-box-title">📝 Remarques / État</div><div style="font-size:13px;padding:4px 0;">${c.restitRemarques}</div></div>`:''}<div class="restit-signatures"><div><div class="restit-sig-label">Signature du client<br><small>(bon pour accord)</small></div><div class="restit-sig-line">Nom : ${c.nom||'_______________________________'}</div></div><div><div class="restit-sig-label">Pour la Carrosserie Brun<br><small>Cachet et signature</small></div><div class="restit-sig-line">Carrosserie Brun — Valence Motors</div></div></div><div class="restit-footer">Reçu de restitution — Contrat N° ${c.id} — Carrosserie Brun Valence Motors, 307 avenue de Romans, 26000 Valence</div></div>`;
+  zone.innerHTML=`<div class="restit-print">
+    <div class="restit-header"><div><div class="cp-garage-name">CARROSSERIE BRUN — VALENCE MOTORS</div><div class="cp-garage-sub">307 avenue de Romans — 26000 Valence — Tél : 04 75 55 64 39</div></div><div class="cp-num"><strong>CONTRAT N° ${c.id}</strong>Restitution : ${fFR(dr)}</div></div>
+    <div class="restit-title-box">✅ REÇU DE RESTITUTION DE VÉHICULE DE PRÊT</div>
+    <div class="restit-grid">
+      <div class="restit-box"><div class="restit-box-title">👤 Emprunteur</div><div class="cp-row"><span class="cp-label">Nom complet</span><span class="cp-val">${c.nom||'—'}</span></div><div class="cp-row"><span class="cp-label">Téléphone</span><span class="cp-val">${c.tel||'—'}</span></div><div class="cp-row"><span class="cp-label">Adresse</span><span class="cp-val">${c.adresse||'—'}</span></div></div>
+      <div class="restit-box"><div class="restit-box-title">🚗 Véhicule</div><div class="cp-row"><span class="cp-label">Marque / Modèle</span><span class="cp-val">HYUNDAI BAYON</span></div><div class="cp-row"><span class="cp-label">Immatriculation</span><span class="cp-val">${c.immat||'—'}</span></div><div class="cp-row"><span class="cp-label">Couleur</span><span class="cp-val">${c.couleur||'—'}</span></div></div>
+    </div>
+    <div class="restit-grid">
+      <div class="restit-box" style="background:#e8f4fd !important;"><div class="restit-box-title" style="color:#1a5276;">📅 Remise du véhicule</div><div class="cp-row"><span class="cp-label">Date remise</span><span class="cp-val">${fFR(dd)}</span></div><div class="cp-row"><span class="cp-label">Km départ</span><span class="cp-val">${c.km?c.km+' km':'—'}</span></div><div class="cp-row"><span class="cp-label">Carburant départ</span><span class="cp-val"><span class="cp-carburant">${cDH}</span></span></div><div class="cp-row"><span class="cp-label">Restitution prévue</span><span class="cp-val">${fFR(df)}</span></div></div>
+      <div class="restit-box" style="background:#eafaf1 !important;"><div class="restit-box-title" style="color:#1e8449;">✅ Restitution effective</div><div class="cp-row"><span class="cp-label">Date restitution</span><span class="cp-val" style="color:#1e8449;font-weight:800;">${fFR(dr)}</span></div><div class="cp-row"><span class="cp-label">Km retour</span><span class="cp-val" style="font-weight:800;">${c.restitKm?c.restitKm+' km':'—'}</span></div><div class="cp-row"><span class="cp-label">Carburant retour</span><span class="cp-val"><span class="cp-carburant">${cRH}</span></span></div><div class="cp-row"><span class="cp-label">Km parcourus</span><span class="cp-val">${c.km&&c.restitKm?parseInt(c.restitKm)-parseInt(c.km)+' km':'—'}</span></div></div>
+    </div>
+    ${c.restitRemarques?`<div class="restit-box" style="margin-bottom:14px;"><div class="restit-box-title">📝 Remarques / État</div><div style="font-size:13px;padding:4px 0;">${c.restitRemarques}</div></div>`:''}
+    <div class="restit-signatures"><div><div class="restit-sig-label">Signature du client<br><small>(bon pour accord)</small></div><div class="restit-sig-line">Nom : ${c.nom||'_______________________________'}</div></div><div><div class="restit-sig-label">Pour la Carrosserie Brun<br><small>Cachet et signature</small></div><div class="restit-sig-line">Carrosserie Brun — Valence Motors</div></div></div>
+    <div class="restit-footer">Reçu de restitution — Contrat N° ${c.id} — Carrosserie Brun Valence Motors, 307 avenue de Romans, 26000 Valence</div>
+  </div>`;
   zone.style.display='block';
   setTimeout(()=>{window.print();setTimeout(()=>{zone.innerHTML='';zone.style.display='none';},3000);},200);
 }
@@ -1498,14 +1395,14 @@ function openMobileRestitution(id,c){mRestitId=id;document.getElementById('mRest
 function closeMobileRestitution(){document.getElementById('mobileRestitutionOverlay').classList.remove('open');mRestitId=null;}
 function saveMobileRestitution(){if(!mRestitId)return;const idx=ctState.contrats.findIndex(c=>c.id===mRestitId);if(idx<0)return;ctState.contrats[idx].restitue=true;ctState.contrats[idx].restitDate=document.getElementById('mRestitDate').value;ctState.contrats[idx].restitKm=document.getElementById('mRestitKm').value;ctState.contrats[idx].restitCarburant=document.getElementById('mRestitCarburant').value;ctState.contrats[idx].restitRemarques=document.getElementById('mRestitRemarques').value;saveCT();closeMobileRestitution();renderMobileContrats();}
 
-// ── PRINT PLANNING ──
+// ── IMPRESSION PLANNING ──
 function printPlanning(){
   const days=gWD();const ws=days[0].toDateString();const all=state.appointments.filter(a=>new Date(a.weekStart).toDateString()===ws);
   const rows2=[...state.loanNames.map((n,i)=>({type:'loan',row:i,name:n,isLoan:true})),...state.noLoanNames.map((n,i)=>({type:'noloan',row:i,name:n,isLoan:false}))];
   const totalH=Math.round(all.reduce((s,a)=>s+hSeg(a.hours||0,a.totalDays||1,a.span||1),0)*10)/10;
   const nbRdv=all.filter(a=>a.segmentIndex===0).length;const cap=nbTech*39;const pct=cap>0?Math.round((totalH/cap)*100):0;
   let rows='';let fl=true,fn=true;
-  rows2.forEach(r=>{if(r.isLoan&&fl){rows+=`<tr><td colspan="6" class="pp-section-header">🚗 VÉHICULES DE PRÊT — HYUNDAI BAYON</td></tr>`;fl=false;}if(!r.isLoan&&fn){rows+=`<tr><td colspan="6" class="pp-section-header">🔧 POSTES SANS VÉHICULE</td></tr>`;fn=false;}const cells=days.map((_,di)=>{const appts=all.filter(a=>a.type===r.type&&a.row===r.row&&a.day===di);return `<td>${appts.map(a=>`<div class="pp-appt-block" style="background:${a.color} !important;"><span class="pp-appt-name">${a.name}${a.technicien?' ['+a.technicien.slice(0,3).toUpperCase()+']':''}</span><span class="pp-appt-info">${hSeg(a.hours||0,a.totalDays||1,a.span||1)}h${a.totalDays>1?' · '+a.span+'j/'+a.totalDays:''}${a.tel?' · '+a.tel:''}</span></div>`).join('')}</td>`;}).join('');rows+=`<tr class="${r.isLoan?'pp-loan-row':''}"><td class="pp-label-cell">${r.isLoan?'🚗':'🔧'} ${r.name}</td>${cells}</tr>`;});
+  rows2.forEach(r=>{if(r.isLoan&&fl){rows+=`<tr><td colspan="6" class="pp-section-header">🚗 VÉHICULES DE PRÊT — HYUNDAI BAYON</td></tr>`;fl=false;}if(!r.isLoan&&fn){rows+=`<tr><td colspan="6" class="pp-section-header">🔧 POSTES SANS VÉHICULE</td></tr>`;fn=false;}const cells=days.map((_,di)=>{const appts=all.filter(a=>a.type===r.type&&a.row===r.row&&a.day===di);return `<td>${appts.map(a=>`<div class="pp-appt-block" style="background:${a.color} !important;"><span class="pp-appt-name">${a.name}</span><span class="pp-appt-info">${hSeg(a.hours||0,a.totalDays||1,a.span||1)}h${a.totalDays>1?' · '+a.span+'j/'+a.totalDays:''}${a.tel?' · '+a.tel:''}</span></div>`).join('')}</td>`;}).join('');rows+=`<tr class="${r.isLoan?'pp-loan-row':''}"><td class="pp-label-cell">${r.isLoan?'🚗':'🔧'} ${r.name}</td>${cells}</tr>`;});
   const zone=document.getElementById('planning-print-zone');
   zone.innerHTML=`<div class="planning-print"><div class="pp-header"><div><div class="pp-garage">CARROSSERIE BRUN — VALENCE MOTORS<small>307 avenue de Romans, 26000 Valence · Tél : 04 75 55 64 39</small></div></div><div class="pp-week-title">${gWL(days)}<small>Imprimé le ${fFR(new Date())}</small></div></div><div class="pp-stats"><div class="pp-stat">📋 RDV : <span>${nbRdv}</span></div><div class="pp-stat">⏱ Heures : <span>${totalH}h</span></div><div class="pp-stat">📊 <span>${pct}%</span></div><div class="pp-stat">👷 <span>${nbTech}</span> tech.</div><div class="pp-stat">⚡ Capacité : <span>${cap}h</span></div></div><table class="pp-table"><thead><tr><th style="width:90px;text-align:left;padding-left:6px;">Poste</th>${days.map(d=>`<th${isToday(d)?' class="today-th"':''}>${d.toLocaleDateString('fr-FR',{weekday:'long'})}<br><span style="font-weight:400;font-size:9px;">${d.toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}</span></th>`).join('')}</tr></thead><tbody>${rows}</tbody></table><div class="pp-footer"><span>Carrosserie Brun Valence Motors — 307 avenue de Romans, 26000 Valence</span><span>${gWL(days)}</span></div></div>`;
   zone.style.display='block';
@@ -1519,53 +1416,15 @@ function delGroup(gid){if(isRO()){showRO();return;}state.appointments=state.appo
 function confirmDel(gid,name){pendingDelId=gid;document.getElementById('confirmText').textContent=`Supprimer le RDV "${name}" ?`;document.getElementById('confirmModalOverlay').classList.add('open');}
 function closeConfirm(){document.getElementById('confirmModalOverlay').classList.remove('open');pendingDelId=null;}
 
-// ── MODALS ──
-function openModal(type,row,day){if(isRO()){showRO();return;}pendingAppt={type,row,day};selColor=0;newPrio='moyenne';['apptName','apptTel','apptAdresse','apptMemo'].forEach(id=>document.getElementById(id).value='');document.getElementById('apptDays').value=1;document.getElementById('apptHours').value=4;document.getElementById('apptTech').value='';upPrev('apptPreview',day,state.weekOffset,1);setNP('moyenne');buildCP('colorPicker',i=>selColor=i);document.getElementById('modalOverlay').classList.add('open');setTimeout(()=>document.getElementById('apptName').focus(),50);}
+// ── MODAL RDV PC ──
+function openModal(type,row,day){if(isRO()){showRO();return;}pendingAppt={type,row,day};selColor=0;newPrio='moyenne';['apptName','apptTel','apptAdresse','apptMemo'].forEach(id=>document.getElementById(id).value='');document.getElementById('apptDays').value=1;document.getElementById('apptHours').value=4;upPrev('apptPreview',day,state.weekOffset,1);setNP('moyenne');buildCP('colorPicker',i=>selColor=i);document.getElementById('modalOverlay').classList.add('open');setTimeout(()=>document.getElementById('apptName').focus(),50);}
 function setNP(p){newPrio=p;['newPrioBasse','newPrioMoyenne','newPrioHaute'].forEach(id=>document.getElementById(id).className='status-btn');const ids={basse:'newPrioBasse',moyenne:'newPrioMoyenne',haute:'newPrioHaute'};document.getElementById(ids[p]).className=`status-btn active-${p}`;}
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open');pendingAppt=null;}
-function saveAppt(){if(isRO()){showRO();return;}if(!pendingAppt)return;const name=document.getElementById('apptName').value.trim();if(!name){document.getElementById('apptName').focus();return;}const tel=document.getElementById('apptTel').value.trim();const adresse=document.getElementById('apptAdresse').value.trim();const memo=document.getElementById('apptMemo').value.trim();const td=parseInt(document.getElementById('apptDays').value)||1;const hours=parseFloat(document.getElementById('apptHours').value)||0;const tech=document.getElementById('apptTech').value;const days=gWD();const gid=Date.now().toString(36)+Math.random().toString(36).slice(2);const color=COLORS[selColor];const segs=split(pendingAppt.day,td,days[0]);segs.forEach((seg,i)=>{state.appointments.push({id:gid+(i===0?'':'-'+i),groupId:gid,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:pendingAppt.type,row:pendingAppt.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:newPrio,arrived:false,pieceStatus:'none',pieceFournisseur:'',pieceNote:'',technicien:tech});});saveFB();closeModal();render();if(isMobile())renderMobile();}
+function saveAppt(){if(isRO()){showRO();return;}if(!pendingAppt)return;const name=document.getElementById('apptName').value.trim();if(!name){document.getElementById('apptName').focus();return;}const tel=document.getElementById('apptTel').value.trim();const adresse=document.getElementById('apptAdresse').value.trim();const memo=document.getElementById('apptMemo').value.trim();const td=parseInt(document.getElementById('apptDays').value)||1;const hours=parseFloat(document.getElementById('apptHours').value)||0;const days=gWD();const gid=Date.now().toString(36)+Math.random().toString(36).slice(2);const color=COLORS[selColor];const segs=split(pendingAppt.day,td,days[0]);segs.forEach((seg,i)=>{state.appointments.push({id:gid+(i===0?'':'-'+i),groupId:gid,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:pendingAppt.type,row:pendingAppt.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:newPrio,arrived:false,pieceStatus:'none',pieceFournisseur:'',pieceNote:''});});saveFB();closeModal();render();if(isMobile())renderMobile();}
 
-// ── EDIT MODAL ──
-function openEditModal(gid){
-  const fs=state.appointments.find(a=>a.groupId===gid&&a.segmentIndex===0);if(!fs)return;
-  editId=gid;editRef=fs;editStat=fs.arrived?'arrived':'pending';editPieceStat=fs.pieceStatus||'none';editPrio=fs.priority||'moyenne';editSelColor=Math.max(0,COLORS.indexOf(fs.color));
-  document.getElementById('editApptName').value=fs.name;document.getElementById('editApptTel').value=fs.tel||'';document.getElementById('editApptAdresse').value=fs.adresse||'';document.getElementById('editApptMemo').value=fs.memo||'';document.getElementById('editApptHours').value=fs.hours;document.getElementById('editApptDays').value=fs.totalDays||fs.span||1;document.getElementById('editApptDay').value=fs.day||0;document.getElementById('editApptTech').value=fs.technicien||'';document.getElementById('editPieceFournisseur').value=fs.pieceFournisseur||'';document.getElementById('editPieceNote').value=fs.pieceNote||'';
-  const wo=gWO(fs.weekStart);const days=gWD(wo);const monday=days[0];
-  const jan4=new Date(monday.getFullYear(),0,4);const weekNum=Math.ceil(((monday-jan4)/86400000+jan4.getDay()+1)/7);
-  document.getElementById('editApptWeek').value=`${monday.getFullYear()}-W${String(weekNum).padStart(2,'0')}`;
-  upPrev('editApptPreview',fs.day,wo,fs.totalDays||fs.span||1);
-  setES(editStat);setEPS(editPieceStat);setEP(editPrio);buildCP('editColorPicker',i=>editSelColor=i);
-  document.querySelectorAll('#editColorPicker .color-swatch').forEach((s,i)=>s.classList.toggle('selected',i===editSelColor));
-  document.getElementById('editModalOverlay').classList.add('open');setTimeout(()=>document.getElementById('editApptName').focus(),50);
-}
-function setEP(p){editPrio=p;['editPrioBasse','editPrioMoyenne','editPrioHaute'].forEach(id=>document.getElementById(id).className='status-btn');const ids={basse:'editPrioBasse',moyenne:'editPrioMoyenne',haute:'editPrioHaute'};document.getElementById(ids[p]).className=`status-btn active-${p}`;}
-function setES(s){editStat=s;document.getElementById('btnPending').className='status-btn'+(s==='pending'?' active-pending':'');document.getElementById('btnArrived').className='status-btn'+(s==='arrived'?' active-arrived':'');}
-function setEPS(s){editPieceStat=s;document.getElementById('btnPieceNon').className='status-btn'+(s==='none'?' active-pending':'');document.getElementById('btnPieceOui').className='status-btn'+(s==='ordered'?' active-ordered':'');document.getElementById('btnPieceLivree').className='status-btn'+(s==='delivered'?' active-delivered':'');document.querySelector('.piece-fournisseur').style.display=s==='none'?'none':'block';}
-function closeEditModal(){document.getElementById('editModalOverlay').classList.remove('open');editId=null;editRef=null;}
-function saveEditAppt(){
-  if(isRO()){showRO();return;}if(!editId||!editRef)return;
-  const name=document.getElementById('editApptName').value.trim();if(!name){document.getElementById('editApptName').focus();return;}
-  const tel=document.getElementById('editApptTel').value.trim();const adresse=document.getElementById('editApptAdresse').value.trim();const memo=document.getElementById('editApptMemo').value.trim();
-  const hours=parseFloat(document.getElementById('editApptHours').value)||0;const td=parseInt(document.getElementById('editApptDays').value)||1;
-  const newDay=parseInt(document.getElementById('editApptDay').value)||0;const color=COLORS[editSelColor];
-  const pf=document.getElementById('editPieceFournisseur').value.trim();const pn=document.getElementById('editPieceNote').value.trim();
-  const tech=document.getElementById('editApptTech').value;
-  const weekVal=document.getElementById('editApptWeek').value;
-  let newWeekStart;
-  if(weekVal){const[year,week]=weekVal.split('-W');const jan4=new Date(parseInt(year),0,4);const jan4Day=jan4.getDay()||7;const monday=new Date(jan4);monday.setDate(jan4.getDate()-(jan4Day-1)+(parseInt(week)-1)*7);monday.setHours(0,0,0,0);newWeekStart=monday;}
-  else{newWeekStart=gWD(gWO(editRef.weekStart))[0];}
-  state.appointments=state.appointments.filter(a=>a.groupId!==editId);
-  const segs=split(newDay,td,newWeekStart);
-  segs.forEach((seg,i)=>{state.appointments.push({id:editId+(i===0?'':'-'+i),groupId:editId,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:editRef.type,row:editRef.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:editPrio,arrived:(editStat==='arrived'),pieceStatus:editPieceStat,pieceFournisseur:pf,pieceNote:pn,technicien:tech});});
-  saveFB();closeEditModal();render();if(isMobile())renderMobile();
-}
-
-function buildCP(id,onPick){const cp=document.getElementById(id);cp.innerHTML='';COLORS.forEach((c,i)=>{const sw=document.createElement('div');sw.className=`color-swatch${i===0?' selected':''}`;sw.style.background=c;sw.addEventListener('click',()=>{cp.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));sw.classList.add('selected');onPick(i);});cp.appendChild(sw);});}
-function buildMCP(onPick){const cp=document.getElementById('mColorPicker');cp.innerHTML='';COLORS.forEach((c,i)=>{const sw=document.createElement('div');sw.className=`mobile-color-swatch${i===0?' selected':''}`;sw.style.background=c;sw.addEventListener('click',()=>{cp.querySelectorAll('.mobile-color-swatch').forEach(s=>s.classList.remove('selected'));sw.classList.add('selected');onPick(i);});cp.appendChild(sw);});}
-
-// ── MOBILE MODALS ──
-function openMobileModal(type,row,day){if(isRO()){showRO();return;}mPendingAppt={type,row,day};isEditing=false;mSelColor=0;mNewPrio='moyenne';document.getElementById('mModalTitle').textContent='Nouveau rendez-vous';['mApptName','mApptTel','mApptAdresse','mApptMemo'].forEach(id=>document.getElementById(id).value='');document.getElementById('mApptDays').value=1;document.getElementById('mApptHours').value=4;document.getElementById('mApptPreview').textContent='📅 1 jour';document.getElementById('mApptTech').value='';setMP('moyenne');buildMCP(i=>mSelColor=i);document.getElementById('mobileModalOverlay').classList.add('open');setTimeout(()=>document.getElementById('mApptName').focus(),50);}
-function openMobileEditModal(gid){const fs=state.appointments.find(a=>a.groupId===gid&&a.segmentIndex===0);if(!fs)return;isEditing=true;mPendingAppt={groupId:gid,ref:fs};mSelColor=Math.max(0,COLORS.indexOf(fs.color));mNewPrio=fs.priority||'moyenne';document.getElementById('mModalTitle').textContent=isRO()?'Consulter le RDV':'Modifier le RDV';document.getElementById('mApptName').value=fs.name;document.getElementById('mApptTel').value=fs.tel||'';document.getElementById('mApptAdresse').value=fs.adresse||'';document.getElementById('mApptMemo').value=fs.memo||'';document.getElementById('mApptDays').value=fs.totalDays||fs.span||1;document.getElementById('mApptHours').value=fs.hours;document.getElementById('mApptTech').value=fs.technicien||'';const wo=gWO(fs.weekStart);upPrevM(fs.day,wo,fs.totalDays||fs.span||1);setMP(mNewPrio);buildMCP(i=>mSelColor=i);document.querySelectorAll('#mColorPicker .mobile-color-swatch').forEach((s,i)=>s.classList.toggle('selected',i===mSelColor));document.getElementById('mobileModalOverlay').classList.add('open');}
+// ── MOBILE MODAL RDV ──
+function openMobileModal(type,row,day){if(isRO()){showRO();return;}mPendingAppt={type,row,day};isEditing=false;mSelColor=0;mNewPrio='moyenne';document.getElementById('mModalTitle').textContent='Nouveau rendez-vous';['mApptName','mApptTel','mApptAdresse','mApptMemo'].forEach(id=>document.getElementById(id).value='');document.getElementById('mApptDays').value=1;document.getElementById('mApptHours').value=4;document.getElementById('mApptPreview').textContent='📅 1 jour';setMP('moyenne');buildMCP(i=>mSelColor=i);document.getElementById('mobileModalOverlay').classList.add('open');setTimeout(()=>document.getElementById('mApptName').focus(),50);}
+function openMobileEditModal(gid){const fs=state.appointments.find(a=>a.groupId===gid&&a.segmentIndex===0);if(!fs)return;isEditing=true;mPendingAppt={groupId:gid,ref:fs};mSelColor=Math.max(0,COLORS.indexOf(fs.color));mNewPrio=fs.priority||'moyenne';document.getElementById('mModalTitle').textContent=isRO()?'Consulter le RDV':'Modifier le RDV';document.getElementById('mApptName').value=fs.name;document.getElementById('mApptTel').value=fs.tel||'';document.getElementById('mApptAdresse').value=fs.adresse||'';document.getElementById('mApptMemo').value=fs.memo||'';document.getElementById('mApptDays').value=fs.totalDays||fs.span||1;document.getElementById('mApptHours').value=fs.hours;const wo=gWO(fs.weekStart);upPrevM(fs.day,wo,fs.totalDays||fs.span||1);setMP(mNewPrio);buildMCP(i=>mSelColor=i);document.querySelectorAll('#mColorPicker .mobile-color-swatch').forEach((s,i)=>s.classList.toggle('selected',i===mSelColor));document.getElementById('mobileModalOverlay').classList.add('open');}
 function upPrevM(sd,wo,n){if(!n||n<1){document.getElementById('mApptPreview').textContent='📅 —';return;}const days=gWD(wo);const dd=days[sd];const df=calcFin(dd,n);document.getElementById('mApptPreview').textContent=`📅 Du ${fFR(dd)} au ${fFR(df)} (${n}j)`;}
 function setMP(p){mNewPrio=p;['mPrioBasse','mPrioMoyenne','mPrioHaute'].forEach(id=>document.getElementById(id).className='mprio-btn');const ids={basse:'mPrioBasse',moyenne:'mPrioMoyenne',haute:'mPrioHaute'};document.getElementById(ids[p]).className=`mprio-btn active-${p}`;}
 function closeMobileModal(){document.getElementById('mobileModalOverlay').classList.remove('open');mPendingAppt=null;isEditing=false;}
@@ -1573,22 +1432,34 @@ function saveMobileAppt(){
   if(isRO()){showRO();return;}
   const name=document.getElementById('mApptName').value.trim();if(!name){document.getElementById('mApptName').focus();return;}
   const tel=document.getElementById('mApptTel').value.trim();const adresse=document.getElementById('mApptAdresse').value.trim();const memo=document.getElementById('mApptMemo').value.trim();
-  const td=parseInt(document.getElementById('mApptDays').value)||1;const hours=parseFloat(document.getElementById('mApptHours').value)||0;const color=COLORS[mSelColor];const tech=document.getElementById('mApptTech').value;
+  const td=parseInt(document.getElementById('mApptDays').value)||1;const hours=parseFloat(document.getElementById('mApptHours').value)||0;const color=COLORS[mSelColor];
   if(isEditing&&mPendingAppt?.ref){
     const ref=mPendingAppt.ref;const gid=mPendingAppt.groupId;
     state.appointments=state.appointments.filter(a=>a.groupId!==gid);
     const wo=gWO(ref.weekStart);const days=gWD(wo);const segs=split(ref.day,td,days[0]);
-    segs.forEach((seg,i)=>{state.appointments.push({id:gid+(i===0?'':'-'+i),groupId:gid,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:ref.type,row:ref.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:mNewPrio,arrived:ref.arrived||false,pieceStatus:ref.pieceStatus||'none',pieceFournisseur:ref.pieceFournisseur||'',pieceNote:ref.pieceNote||'',technicien:tech});});
+    segs.forEach((seg,i)=>{state.appointments.push({id:gid+(i===0?'':'-'+i),groupId:gid,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:ref.type,row:ref.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:mNewPrio,arrived:ref.arrived||false,pieceStatus:ref.pieceStatus||'none',pieceFournisseur:ref.pieceFournisseur||'',pieceNote:ref.pieceNote||''});});
   }else if(mPendingAppt){
     const days=gWD();const gid=Date.now().toString(36)+Math.random().toString(36).slice(2);const segs=split(mPendingAppt.day,td,days[0]);
-    segs.forEach((seg,i)=>{state.appointments.push({id:gid+(i===0?'':'-'+i),groupId:gid,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:mPendingAppt.type,row:mPendingAppt.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:mNewPrio,arrived:false,pieceStatus:'none',pieceFournisseur:'',pieceNote:'',technicien:tech});});
+    segs.forEach((seg,i)=>{state.appointments.push({id:gid+(i===0?'':'-'+i),groupId:gid,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:mPendingAppt.type,row:mPendingAppt.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:mNewPrio,arrived:false,pieceStatus:'none',pieceFournisseur:'',pieceNote:''});});
   }
   saveFB();closeMobileModal();renderMobile();
 }
 
+// ── MOBILE CONGES MODAL ──
 function openMobileCongesModal(tech,date){if(isRO()){showRO();return;}mPendingConges={tech,date};mSelCongesType='conge';document.getElementById('mCongesInfo').textContent=`${tech.nom} — ${JF[date.getDay()]} ${date.getDate()} ${MF[date.getMonth()]} ${date.getFullYear()}`;document.getElementById('mCongesNote').value='';const tg=document.getElementById('mTypeGrid');tg.innerHTML='';TABS.forEach(t=>{const card=document.createElement('div');card.className=`type-card${t.id===mSelCongesType?' selected':''}`;if(t.id===mSelCongesType)card.style.background=t.color;card.innerHTML=`<div class="type-dot" style="background:${t.color}"></div>${t.icon} ${t.label}`;card.addEventListener('click',()=>{mSelCongesType=t.id;tg.querySelectorAll('.type-card').forEach(c=>{c.classList.remove('selected');c.style.background='';});card.classList.add('selected');card.style.background=t.color;});tg.appendChild(card);});document.getElementById('mobileCongesModalOverlay').classList.add('open');}
 function closeMobileCongesModal(){document.getElementById('mobileCongesModalOverlay').classList.remove('open');mPendingConges=null;}
 function saveMobileConges(){if(isRO()){showRO();return;}if(!mPendingConges)return;const dk=dKey(mPendingConges.date);cState.absences=cState.absences.filter(a=>!(a.techId===mPendingConges.tech.id&&a.date===dk));cState.absences.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2),techId:mPendingConges.tech.id,date:dk,type:mSelCongesType,note:document.getElementById('mCongesNote').value.trim()});saveCG();closeMobileCongesModal();renderMobileConges();}
+
+// ── EDIT MODAL PC ──
+function openEditModal(gid){const fs=state.appointments.find(a=>a.groupId===gid&&a.segmentIndex===0);if(!fs)return;editId=gid;editRef=fs;editStat=fs.arrived?'arrived':'pending';editPieceStat=fs.pieceStatus||'none';editPrio=fs.priority||'moyenne';editSelColor=Math.max(0,COLORS.indexOf(fs.color));document.getElementById('editApptName').value=fs.name;document.getElementById('editApptTel').value=fs.tel||'';document.getElementById('editApptAdresse').value=fs.adresse||'';document.getElementById('editApptMemo').value=fs.memo||'';document.getElementById('editApptHours').value=fs.hours;document.getElementById('editApptDays').value=fs.totalDays||fs.span||1;document.getElementById('editPieceFournisseur').value=fs.pieceFournisseur||'';document.getElementById('editPieceNote').value=fs.pieceNote||'';const wo=gWO(fs.weekStart);upPrev('editApptPreview',fs.day,wo,fs.totalDays||fs.span||1);setES(editStat);setEPS(editPieceStat);setEP(editPrio);buildCP('editColorPicker',i=>editSelColor=i);document.querySelectorAll('#editColorPicker .color-swatch').forEach((s,i)=>s.classList.toggle('selected',i===editSelColor));document.getElementById('editModalOverlay').classList.add('open');setTimeout(()=>document.getElementById('editApptName').focus(),50);}
+function setEP(p){editPrio=p;['editPrioBasse','editPrioMoyenne','editPrioHaute'].forEach(id=>document.getElementById(id).className='status-btn');const ids={basse:'editPrioBasse',moyenne:'editPrioMoyenne',haute:'editPrioHaute'};document.getElementById(ids[p]).className=`status-btn active-${p}`;}
+function setES(s){editStat=s;document.getElementById('btnPending').className='status-btn'+(s==='pending'?' active-pending':'');document.getElementById('btnArrived').className='status-btn'+(s==='arrived'?' active-arrived':'');}
+function setEPS(s){editPieceStat=s;document.getElementById('btnPieceNon').className='status-btn'+(s==='none'?' active-pending':'');document.getElementById('btnPieceOui').className='status-btn'+(s==='ordered'?' active-ordered':'');document.getElementById('btnPieceLivree').className='status-btn'+(s==='delivered'?' active-delivered':'');document.querySelector('.piece-fournisseur').style.display=s==='none'?'none':'block';}
+function closeEditModal(){document.getElementById('editModalOverlay').classList.remove('open');editId=null;editRef=null;}
+function saveEditAppt(){if(isRO()){showRO();return;}if(!editId||!editRef)return;const name=document.getElementById('editApptName').value.trim();if(!name){document.getElementById('editApptName').focus();return;}const tel=document.getElementById('editApptTel').value.trim();const adresse=document.getElementById('editApptAdresse').value.trim();const memo=document.getElementById('editApptMemo').value.trim();const hours=parseFloat(document.getElementById('editApptHours').value)||0;const td=parseInt(document.getElementById('editApptDays').value)||1;const color=COLORS[editSelColor];const pf=document.getElementById('editPieceFournisseur').value.trim();const pn=document.getElementById('editPieceNote').value.trim();state.appointments=state.appointments.filter(a=>a.groupId!==editId);const wo=gWO(editRef.weekStart);const days=gWD(wo);const segs=split(editRef.day,td,days[0]);segs.forEach((seg,i)=>{state.appointments.push({id:editId+(i===0?'':'-'+i),groupId:editId,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:editRef.type,row:editRef.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:editPrio,arrived:(editStat==='arrived'),pieceStatus:editPieceStat,pieceFournisseur:pf,pieceNote:pn});});saveFB();closeEditModal();render();if(isMobile())renderMobile();}
+
+function buildCP(id,onPick){const cp=document.getElementById(id);cp.innerHTML='';COLORS.forEach((c,i)=>{const sw=document.createElement('div');sw.className=`color-swatch${i===0?' selected':''}`;sw.style.background=c;sw.addEventListener('click',()=>{cp.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));sw.classList.add('selected');onPick(i);});cp.appendChild(sw);});}
+function buildMCP(onPick){const cp=document.getElementById('mColorPicker');cp.innerHTML='';COLORS.forEach((c,i)=>{const sw=document.createElement('div');sw.className=`mobile-color-swatch${i===0?' selected':''}`;sw.style.background=c;sw.addEventListener('click',()=>{cp.querySelectorAll('.mobile-color-swatch').forEach(s=>s.classList.remove('selected'));sw.classList.add('selected');onPick(i);});cp.appendChild(sw);});}
 
 // ── ABSENCE ──
 function openAbsModal(type,row,day){if(isRO()){showRO();return;}pendingAbs={type,row,day};absType='conge';document.getElementById('absLabel').value='';document.getElementById('absTypeConge').className='status-btn active-arrived';document.getElementById('absTypeAbsence').className='status-btn';document.getElementById('absenceModalOverlay').classList.add('open');}
@@ -1622,14 +1493,6 @@ function renderHistory(){const so=-(histPage*4);const weeks=[];for(let i=0;i<4;i
 
 // ── EVENTS ──
 function setupEvents(){
-  document.getElementById('editApptDay').addEventListener('change',()=>{
-    const day=parseInt(document.getElementById('editApptDay').value)||0;
-    const td=parseInt(document.getElementById('editApptDays').value)||1;
-    const weekVal=document.getElementById('editApptWeek').value;
-    if(weekVal){const[year,week]=weekVal.split('-W');const jan4=new Date(parseInt(year),0,4);const jan4Day=jan4.getDay()||7;const monday=new Date(jan4);monday.setDate(jan4.getDate()-(jan4Day-1)+(parseInt(week)-1)*7);monday.setHours(0,0,0,0);const days=[0,1,2,3,4].map(i=>{const d=new Date(monday);d.setDate(d.getDate()+i);return d;});const dd=days[day];const df=calcFin(dd,td);const s=split(day,td,monday);let t=`📅 Du ${fFR(dd)} au ${fFR(df)} (${td}j)`;if(s.length>1)t+=` — ${s.length} sem.`;document.getElementById('editApptPreview').textContent=t;}
-  });
-  document.getElementById('editApptWeek').addEventListener('change',()=>{document.getElementById('editApptDay').dispatchEvent(new Event('change'));});
-  document.getElementById('editApptDays').addEventListener('input',()=>{document.getElementById('editApptDay').dispatchEvent(new Event('change'));});
   document.getElementById('btnPrevWeek').addEventListener('click',()=>changeWeek(-1));
   document.getElementById('btnNextWeek').addEventListener('click',()=>changeWeek(1));
   document.getElementById('btnToday').addEventListener('click',()=>goToday());
@@ -1675,6 +1538,7 @@ function setupEvents(){
   document.getElementById('contratsSearchInput').addEventListener('input',e=>{ctSearch=e.target.value;renderContrats();});
   document.querySelectorAll('.filter-chip[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{ctFilter=btn.dataset.filter;document.querySelectorAll('.filter-chip[data-filter]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderContrats();}));
   document.getElementById('apptDays').addEventListener('input',e=>{if(pendingAppt)upPrev('apptPreview',pendingAppt.day,state.weekOffset,parseInt(e.target.value)||1);});
+  document.getElementById('editApptDays').addEventListener('input',e=>{if(editRef){const wo=gWO(editRef.weekStart);upPrev('editApptPreview',editRef.day,wo,parseInt(e.target.value)||1);}});
   document.getElementById('mBtnPrev').addEventListener('click',()=>changeWeek(-1));
   document.getElementById('mBtnNext').addEventListener('click',()=>changeWeek(1));
   document.getElementById('mBtnToday').addEventListener('click',()=>goToday());
