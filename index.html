@@ -401,7 +401,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 </style>
 </head>
 <body>
-  <div id="loginPage">
+<div id="loginPage">
   <div class="login-card">
     <div class="login-logo">
       <div class="ll-icon">🔧</div>
@@ -484,7 +484,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   <button class="toolbar-btn" id="mBtnLogout" style="background:#e74c3c;height:28px;font-size:.7rem;">🚪</button>
 </div>
 
-<!-- VUE TECHNICIEN -->
 <div class="tech-view" id="techView">
   <div class="tech-view-header">
     <div class="tech-view-name" id="techViewName">Mes RDV</div>
@@ -592,7 +591,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<div id="adminPanel">
+<div id="adminPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;">
   <div class="admin-card">
     <h2>👥 Gestion des utilisateurs</h2>
     <div id="adminUserList"></div>
@@ -629,7 +628,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 <div class="readonly-overlay" id="readonlyMsg">🔒 Accès en lecture seule — contactez l'admin</div>
 
 <!-- MODAL NOUVEAU RDV -->
-<div class="modal-overlay" id="modalOverlay">
+<div class="modal-overlay" id="modalOverlay" style="display:none;">
   <div class="modal">
     <h2>Nouveau rendez-vous</h2>
     <label>Client / Véhicule</label><input type="text" id="apptName" placeholder="Ex: DUPONT – Peugeot 308">
@@ -655,7 +654,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 </div>
 
 <!-- MODAL MODIFIER RDV -->
-<div class="modal-overlay" id="editModalOverlay">
+<div class="modal-overlay" id="editModalOverlay" style="display:none;">
   <div class="modal">
     <h2 style="gap:8px;">✏️ Modifier le rendez-vous</h2>
     <label>Client / Véhicule</label><input type="text" id="editApptName">
@@ -692,7 +691,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
       <button class="status-btn active-pending" id="btnPending">⏳ En attente</button>
       <button class="status-btn" id="btnArrived">✅ Client arrivé</button>
     </div>
-    <!-- HEURES TRAVAILLÉES -->
     <div class="heures-section">
       <div class="heures-section-title">⏱ Heures travaillées</div>
       <div class="heures-grid">
@@ -702,7 +700,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
       </div>
       <div class="heures-total" id="editHeuresTotal">Total : 0h</div>
     </div>
-    <!-- PHOTOS -->
     <div class="photos-section">
       <div class="photos-section-title">📸 Photos du dossier</div>
       <div class="photos-grid" id="editPhotosGrid"></div>
@@ -713,7 +710,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<div class="modal-overlay" id="confirmModalOverlay">
+<div class="modal-overlay" id="confirmModalOverlay" style="display:none;">
   <div class="confirm-modal">
     <h3>⚠️ Confirmer la suppression</h3>
     <p id="confirmText">Supprimer ce rendez-vous ?</p>
@@ -721,7 +718,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<div class="modal-overlay" id="absenceModalOverlay">
+<div class="modal-overlay" id="absenceModalOverlay" style="display:none;">
   <div class="modal" style="width:340px;">
     <h2 style="gap:8px;">🏖️ Congé / Absence</h2>
     <label>Type</label>
@@ -734,7 +731,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<div class="modal-overlay" id="historyModalOverlay">
+<div class="modal-overlay" id="historyModalOverlay" style="display:none;">
   <div class="modal" style="width:620px;">
     <h2 style="gap:8px;">📊 Historique des semaines</h2>
     <div class="history-nav">
@@ -747,7 +744,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<div class="modal-overlay" id="contratModalOverlay">
+<div class="modal-overlay" id="contratModalOverlay" style="display:none;">
   <div class="modal" style="width:520px;">
     <h2 style="gap:8px;">📄 Contrat de prêt</h2>
     <div style="background:#f8f9fa;border-radius:8px;padding:12px;margin-bottom:14px;border:1px solid var(--border);">
@@ -770,7 +767,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<div class="modal-overlay" id="restitutionModalOverlay">
+<div class="modal-overlay" id="restitutionModalOverlay" style="display:none;">
   <div class="modal" style="width:420px;">
     <h2 style="gap:8px;">🔑 Restitution du véhicule</h2>
     <div id="restitInfo" style="background:#f8f9fa;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.88rem;font-weight:600;color:var(--steel);border:1px solid var(--border);"></div>
@@ -782,7 +779,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<div class="modal-overlay" id="congesModalOverlay">
+<div class="modal-overlay" id="congesModalOverlay" style="display:none;">
   <div class="modal" style="width:420px;">
     <h2 style="gap:8px;">🏖️ Ajouter une absence</h2>
     <div id="congesModalInfo" style="background:#f8f9fa;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.88rem;font-weight:600;color:var(--steel);border:1px solid var(--border);"></div>
@@ -793,7 +790,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 </div>
 
 <!-- MODALS MOBILE -->
-<div class="mobile-modal-overlay" id="mobileModalOverlay">
+<div class="mobile-modal-overlay" id="mobileModalOverlay" style="display:none;">
   <div class="mobile-modal">
     <div class="mobile-modal-handle"></div>
     <h3 id="mModalTitle">Nouveau rendez-vous</h3>
@@ -819,7 +816,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<div class="mobile-modal-overlay" id="mobileCongesModalOverlay">
+<div class="mobile-modal-overlay" id="mobileCongesModalOverlay" style="display:none;">
   <div class="mobile-modal">
     <div class="mobile-modal-handle"></div>
     <h3>Ajouter une absence</h3>
@@ -830,7 +827,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<div class="mobile-modal-overlay" id="mobileRestitutionOverlay">
+<div class="mobile-modal-overlay" id="mobileRestitutionOverlay" style="display:none;">
   <div class="mobile-modal">
     <div class="mobile-modal-handle"></div>
     <h3>🔑 Restitution véhicule</h3>
@@ -843,14 +840,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<!-- LIGHTBOX PHOTOS -->
-<div class="lightbox" id="lightbox">
+<div class="lightbox" id="lightbox" style="display:none;">
   <button class="lightbox-close" id="lightboxClose">✕</button>
   <img id="lightboxImg" src="" alt="">
 </div>
 
 <div class="tooltip" id="tooltip"></div>
 <div id="dragGhost" style="display:none"></div>
+
 </div>
 <div id="contrat-print-zone"></div>
 <div id="planning-print-zone"></div>
