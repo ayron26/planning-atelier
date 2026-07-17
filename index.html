@@ -500,6 +500,43 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 @media(min-width:769px){
   .mobile-topbar,.mobile-bottom-nav,.mobile-planning,.mobile-conges,.mobile-contrats,.mobile-modal-overlay,.tech-view{display:none !important;}
 }
+
+.heures-section{background:#f0f7ff;border-radius:10px;padding:12px 14px;margin-top:14px;border:1px solid #aed6f1;}
+.heures-section-title{font-size:.78rem;font-weight:700;color:#1a5276;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.heures-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.heure-item{display:flex;flex-direction:column;gap:4px;}
+.heure-item label{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:0;}
+.heure-item input{border:1.5px solid var(--border);border-radius:6px;padding:7px 8px;font-size:.9rem;font-family:inherit;text-align:center;outline:none;background:#fff;}
+.heure-item input:focus{border-color:#2980b9;}
+.heures-total{margin-top:8px;padding:6px 10px;background:#1a5276;color:#fff;border-radius:6px;font-size:.82rem;font-weight:700;text-align:center;}
+.photos-section{background:#f0fff4;border-radius:10px;padding:12px 14px;margin-top:14px;border:1px solid #a9dfbf;}
+.photos-section-title{font-size:.78rem;font-weight:700;color:#1e8449;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.photos-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.photo-thumb{width:72px;height:72px;border-radius:8px;object-fit:cover;border:2px solid var(--border);cursor:pointer;transition:transform .15s;}
+.photo-thumb:hover{transform:scale(1.05);}
+.photo-add-btn{width:72px;height:72px;border-radius:8px;border:2px dashed #a9dfbf;background:#f0fff4;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:.65rem;color:#1e8449;font-weight:700;gap:3px;transition:all .15s;}
+.photo-add-btn:hover{background:#d5f5e3;border-color:#27ae60;}
+.photo-add-btn .add-icon{font-size:1.4rem;line-height:1;}
+.photo-del-btn{position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:#e74c3c;color:#fff;border:none;font-size:.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.photo-wrap{position:relative;display:inline-block;}
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1000;align-items:center;justify-content:center;}
+.lightbox img{max-width:90vw;max-height:90vh;border-radius:8px;object-fit:contain;}
+.lightbox-close{position:absolute;top:16px;right:20px;color:#fff;font-size:2rem;cursor:pointer;background:none;border:none;line-height:1;}
+.tech-heures-section{background:#f0f7ff;border-radius:8px;padding:10px 12px;margin-top:8px;border:1px solid #aed6f1;}
+.tech-heures-title{font-size:.72rem;font-weight:700;color:#1a5276;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.tech-heures-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
+.tech-heure-item{display:flex;flex-direction:column;gap:3px;}
+.tech-heure-item label{font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;}
+.tech-heure-input{border:1.5px solid #aed6f1;border-radius:6px;padding:8px;font-size:1rem;font-family:inherit;text-align:center;outline:none;background:#fff;width:100%;}
+.tech-heure-input:focus{border-color:#2980b9;}
+.tech-heures-save-btn{width:100%;background:#2980b9;color:#fff;border:none;border-radius:8px;padding:10px;font-size:.9rem;font-weight:700;cursor:pointer;margin-top:8px;font-family:inherit;}
+.tech-heures-save-btn:hover{background:#1a5276;}
+.tech-photos-section{background:#f0fff4;border-radius:8px;padding:10px 12px;margin-top:8px;border:1px solid #a9dfbf;}
+.tech-photos-title{font-size:.72rem;font-weight:700;color:#1e8449;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.tech-photos-grid{display:flex;gap:8px;flex-wrap:wrap;}
+.tech-photo-thumb{width:64px;height:64px;border-radius:6px;object-fit:cover;border:2px solid var(--border);cursor:pointer;}
+.tech-photo-add{width:64px;height:64px;border-radius:6px;border:2px dashed #a9dfbf;background:#f0fff4;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:.6rem;color:#1e8449;font-weight:700;gap:2px;}
+.tech-photo-add .add-icon{font-size:1.2rem;}
 </style>
 </head>
 <body>
@@ -739,6 +776,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <label>Adresse</label><input type="text" id="apptAdresse" placeholder="12 rue des Lilas, 26000 Valence">
     <label>Technicien assigné</label>
     <select id="apptTech"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
+    <label>Technicien 2 (optionnel)</label>
+    <select id="apptTech2"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
     <label>Nombre de jours</label><input type="number" id="apptDays" value="1" min="1" max="20">
     <div class="preview-note" id="apptPreview">📅 1 jour</div>
     <label>Heures de travail (total)</label><input type="number" id="apptHours" value="4" min="0.5" max="999" step="0.5">
@@ -762,6 +801,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <label>Adresse</label><input type="text" id="editApptAdresse">
     <label>Technicien assigné</label>
     <select id="editApptTech"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
+    <label>Technicien 2 (optionnel)</label>
+    <select id="editApptTech2"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
     <label>Heures de travail (total)</label><input type="number" id="editApptHours" min="0.5" max="999" step="0.5">
     <label>Nombre de jours</label><input type="number" id="editApptDays" min="1" max="20">
     <div class="preview-note" id="editApptPreview" style="margin-top:6px;">📅 —</div>
@@ -788,6 +829,21 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <div class="status-row">
       <button class="status-btn active-pending" id="btnPending">⏳ En attente</button>
       <button class="status-btn" id="btnArrived">✅ Client arrivé</button>
+    </div>
+    
+    <div class="heures-section">
+      <div class="heures-section-title">⏱ Heures travaillées</div>
+      <div class="heures-grid">
+        <div class="heure-item"><label>T1 — Tôlerie 1</label><input type="number" id="editHeuresT1" min="0" step="0.5" placeholder="0"></div>
+        <div class="heure-item"><label>T2 — Tôlerie 2</label><input type="number" id="editHeuresT2" min="0" step="0.5" placeholder="0"></div>
+        <div class="heure-item"><label>P — Peinture</label><input type="number" id="editHeuresP" min="0" step="0.5" placeholder="0"></div>
+      </div>
+      <div class="heures-total" id="editHeuresTotal">Total saisi : 0h</div>
+    </div>
+    <div class="photos-section">
+      <div class="photos-section-title">📸 Photos du dossier</div>
+      <div class="photos-grid" id="editPhotosGrid"></div>
+      <input type="file" id="editPhotoInput" accept="image/*" multiple style="display:none;">
     </div>
     <label>Couleur</label><div class="color-picker" id="editColorPicker"></div>
     <div class="btn-row"><button class="btn-secondary" id="btnCloseEditModal">Annuler</button><button class="btn-primary" id="btnSaveEditAppt">Enregistrer</button></div>
@@ -882,6 +938,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <label>Adresse</label><input type="text" id="mApptAdresse" placeholder="12 rue des Lilas">
     <label>Technicien assigné</label>
     <select id="mApptTech"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
+    <label>Technicien 2 (optionnel)</label>
+    <select id="mApptTech2"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
     <label>Nombre de jours</label><input type="number" id="mApptDays" value="1" min="1" max="20">
     <div class="mobile-preview-note" id="mApptPreview">📅 1 jour</div>
     <label>Heures total</label><input type="number" id="mApptHours" value="4" min="0.5" max="999" step="0.5">
@@ -921,6 +979,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
+
+<div id="lightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1000;align-items:center;justify-content:center;"><button id="lightboxClose" style="position:absolute;top:16px;right:20px;color:#fff;font-size:2rem;cursor:pointer;background:none;border:none;line-height:1;">✕</button><img id="lightboxImg" src="" alt="" style="max-width:90vw;max-height:90vh;border-radius:8px;object-fit:contain;"></div>
 <div class="tooltip" id="tooltip"></div>
 <div id="dragGhost" style="display:none"></div>
 
@@ -1078,9 +1138,57 @@ function renderTechView(){
           ${appt.pieceStatus==='delivered'?`<div class="tech-rdv-row">✅ <span style="color:#27ae60;font-weight:600;">Pièce livrée</span></div>`:''}
           <div class="tech-rdv-deadline ${deadlineClass}">${deadlineText}</div>
           ${appt.memo?`<div class="tech-rdv-memo">💬 ${appt.memo}</div>`:''}
+          <div class="tech-heures-section">
+            <div class="tech-heures-title">⏱ Heures travaillées</div>
+            <div class="tech-heures-grid">
+              <div class="tech-heure-item"><label>T1 Tôlerie 1</label><input type="number" class="tech-heure-input" data-field="heuresT1" data-gid="${appt.groupId}" value="${parseFloat(appt.heuresT1)||''}" min="0" step="0.5" placeholder="0"></div>
+              <div class="tech-heure-item"><label>T2 Tôlerie 2</label><input type="number" class="tech-heure-input" data-field="heuresT2" data-gid="${appt.groupId}" value="${parseFloat(appt.heuresT2)||''}" min="0" step="0.5" placeholder="0"></div>
+              <div class="tech-heure-item"><label>P Peinture</label><input type="number" class="tech-heure-input" data-field="heuresP" data-gid="${appt.groupId}" value="${parseFloat(appt.heuresP)||''}" min="0" step="0.5" placeholder="0"></div>
+            </div>
+            <button class="tech-heures-save-btn" data-gid="${appt.groupId}">💾 Enregistrer mes heures</button>
+          </div>
+          ${(appt.photos&&appt.photos.length)?`<div class="tech-photos-section"><div class="tech-photos-title">📸 Photos</div><div class="tech-photos-grid">${appt.photos.map(ph=>`<img src="${ph}" class="tech-photo-thumb" onclick="openLightbox('${ph}')">`).join('')}</div></div>`:''}
+          <div class="tech-photos-section">
+            <div class="tech-photos-title">📸 Ajouter des photos</div>
+            <label class="tech-photo-add" for="techPhotoInput_${appt.groupId}"><span class="add-icon">📷</span>Ajouter</label>
+            <input type="file" id="techPhotoInput_${appt.groupId}" accept="image/*" multiple style="display:none;" data-gid="${appt.groupId}">
+          </div>
         </div>`;
       list.appendChild(card);
     }catch(e){console.error(e);}
+  });
+  // Events heures technicien
+  list.querySelectorAll('.tech-heures-save-btn').forEach(btn=>{
+    btn.addEventListener('click',async()=>{
+      const gid=btn.dataset.gid;
+      const card=btn.closest('.tech-rdv-card');
+      const t1=parseFloat(card.querySelector('[data-field="heuresT1"]').value)||0;
+      const t2=parseFloat(card.querySelector('[data-field="heuresT2"]').value)||0;
+      const p=parseFloat(card.querySelector('[data-field="heuresP"]').value)||0;
+      state.appointments=state.appointments.map(a=>(!a||a.groupId!==gid)?a:{...a,heuresT1:t1,heuresT2:t2,heuresP:p});
+      btn.textContent='⏳…';btn.disabled=true;
+      await saveFB();
+      btn.textContent='✅ Enregistré !';
+      setTimeout(()=>{btn.textContent='💾 Enregistrer mes heures';btn.disabled=false;},2000);
+    });
+  });
+  // Events photos technicien
+  list.querySelectorAll('input[type="file"][id^="techPhotoInput_"]').forEach(input=>{
+    input.addEventListener('change',async(e)=>{
+      const gid=input.dataset.gid;
+      const files=Array.from(e.target.files);if(!files.length)return;
+      const appt=state.appointments.find(a=>a&&a.groupId===gid&&a.segmentIndex===0);if(!appt)return;
+      const existing=appt.photos||[];
+      if(existing.length>=4){alert('Maximum 4 photos.');return;}
+      const newPhotos=[...existing];
+      for(const file of files.slice(0,4-existing.length)){newPhotos.push(await fileToBase64(file));}
+      state.appointments=state.appointments.map(a=>(!a||a.groupId!==gid)?a:{...a,photos:newPhotos});
+      await saveFB();renderTechView();
+    });
+  });
+  // Event lightbox photos tech
+  list.querySelectorAll('.tech-photo-thumb').forEach(img=>{
+    img.addEventListener('click',()=>openLightbox(img.src));
   });
 }
 
@@ -1193,6 +1301,11 @@ function na(a){
   if(!a)return null;
   if(!a.pieceStatus)a.pieceStatus='none';if(!a.pieceFournisseur)a.pieceFournisseur='';if(!a.pieceNote)a.pieceNote='';if(!a.priority)a.priority='moyenne';if(!a.tel)a.tel='';if(!a.adresse)a.adresse='';if(!a.memo)a.memo='';if(a.arrived===undefined)a.arrived=false;if(a.piece===true&&a.pieceStatus==='none')a.pieceStatus='ordered';if(!a.groupId)a.groupId=a.id;if(!a.totalDays)a.totalDays=a.span||1;if(a.segmentIndex===undefined)a.segmentIndex=0;if(!a.hasPrev)a.hasPrev=false;if(!a.hasNext)a.hasNext=false;
   if(a.technicien===undefined||a.technicien===null)a.technicien='';
+  if(a.technicien2===undefined||a.technicien2===null)a.technicien2='';
+  if(a.heuresT1===undefined||a.heuresT1===null)a.heuresT1=0;
+  if(a.heuresT2===undefined||a.heuresT2===null)a.heuresT2=0;
+  if(a.heuresP===undefined||a.heuresP===null)a.heuresP=0;
+  if(!Array.isArray(a.photos))a.photos=[];
   return a;
 }
 function hSeg(h,td,sp){if(!td||td===0)return h;return Math.round((h*sp/td)*10)/10;}
@@ -1269,8 +1382,13 @@ function renderAppts(days){
     const cb=isLF?`<button class="btn-contrat-inline">📄 Contrat</button>`:'';
     const techInfo=getTechInfo(appt.technicien);
     const techBadge=techInfo?`<span class="tech-badge-appt" style="background:${techInfo.color}88;">${techInfo.nom.slice(0,3).toUpperCase()}</span>`:'';
+    const techInfo2=getTechInfo(appt.technicien2);
+    const techBadge2=techInfo2?`<span class="tech-badge-appt" style="background:${techInfo2.color}88;">${techInfo2.nom.slice(0,3).toUpperCase()}</span>`:'';
+    const totalSaisi=Math.round(((parseFloat(appt.heuresT1)||0)+(parseFloat(appt.heuresT2)||0)+(parseFloat(appt.heuresP)||0))*10)/10;
+    const heuresDot=totalSaisi>0?`<span class="appt-memo-dot" title="${totalSaisi}h saisis">⏱</span>`:'';
+    const photosDot=appt.photos&&appt.photos.length?`<span class="appt-memo-dot">📸</span>`:'';
     el.innerHTML=`<div class="prio-strip"></div><button class="appt-del-btn">✕</button>
-      <div class="appt-top">${appt.hasPrev?'<span class="badge-prev">◀</span>':''}<span class="appt-name">${appt.name}</span>${techBadge}${prio==='haute'?'<span class="badge badge-red">🔴</span>':''}${appt.arrived?'<span class="badge badge-green">✔</span>':''}${pb}${appt.memo?'<span class="appt-memo-dot">📝</span>':''}${appt.hasNext?'<span class="badge-next">▶</span>':''}</div>
+      <div class="appt-top">${appt.hasPrev?'<span class="badge-prev">◀</span>':''}<span class="appt-name">${appt.name}</span>${techBadge}${techBadge2}${prio==='haute'?'<span class="badge badge-red">🔴</span>':''}${appt.arrived?'<span class="badge badge-green">✔</span>':''}${pb}${appt.memo?'<span class="appt-memo-dot">📝</span>':''}${heuresDot}${photosDot}${appt.hasNext?'<span class="badge-next">▶</span>':''}</div>
       <div class="appt-bottom"><span class="appt-hours-tag">${hS}h·${span}j</span>${appt.tel?`<span class="appt-tel-tag">📞 ${appt.tel}</span>`:''}${cb}</div>`;
     el.querySelector('.appt-del-btn').addEventListener('click',e=>{e.stopPropagation();if(isRO()){showRO();return;}confirmDel(appt.groupId,appt.name);});
     if(isLF)el.querySelector('.btn-contrat-inline').addEventListener('click',e=>{e.stopPropagation();openContrat(appt,dd,df,td);});
@@ -1494,7 +1612,7 @@ function saveAppt(){
   const tech=document.getElementById('apptTech').value;
   const days=gWD();const gid=Date.now().toString(36)+Math.random().toString(36).slice(2);const color=COLORS[selColor];
   const segs=split(pendingAppt.day,td,days[0]);
-  segs.forEach((seg,i)=>{state.appointments.push({id:gid+(i===0?'':'-'+i),groupId:gid,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:pendingAppt.type,row:pendingAppt.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:newPrio,arrived:false,pieceStatus:'none',pieceFournisseur:'',pieceNote:'',technicien:tech});});
+  segs.forEach((seg,i)=>{state.appointments.push({id:gid+(i===0?'':'-'+i),groupId:gid,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:pendingAppt.type,row:pendingAppt.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:newPrio,arrived:false,pieceStatus:'none',pieceFournisseur:'',pieceNote:'',technicien:tech,technicien2:document.getElementById('apptTech2')?document.getElementById('apptTech2').value:'',heuresT1:0,heuresT2:0,heuresP:0,photos:[]});});
   saveFB();closeModal();render();if(isMobile())renderMobile();
 }
 
@@ -1514,6 +1632,13 @@ function openEditModal(gid){
   setES(editStat);setEPS(editPieceStat);setEP(editPrio);
   buildCP('editColorPicker',i=>editSelColor=i);
   document.querySelectorAll('#editColorPicker .color-swatch').forEach((s,i)=>s.classList.toggle('selected',i===editSelColor));
+  const eT2=document.getElementById('editApptTech2');if(eT2)eT2.value=fs.technicien2||'';
+  const eH1=document.getElementById('editHeuresT1');if(eH1)eH1.value=fs.heuresT1||0;
+  const eH2=document.getElementById('editHeuresT2');if(eH2)eH2.value=fs.heuresT2||0;
+  const eHP=document.getElementById('editHeuresP');if(eHP)eHP.value=fs.heuresP||0;
+  upEditHeuresTotal();
+  editPhotos=Array.isArray(fs.photos)?[...fs.photos]:[];
+  renderEditPhotos();
   document.getElementById('editModalOverlay').classList.add('open');setTimeout(()=>document.getElementById('editApptName').focus(),50);
 }
 function setEP(p){editPrio=p;['editPrioBasse','editPrioMoyenne','editPrioHaute'].forEach(id=>document.getElementById(id).className='status-btn');const ids={basse:'editPrioBasse',moyenne:'editPrioMoyenne',haute:'editPrioHaute'};document.getElementById(ids[p]).className=`status-btn active-${p}`;}
@@ -1535,7 +1660,7 @@ function saveEditAppt(){
   const tech=document.getElementById('editApptTech').value;
   state.appointments=state.appointments.filter(a=>a&&a.groupId!==editId);
   const wo=gWO(editRef.weekStart);const days=gWD(wo);const segs=split(editRef.day,td,days[0]);
-  segs.forEach((seg,i)=>{state.appointments.push({id:editId+(i===0?'':'-'+i),groupId:editId,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:editRef.type,row:editRef.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:editPrio,arrived:(editStat==='arrived'),pieceStatus:editPieceStat,pieceFournisseur:pf,pieceNote:pn,technicien:tech});});
+  segs.forEach((seg,i)=>{state.appointments.push({id:editId+(i===0?'':'-'+i),groupId:editId,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:editRef.type,row:editRef.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:editPrio,arrived:(editStat==='arrived'),pieceStatus:editPieceStat,pieceFournisseur:pf,pieceNote:pn,technicien:tech,technicien2:document.getElementById('editApptTech2')?document.getElementById('editApptTech2').value:'',heuresT1:parseFloat(document.getElementById('editHeuresT1')?document.getElementById('editHeuresT1').value:0)||0,heuresT2:parseFloat(document.getElementById('editHeuresT2')?document.getElementById('editHeuresT2').value:0)||0,heuresP:parseFloat(document.getElementById('editHeuresP')?document.getElementById('editHeuresP').value:0)||0,photos:[...editPhotos]});});
   saveFB();closeEditModal();render();if(isMobile())renderMobile();
 }
 
@@ -1558,10 +1683,10 @@ function saveMobileAppt(){
     const ref=mPendingAppt.ref;const gid=mPendingAppt.groupId;
     state.appointments=state.appointments.filter(a=>a&&a.groupId!==gid);
     const wo=gWO(ref.weekStart);const days=gWD(wo);const segs=split(ref.day,td,days[0]);
-    segs.forEach((seg,i)=>{state.appointments.push({id:gid+(i===0?'':'-'+i),groupId:gid,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:ref.type,row:ref.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:mNewPrio,arrived:ref.arrived||false,pieceStatus:ref.pieceStatus||'none',pieceFournisseur:ref.pieceFournisseur||'',pieceNote:ref.pieceNote||'',technicien:tech});});
+    segs.forEach((seg,i)=>{state.appointments.push({id:gid+(i===0?'':'-'+i),groupId:gid,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:ref.type,row:ref.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:mNewPrio,arrived:ref.arrived||false,pieceStatus:ref.pieceStatus||'none',pieceFournisseur:ref.pieceFournisseur||'',pieceNote:ref.pieceNote||'',technicien:tech,technicien2:document.getElementById('mApptTech2')?document.getElementById('mApptTech2').value:'',heuresT1:ref.heuresT1||0,heuresT2:ref.heuresT2||0,heuresP:ref.heuresP||0,photos:ref.photos||[]});});
   }else if(mPendingAppt){
     const days=gWD();const gid=Date.now().toString(36)+Math.random().toString(36).slice(2);const segs=split(mPendingAppt.day,td,days[0]);
-    segs.forEach((seg,i)=>{state.appointments.push({id:gid+(i===0?'':'-'+i),groupId:gid,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:mPendingAppt.type,row:mPendingAppt.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:mNewPrio,arrived:false,pieceStatus:'none',pieceFournisseur:'',pieceNote:'',technicien:tech});});
+    segs.forEach((seg,i)=>{state.appointments.push({id:gid+(i===0?'':'-'+i),groupId:gid,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:mPendingAppt.type,row:mPendingAppt.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:mNewPrio,arrived:false,pieceStatus:'none',pieceFournisseur:'',pieceNote:'',technicien:tech,technicien2:document.getElementById('mApptTech2')?document.getElementById('mApptTech2').value:'',heuresT1:0,heuresT2:0,heuresP:0,photos:[]});});
   }
   saveFB();closeMobileModal();renderMobile();
 }
@@ -1594,6 +1719,61 @@ function doSearch(q){const res=document.getElementById('searchResults');if(!q.tr
 function openHistory(){histPage=0;document.getElementById('historyModalOverlay').classList.add('open');renderHistory();}
 function closeHistory(){document.getElementById('historyModalOverlay').classList.remove('open');}
 function renderHistory(){const so=-(histPage*4);const weeks=[];for(let i=0;i<4;i++){const off=so-i,days=gWD(off),ws=days[0].toDateString();const wa=state.appointments.filter(a=>a&&new Date(a.weekStart).toDateString()===ws);const totalH=Math.round(wa.reduce((s,a)=>s+hSeg(a.hours||0,a.totalDays||1,a.span||1),0)*10)/10;const nb=wa.filter(a=>a.segmentIndex===0).length;const cap=nbTech*39,pct=cap>0?Math.round((totalH/cap)*100):0;const urg=wa.filter(a=>a.segmentIndex===0&&a.priority==='haute').length;weeks.push({off,days,wa:wa.filter(a=>a.segmentIndex===0),totalH,pct,urg,cap,nb});}const first=weeks[weeks.length-1].days[0],last=weeks[0].days[4];document.getElementById('historyRangeLabel').textContent=`${first.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} → ${last.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}`;const content=document.getElementById('historyContent');content.innerHTML='';weeks.forEach(({off,days,wa,totalH,pct,urg,cap,nb})=>{const isCur=off===state.weekOffset;const div=document.createElement('div');div.className='history-week';div.innerHTML=`<div class="history-week-header" style="${isCur?'background:var(--accent);':''}"><span>${days[0].toLocaleDateString('fr-FR',{day:'numeric',month:'long'})} → ${days[4].toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}</span><span>${totalH}h/${cap}h (${pct}%)</span></div><div class="history-week-body${isCur?' open':''}"><div class="history-stat-row"><div class="history-stat">📋 <strong>${nb}</strong></div><div class="history-stat">⏱ <strong>${totalH}h</strong></div><div class="history-stat">📊 <strong>${pct}%</strong></div>${urg?`<div class="history-stat">🔴 <strong>${urg}</strong></div>`:''}</div><div class="history-appt-list">${wa.length===0?'<em style="color:var(--muted)">Aucun RDV</em>':wa.map(a=>{const rn=a.type==='loan'?(state.loanNames[a.row]||'?'):(state.noLoanNames[a.row]||'?');const dn=days[a.day]?days[a.day].toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'}):'?';return `<div class="history-appt-item"><span style="color:${a.color}">●</span> ${a.name} — ${dn} — ${rn} — ${a.hours}h${a.priority==='haute'?' 🔴':''}</div>`;}).join('')}</div><button class="btn-secondary" style="margin-top:10px;padding:5px 12px;font-size:.78rem;" data-off="${off}">📅 Aller à cette semaine</button></div>`;div.querySelector('.history-week-header').addEventListener('click',()=>div.querySelector('.history-week-body').classList.toggle('open'));div.querySelector('[data-off]').addEventListener('click',()=>{state.weekOffset=off;closeHistory();render();if(isMobile())renderMobile();});content.appendChild(div);});}
+
+
+let editPhotos=[];
+
+function fileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement('canvas');const MAX=800;
+        let w=img.width,h=img.height;
+        if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+        canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg',0.7));
+      };
+      img.onerror=reject;img.src=e.target.result;
+    };
+    reader.onerror=reject;reader.readAsDataURL(file);
+  });
+}
+
+function openLightbox(src){
+  const lb=document.getElementById('lightbox');
+  if(!lb)return;
+  document.getElementById('lightboxImg').src=src;
+  lb.style.display='flex';
+}
+
+function upEditHeuresTotal(){
+  const t1=parseFloat(document.getElementById('editHeuresT1')?document.getElementById('editHeuresT1').value:0)||0;
+  const t2=parseFloat(document.getElementById('editHeuresT2')?document.getElementById('editHeuresT2').value:0)||0;
+  const p=parseFloat(document.getElementById('editHeuresP')?document.getElementById('editHeuresP').value:0)||0;
+  const tot=document.getElementById('editHeuresTotal');
+  if(tot)tot.textContent='Total saisi : '+Math.round((t1+t2+p)*10)/10+'h — T1: '+t1+'h · T2: '+t2+'h · P: '+p+'h';
+}
+
+function renderEditPhotos(){
+  const grid=document.getElementById('editPhotosGrid');if(!grid)return;
+  grid.innerHTML='';
+  editPhotos.forEach((ph,i)=>{
+    const wrap=document.createElement('div');wrap.className='photo-wrap';
+    const img=document.createElement('img');img.src=ph;img.className='photo-thumb';
+    img.addEventListener('click',()=>openLightbox(ph));
+    const del=document.createElement('button');del.className='photo-del-btn';del.textContent='✕';
+    del.addEventListener('click',()=>{editPhotos.splice(i,1);renderEditPhotos();});
+    wrap.appendChild(img);wrap.appendChild(del);grid.appendChild(wrap);
+  });
+  if(editPhotos.length<4){
+    const addBtn=document.createElement('div');addBtn.className='photo-add-btn';
+    addBtn.innerHTML='<span class="add-icon">📷</span><span>Ajouter</span>';
+    addBtn.addEventListener('click',()=>{const inp=document.getElementById('editPhotoInput');if(inp)inp.click();});
+    grid.appendChild(addBtn);
+  }
+}
 
 function setupEvents(){
   document.getElementById('btnPrevWeek').addEventListener('click',()=>changeWeek(-1));
@@ -1661,6 +1841,23 @@ function setupEvents(){
   document.querySelectorAll('.filter-chip[data-mfilter]').forEach(btn=>btn.addEventListener('click',()=>{mCtFilter=btn.dataset.mfilter;document.querySelectorAll('.filter-chip[data-mfilter]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMobileContrats();}));
   document.getElementById('mobileSearchInput').addEventListener('input',e=>doSearch(e.target.value));
   [['modalOverlay',closeModal],['editModalOverlay',closeEditModal],['absenceModalOverlay',closeAbsModal],['historyModalOverlay',closeHistory],['contratModalOverlay',closeContrat],['restitutionModalOverlay',closeRestitution],['congesModalOverlay',closeCongesModal],['confirmModalOverlay',closeConfirm],['mobileModalOverlay',closeMobileModal],['mobileCongesModalOverlay',closeMobileCongesModal],['mobileRestitutionOverlay',closeMobileRestitution]].forEach(([id,fn])=>{document.getElementById(id).addEventListener('click',function(e){if(e.target===this)fn();});});
+  document.getElementById('editHeuresT1')?.addEventListener('input',upEditHeuresTotal);
+  document.getElementById('editHeuresT2')?.addEventListener('input',upEditHeuresTotal);
+  document.getElementById('editHeuresP')?.addEventListener('input',upEditHeuresTotal);
+  const editPhotoInput=document.getElementById('editPhotoInput');
+  if(editPhotoInput){
+    editPhotoInput.addEventListener('change',async(e)=>{
+      const files=Array.from(e.target.files);if(!files.length)return;
+      const remaining=4-editPhotos.length;if(remaining<=0){alert('Maximum 4 photos par dossier.');return;}
+      for(const file of files.slice(0,remaining)){editPhotos.push(await fileToBase64(file));}
+      renderEditPhotos();e.target.value='';
+    });
+  }
+  const lb=document.getElementById('lightbox');
+  if(lb){
+    document.getElementById('lightboxClose')?.addEventListener('click',()=>lb.style.display='none');
+    lb.addEventListener('click',function(e){if(e.target===this)this.style.display='none';});
+  }
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeEditModal();closeAbsModal();closeHistory();closeContrat();closeRestitution();closeCongesModal();closeConfirm();closeMobileModal();closeMobileCongesModal();closeMobileRestitution();document.getElementById('searchResults').classList.remove('open');}});
   window.addEventListener('resize',()=>{if(isMobile()){renderMobile();if(curPage==='conges')renderMobileConges();if(curPage==='contrats')renderMobileContrats();}});
 }
