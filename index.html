@@ -1322,7 +1322,7 @@ function renderTechView(){
       const newPhotos=[...existing];
       for(const file of files.slice(0,MAX_PHOTOS-existing.length)){newPhotos.push(await fileToBase64(file));}
       state.appointments=state.appointments.map(a=>(!a||a.groupId!==gid)?a:{...a,photos:newPhotos});
-      await saveFB();renderTechView();
+      await saveFBTech();renderTechView();
     });
   });
   // Event lightbox photos tech
@@ -1496,6 +1496,21 @@ async function saveFB(){
     });
     ss('ok');
   }catch(e){console.error(e);ss('err');}
+  setTimeout(()=>isSav=false,600);
+}
+// Sauvegarde utilisée par la vue technicien : un technicien a le rôle "lecteur" + un poste assigné,
+// il doit pouvoir enregistrer SES photos même si isRO() renvoie true pour son compte.
+async function saveFBTech(){
+  isSav=true;
+  try{
+    await setDoc(docRef,{
+      loanNames:state.loanNames,
+      noLoanNames:state.noLoanNames,
+      absences:state.absences,
+      appointments:state.appointments,
+      updatedAt:Date.now()
+    });
+  }catch(e){console.error(e);}
   setTimeout(()=>isSav=false,600);
 }
 
