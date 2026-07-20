@@ -263,7 +263,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .status-btn.active-pending{border-color:var(--amber);background:#fef9e7;color:#9a6a00;}
 .status-btn.active-ordered{border-color:#e67e22;background:#fef0e7;color:#a04000;}
 .status-btn.active-delivered{border-color:#2980b9;background:#e8f4fd;color:#1a5276;}
-.status-btn.active-sans{border-color:#2ecc71;background:#eafaf1;color:#1e8449;}
 .status-btn.active-haute{border-color:#e74c3c;background:#fde8e8;color:#c0392b;}
 .status-btn.active-moyenne{border-color:var(--amber);background:#fef9e7;color:#9a6a00;}
 .status-btn.active-basse{border-color:#2ecc71;background:#eafaf1;color:#1e8449;}
@@ -538,14 +537,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .tech-photo-thumb{width:64px;height:64px;border-radius:6px;object-fit:cover;border:2px solid var(--border);cursor:pointer;}
 .tech-photo-add{width:64px;height:64px;border-radius:6px;border:2px dashed #a9dfbf;background:#f0fff4;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:.6rem;color:#1e8449;font-weight:700;gap:2px;}
 .tech-photo-add .add-icon{font-size:1.2rem;}
-
-.alerte-48h-bar{background:#fff3cd;border:1px solid #f5a623;border-radius:10px;padding:10px 16px;margin:8px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.alerte-48h-bar .alerte-title{font-size:.82rem;font-weight:700;color:#9a6a00;white-space:nowrap;}
-.alerte-48h-item{background:#fff;border:1px solid #f5a623;border-radius:6px;padding:4px 10px;font-size:.78rem;font-weight:600;color:#9a6a00;display:flex;align-items:center;gap:5px;cursor:pointer;}
-.alerte-48h-item:hover{background:#fff3cd;}
-.alerte-48h-item .alerte-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.appt.alerte-48h{outline:2px solid #f5a623;outline-offset:-2px;}
-.badge-alerte{font-size:.55rem;font-weight:800;background:rgba(245,166,35,.9);color:#fff;border-radius:3px;padding:1px 4px;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -659,7 +650,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     </div>
     <span style="font-size:.75rem;color:var(--muted);">Clic droit → congé / absence</span>
   </div>
-  <div id="alerte48hBar" style="display:none;" class="alerte-48h-bar"><span class="alerte-title">🔔 Pièces à commander — RDV dans moins de 48h :</span><div id="alerte48hItems" style="display:flex;gap:6px;flex-wrap:wrap;"></div></div>
   <div class="planner-wrap"><div id="planner"><div class="loader">Chargement…</div></div></div>
   <div class="mobile-planning" id="mobilePlanning">
     <div class="mobile-search-bar"><input type="text" id="mobileSearchInput" placeholder="🔍 Rechercher…"></div>
@@ -829,7 +819,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
         <button class="status-btn active-pending" id="btnPieceNon">❌ Non commandée</button>
         <button class="status-btn" id="btnPieceOui">📦 Commandée</button>
         <button class="status-btn" id="btnPieceLivree">✅ Livrée</button>
-        <button class="status-btn" id="btnPieceSans">✔️ Pas de pièce</button>
       </div>
       <div class="piece-fournisseur" style="display:none;">
         <label style="margin-top:8px;">Commandée chez</label><input type="text" id="editPieceFournisseur">
@@ -850,7 +839,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
         <div class="heure-item"><label>P — Peinture</label><input type="number" id="editHeuresP" min="0" step="0.5" placeholder="0"></div>
       </div>
       <div class="heures-total" id="editHeuresTotal">Total saisi : 0h</div>
-      <div id="editHeuresDate" style="font-size:.75rem;color:#1a5276;margin-top:6px;text-align:center;"></div>
     </div>
     <div class="photos-section">
       <div class="photos-section-title">📸 Photos du dossier</div>
@@ -1158,7 +1146,6 @@ function renderTechView(){
               <div class="tech-heure-item"><label>P Peinture</label><input type="number" class="tech-heure-input" data-field="heuresP" data-gid="${appt.groupId}" value="${parseFloat(appt.heuresP)||''}" min="0" step="0.5" placeholder="0"></div>
             </div>
             <button class="tech-heures-save-btn" data-gid="${appt.groupId}">💾 Enregistrer mes heures</button>
-            ${appt.heuresDate?`<div style="font-size:.7rem;color:#1a5276;margin-top:5px;text-align:center;">📅 Dernier pointage : <strong>${appt.heuresDate}</strong></div>`:''}
           </div>
           ${(appt.photos&&appt.photos.length)?`<div class="tech-photos-section"><div class="tech-photos-title">📸 Photos</div><div class="tech-photos-grid">${appt.photos.map(ph=>`<img src="${ph}" class="tech-photo-thumb" onclick="openLightbox('${ph}')">`).join('')}</div></div>`:''}
           <div class="tech-photos-section">
@@ -1178,8 +1165,7 @@ function renderTechView(){
       const t1=parseFloat(card.querySelector('[data-field="heuresT1"]').value)||0;
       const t2=parseFloat(card.querySelector('[data-field="heuresT2"]').value)||0;
       const p=parseFloat(card.querySelector('[data-field="heuresP"]').value)||0;
-      const heuresDate=new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-      state.appointments=state.appointments.map(a=>(!a||a.groupId!==gid)?a:{...a,heuresT1:t1,heuresT2:t2,heuresP:p,heuresDate});
+      state.appointments=state.appointments.map(a=>(!a||a.groupId!==gid)?a:{...a,heuresT1:t1,heuresT2:t2,heuresP:p});
       btn.textContent='⏳…';btn.disabled=true;
       await saveFB();
       btn.textContent='✅ Enregistré !';
@@ -1320,7 +1306,6 @@ function na(a){
   if(a.heuresT2===undefined||a.heuresT2===null)a.heuresT2=0;
   if(a.heuresP===undefined||a.heuresP===null)a.heuresP=0;
   if(!Array.isArray(a.photos))a.photos=[];
-  if(!a.heuresDate)a.heuresDate='';
   return a;
 }
 function hSeg(h,td,sp){if(!td||td===0)return h;return Math.round((h*sp/td)*10)/10;}
@@ -1353,7 +1338,7 @@ function render(){
   const nb=document.createElement('div');nb.className='grid-body';
   state.noLoanNames.forEach((n,i)=>nb.appendChild(mkRow('noloan',i,n,days,occ)));
   nc.appendChild(nb);planner.appendChild(nc);
-  renderAppts(days);renderAbs(days);renderAlertes48h();
+  renderAppts(days);renderAbs(days);
 }
 function mksec(t){const e=document.createElement('div');e.className='section-label';e.style.margin='12px 0 6px';e.innerHTML=t;return e;}
 function bldHdr(days){const h=document.createElement('div');h.className='grid-header';h.innerHTML=`<div class="h-corner">VÉHICULE</div>`+days.map(d=>`<div class="h-day${isToday(d)?' today':''}"><span class="day-name">${d.toLocaleDateString('fr-FR',{weekday:'long'}).toUpperCase()}</span><span class="day-date">${d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span></div>`).join('');return h;}
@@ -1391,11 +1376,9 @@ function renderAppts(days){
     const prio=appt.priority||'moyenne';const isLF=appt.type==='loan'&&appt.segmentIndex===0;
     const fs=state.appointments.find(a=>a&&a.groupId===appt.groupId&&a.segmentIndex===0)||appt;
     const dF=gWD(gWO(fs.weekStart));const dd=dF[fs.day]||dF[0];const td=appt.totalDays||1;const df=calcFin(dd,td);const hS=hSeg(appt.hours||0,td,span);
-    const el=document.createElement('div');const now48=new Date();const limit48=new Date(now48.getTime()+48*3600*1000);
-    let is48h=false;try{const dd48=gWD(gWO(fs.weekStart))[fs.day]||gWD(gWO(fs.weekStart))[0];const ddC=new Date(dd48);ddC.setHours(0,0,0,0);const pieceOk=appt.pieceStatus==='ordered'||appt.pieceStatus==='delivered'||appt.pieceStatus==='sans';is48h=ddC>=now48&&ddC<=limit48&&!pieceOk;}catch(e){}
-    el.className=`appt prio-${prio}${appt.arrived?' arrived':''}${is48h?' alerte-48h':''}`;el.style.background=appt.color||'#2980b9';
+    const el=document.createElement('div');el.className=`appt prio-${prio}${appt.arrived?' arrived':''}`;el.style.background=appt.color||'#2980b9';
     if(span>1){el.style.right=`calc(-${(span-1)*100}% - ${span-1}px)`;el.style.zIndex=15;}
-    let pb='';if(appt.pieceStatus==='delivered')pb='<span class="badge badge-blue">✅</span>';else if(appt.pieceStatus==='ordered')pb='<span class="badge badge-orange">📦</span>';else if(appt.pieceStatus==='sans')pb='<span class="badge badge-green">✔️</span>';
+    let pb='';if(appt.pieceStatus==='delivered')pb='<span class="badge badge-blue">✅</span>';else if(appt.pieceStatus==='ordered')pb='<span class="badge badge-orange">📦</span>';
     const cb=isLF?`<button class="btn-contrat-inline">📄 Contrat</button>`:'';
     const techInfo=getTechInfo(appt.technicien);
     const techBadge=techInfo?`<span class="tech-badge-appt" style="background:${techInfo.color}88;">${techInfo.nom.slice(0,3).toUpperCase()}</span>`:'';
@@ -1654,14 +1637,13 @@ function openEditModal(gid){
   const eH2=document.getElementById('editHeuresT2');if(eH2)eH2.value=fs.heuresT2||0;
   const eHP=document.getElementById('editHeuresP');if(eHP)eHP.value=fs.heuresP||0;
   upEditHeuresTotal();
-  const hdEl=document.getElementById('editHeuresDate');if(hdEl)hdEl.textContent=fs.heuresDate?'📅 Dernier pointage : '+fs.heuresDate:'';
   editPhotos=Array.isArray(fs.photos)?[...fs.photos]:[];
   renderEditPhotos();
   document.getElementById('editModalOverlay').classList.add('open');setTimeout(()=>document.getElementById('editApptName').focus(),50);
 }
 function setEP(p){editPrio=p;['editPrioBasse','editPrioMoyenne','editPrioHaute'].forEach(id=>document.getElementById(id).className='status-btn');const ids={basse:'editPrioBasse',moyenne:'editPrioMoyenne',haute:'editPrioHaute'};document.getElementById(ids[p]).className=`status-btn active-${p}`;}
 function setES(s){editStat=s;document.getElementById('btnPending').className='status-btn'+(s==='pending'?' active-pending':'');document.getElementById('btnArrived').className='status-btn'+(s==='arrived'?' active-arrived':'');}
-function setEPS(s){editPieceStat=s;document.getElementById('btnPieceNon').className='status-btn'+(s==='none'?' active-pending':'');document.getElementById('btnPieceOui').className='status-btn'+(s==='ordered'?' active-ordered':'');document.getElementById('btnPieceLivree').className='status-btn'+(s==='delivered'?' active-delivered':'');document.getElementById('btnPieceSans').className='status-btn'+(s==='sans'?' active-sans':'');document.querySelector('.piece-fournisseur').style.display=(s==='ordered'||s==='delivered')?'block':'none';}
+function setEPS(s){editPieceStat=s;document.getElementById('btnPieceNon').className='status-btn'+(s==='none'?' active-pending':'');document.getElementById('btnPieceOui').className='status-btn'+(s==='ordered'?' active-ordered':'');document.getElementById('btnPieceLivree').className='status-btn'+(s==='delivered'?' active-delivered':'');document.querySelector('.piece-fournisseur').style.display=s==='none'?'none':'block';}
 function closeEditModal(){document.getElementById('editModalOverlay').classList.remove('open');editId=null;editRef=null;}
 
 function saveEditAppt(){
@@ -1678,7 +1660,7 @@ function saveEditAppt(){
   const tech=document.getElementById('editApptTech').value;
   state.appointments=state.appointments.filter(a=>a&&a.groupId!==editId);
   const wo=gWO(editRef.weekStart);const days=gWD(wo);const segs=split(editRef.day,td,days[0]);
-  segs.forEach((seg,i)=>{state.appointments.push({id:editId+(i===0?'':'-'+i),groupId:editId,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:editRef.type,row:editRef.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:editPrio,arrived:(editStat==='arrived'),pieceStatus:editPieceStat,pieceFournisseur:pf,pieceNote:pn,technicien:tech,technicien2:document.getElementById('editApptTech2')?document.getElementById('editApptTech2').value:'',heuresT1:parseFloat(document.getElementById('editHeuresT1')?document.getElementById('editHeuresT1').value:0)||0,heuresT2:parseFloat(document.getElementById('editHeuresT2')?document.getElementById('editHeuresT2').value:0)||0,heuresP:parseFloat(document.getElementById('editHeuresP')?document.getElementById('editHeuresP').value:0)||0,heuresDate:editRef.heuresDate||'',photos:[...editPhotos]});});
+  segs.forEach((seg,i)=>{state.appointments.push({id:editId+(i===0?'':'-'+i),groupId:editId,segmentIndex:seg.segmentIndex,hasPrev:seg.hasPrev,hasNext:seg.hasNext,totalDays:td,type:editRef.type,row:editRef.row,day:seg.day,span:seg.span,name,hours,tel,adresse,memo,color,weekStart:seg.weekStart.toISOString(),priority:editPrio,arrived:(editStat==='arrived'),pieceStatus:editPieceStat,pieceFournisseur:pf,pieceNote:pn,technicien:tech,technicien2:document.getElementById('editApptTech2')?document.getElementById('editApptTech2').value:'',heuresT1:parseFloat(document.getElementById('editHeuresT1')?document.getElementById('editHeuresT1').value:0)||0,heuresT2:parseFloat(document.getElementById('editHeuresT2')?document.getElementById('editHeuresT2').value:0)||0,heuresP:parseFloat(document.getElementById('editHeuresP')?document.getElementById('editHeuresP').value:0)||0,photos:[...editPhotos]});});
   saveFB();closeEditModal();render();if(isMobile())renderMobile();
 }
 
@@ -1793,59 +1775,6 @@ function renderEditPhotos(){
   }
 }
 
-
-function renderAlertes48h(){
-  const now=new Date();
-  const limit=new Date(now.getTime()+48*3600*1000);
-  const bar=document.getElementById('alerte48hBar');
-  const items=document.getElementById('alerte48hItems');
-  if(!bar||!items)return;
-  // RDV dont la date de début est dans les 48h ET qui n'ont pas encore commencé
-  const alertes=state.appointments.filter(a=>{
-    if(!a||a.segmentIndex!==0||!a.weekStart)return false;
-    // Alerte uniquement si pièce NON commandée (pas 'ordered', 'delivered', ou 'sans')
-    if(a.pieceStatus==='ordered'||a.pieceStatus==='delivered'||a.pieceStatus==='sans')return false;
-    try{
-      const dF=gWD(gWO(a.weekStart));
-      const dd=dF[a.day]||dF[0];
-      dd.setHours(0,0,0,0);
-      return dd>=now&&dd<=limit;
-    }catch(e){return false;}
-  });
-  if(!alertes.length){bar.style.display='none';return;}
-  bar.style.display='flex';
-  items.innerHTML='';
-  alertes.sort((a,b)=>{
-    try{
-      const dA=gWD(gWO(a.weekStart))[a.day];
-      const dB=gWD(gWO(b.weekStart))[b.day];
-      return dA-dB;
-    }catch(e){return 0;}
-  });
-  alertes.forEach(appt=>{
-    try{
-      const dF=gWD(gWO(appt.weekStart));
-      const dd=dF[appt.day]||dF[0];
-      const diffH=Math.round((dd-now)/3600000);
-      const label=diffH<=0?'Aujourd'hui':diffH<24?`Dans ${diffH}h`:'Demain';
-      const item=document.createElement('div');
-      item.className='alerte-48h-item';
-      item.innerHTML=`<div class="alerte-dot" style="background:${appt.color||'#2980b9'}"></div><strong>${appt.name}</strong> — ${label}`;
-      item.addEventListener('click',()=>{
-        // Naviguer vers la semaine du RDV et l'ouvrir
-        const off=gWO(appt.weekStart);
-        state.weekOffset=off;
-        render();
-        setTimeout(()=>{
-          const cell=document.querySelector('[data-type="'+appt.type+'"][data-row="'+appt.row+'"][data-day="'+appt.day+'"]');
-          if(cell){const el=cell.querySelector('.appt');if(el){el.classList.add('highlight');setTimeout(()=>el.classList.remove('highlight'),3500);}}
-          openEditModal(appt.groupId);
-        },120);
-      });
-      items.appendChild(item);
-    }catch(e){}
-  });
-}
 function setupEvents(){
   document.getElementById('btnPrevWeek').addEventListener('click',()=>changeWeek(-1));
   document.getElementById('btnNextWeek').addEventListener('click',()=>changeWeek(1));
@@ -1861,7 +1790,6 @@ function setupEvents(){
   document.getElementById('btnPieceNon').addEventListener('click',()=>setEPS('none'));
   document.getElementById('btnPieceOui').addEventListener('click',()=>setEPS('ordered'));
   document.getElementById('btnPieceLivree').addEventListener('click',()=>setEPS('delivered'));
-  document.getElementById('btnPieceSans')?.addEventListener('click',()=>setEPS('sans'));
   document.getElementById('btnPending').addEventListener('click',()=>setES('pending'));
   document.getElementById('btnArrived').addEventListener('click',()=>setES('arrived'));
   document.getElementById('editPrioBasse').addEventListener('click',()=>setEP('basse'));
