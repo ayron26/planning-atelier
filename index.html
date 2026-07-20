@@ -2173,6 +2173,11 @@ function renderAlertes48h(){
 }
 
 // ===== Contrats de prêt =====
+// Compatibilité avec les contrats existants créés par une version antérieure de l'app,
+// qui pouvait stocker le nom du véhicule de prêt sous un autre nom de champ.
+function getImmatPret(c){
+  return c.immatPret||c.immat||c.immatriculation||c.plaque||c.plaquePret||c.vehiculePret||c.vehicule||c.nomVehicule||'';
+}
 function contratStatusOf(c){
   if(c.dateRestitution)return'restitue';
   const df=new Date(c.dateFin);df.setHours(23,59,59,0);
@@ -2184,7 +2189,7 @@ function filteredContrats(filter,search){
     const st=contratStatusOf(c);
     if(filter==='en-cours'&&st==='restitue')return false;
     if(filter==='restitue'&&st!=='restitue')return false;
-    if(term&&!((c.nom||'').toLowerCase().includes(term)||(c.immatPret||'').toLowerCase().includes(term)||(c.tel||'').toLowerCase().includes(term)))return false;
+    if(term&&!((c.nom||'').toLowerCase().includes(term)||(getImmatPret(c)||'').toLowerCase().includes(term)||(c.tel||'').toLowerCase().includes(term)))return false;
     return true;
   }).sort((a,b)=>new Date(b.dateDebut)-new Date(a.dateDebut));
 }
@@ -2193,7 +2198,7 @@ function contratCardHTML(c,mobile){
   const stLabel={'en-cours':'⏳ En cours','restitue':'✅ Restitué','en-retard':'⚠️ En retard'}[st];
   if(mobile){
     return `<div class="mobile-contrat-item ${st==='restitue'?'restitue-ok':st==='en-retard'?'en-retard':'en-cours'}" data-cid="${c.id}">
-      <div class="mci-header"><div class="mci-nom">${c.nom}</div><span class="mci-immat">${c.immatPret||'—'}</span></div>
+      <div class="mci-header"><div class="mci-nom">${c.nom}</div><span class="mci-immat">${getImmatPret(c)||'—'}</span></div>
       <div class="mci-meta">📞 ${c.tel||'—'}<br>📅 Du ${fSh(new Date(c.dateDebut))} au ${fSh(new Date(c.dateFin))}<br><span class="chi-status-badge ${st}">${stLabel}</span></div>
       ${c.dateRestitution?`<span class="mci-restitue">✅ Restitué le ${fSh(new Date(c.dateRestitution))}</span>`:''}
       <div class="mci-actions">
@@ -2205,7 +2210,7 @@ function contratCardHTML(c,mobile){
   }
   return `<div class="contrat-history-item ${st==='restitue'?'restitue-ok':st==='en-retard'?'en-retard':'en-cours'}" data-cid="${c.id}">
     <div class="chi-info">
-      <div class="chi-header"><span class="chi-nom">${c.nom}</span><span class="chi-immat">${c.immatPret||'—'}</span><span class="chi-status-badge ${st}">${stLabel}</span></div>
+      <div class="chi-header"><span class="chi-nom">${c.nom}</span><span class="chi-immat">${getImmatPret(c)||'—'}</span><span class="chi-status-badge ${st}">${stLabel}</span></div>
       <div class="chi-meta">📞 ${c.tel||'—'} ${c.adresse?'· 📍 '+c.adresse:''}<br>📅 Du <strong>${fSh(new Date(c.dateDebut))}</strong> au <strong>${fSh(new Date(c.dateFin))}</strong> · KM départ : ${c.km||'—'} · Carburant : ${c.carburant||'—'}</div>
       ${c.dateRestitution?`<div class="chi-restitue-info">✅ Restitué le ${fSh(new Date(c.dateRestitution))}${c.kmRetour?' · KM retour : '+c.kmRetour:''}</div>`:''}
       <div class="chi-actions">
@@ -2289,7 +2294,7 @@ function buildContratHTML(c){
     <div class="cp-title">Contrat de prêt de véhicule</div>
     <div class="cp-grid">
       <div class="cp-box"><div class="cp-box-title">Emprunteur</div><div class="cp-row"><span class="cp-label">Nom :</span><span class="cp-val">${c.nom}</span></div><div class="cp-row"><span class="cp-label">Téléphone :</span><span class="cp-val">${c.tel||'—'}</span></div><div class="cp-row"><span class="cp-label">Adresse :</span><span class="cp-val">${c.adresse||'—'}</span></div></div>
-      <div class="cp-box"><div class="cp-box-title">Véhicule prêté</div><div class="cp-row"><span class="cp-label">Modèle :</span><span class="cp-val">HYUNDAI BAYON</span></div><div class="cp-row"><span class="cp-label">Immatriculation :</span><span class="cp-val">${c.immatPret||'—'}</span></div><div class="cp-row"><span class="cp-label">Couleur :</span><span class="cp-val">${c.couleurPret||'—'}</span></div></div>
+      <div class="cp-box"><div class="cp-box-title">Véhicule prêté</div><div class="cp-row"><span class="cp-label">Modèle :</span><span class="cp-val">HYUNDAI BAYON</span></div><div class="cp-row"><span class="cp-label">Immatriculation :</span><span class="cp-val">${getImmatPret(c)||'—'}</span></div><div class="cp-row"><span class="cp-label">Couleur :</span><span class="cp-val">${c.couleurPret||'—'}</span></div></div>
     </div>
     <div class="cp-dates">
       <div><div class="cp-date-label">Date de départ</div><div class="cp-date-val">${fSh(new Date(c.dateDebut))}</div><div class="cp-date-sub">KM départ : ${c.km||'—'} · Carburant : ${c.carburant||'—'}</div></div>
@@ -2328,7 +2333,7 @@ function buildRestitutionHTML(c){
     <div class="restit-header"><div><div class="cp-garage-name">CARROSSERIE BRUN</div><div class="cp-garage-sub">Valence Motors — 307 avenue de Romans, 26000 Valence<br>Tél : 04 75 55 64 39</div></div><div class="cp-num">Contrat n°<strong>${c.numero||c.id.slice(-6).toUpperCase()}</strong></div></div>
     <div class="restit-title-box">✅ Restitution du véhicule de prêt</div>
     <div class="restit-grid">
-      <div class="restit-box"><div class="restit-box-title">Emprunteur</div><div class="cp-row"><span class="cp-label">Nom :</span><span class="cp-val">${c.nom}</span></div><div class="cp-row"><span class="cp-label">Véhicule :</span><span class="cp-val">HYUNDAI BAYON — ${c.immatPret||'—'}</span></div></div>
+      <div class="restit-box"><div class="restit-box-title">Emprunteur</div><div class="cp-row"><span class="cp-label">Nom :</span><span class="cp-val">${c.nom}</span></div><div class="cp-row"><span class="cp-label">Véhicule :</span><span class="cp-val">HYUNDAI BAYON — ${getImmatPret(c)||'—'}</span></div></div>
       <div class="restit-box"><div class="restit-box-title">Départ</div><div class="cp-row"><span class="cp-label">Date :</span><span class="cp-val">${fSh(new Date(c.dateDebut))}</span></div><div class="cp-row"><span class="cp-label">KM :</span><span class="cp-val">${c.km||'—'}</span></div><div class="cp-row"><span class="cp-label">Carburant :</span><span class="cp-val">${c.carburant||'—'}</span></div></div>
     </div>
     <div class="restit-box" style="margin-bottom:14px;"><div class="restit-box-title">Retour</div><div class="cp-row"><span class="cp-label">Date :</span><span class="cp-val">${fSh(new Date(c.dateRestitution))}</span></div><div class="cp-row"><span class="cp-label">KM :</span><span class="cp-val">${c.kmRetour||'—'}</span></div><div class="cp-row"><span class="cp-label">Carburant :</span><span class="cp-val">${c.carburantRetour||'—'}</span></div>${c.remarques?`<div class="cp-row"><span class="cp-label">Remarques :</span><span class="cp-val">${c.remarques}</span></div>`:''}</div>
@@ -2340,7 +2345,7 @@ function openRestitution(cid){
   if(isRO()){showRO();return;}
   const c=(ctState.contrats||[]).find(x=>x.id===cid);if(!c)return;
   restitId=cid;
-  document.getElementById('restitInfo').textContent=`${c.nom} — ${c.immatPret||''}`;
+  document.getElementById('restitInfo').textContent=`${c.nom} — ${getImmatPret(c)||''}`;
   document.getElementById('restitDate').value=todayISO();
   document.getElementById('restitKm').value='';
   document.getElementById('restitCarburant').value='plein';
@@ -2365,7 +2370,7 @@ function openMobileRestitution(cid){
   if(isRO()){showRO();return;}
   const c=(ctState.contrats||[]).find(x=>x.id===cid);if(!c)return;
   mRestitId=cid;
-  document.getElementById('mRestitInfo').textContent=`${c.nom} — ${c.immatPret||''}`;
+  document.getElementById('mRestitInfo').textContent=`${c.nom} — ${getImmatPret(c)||''}`;
   document.getElementById('mRestitDate').value=todayISO();
   document.getElementById('mRestitKm').value='';
   document.getElementById('mRestitCarburant').value='plein';
