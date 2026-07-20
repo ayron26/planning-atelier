@@ -931,6 +931,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <label>Client / Véhicule</label><input type="text" id="apptName" placeholder="Ex: DUPONT – Peugeot 308">
     <label>Téléphone</label><input type="text" id="apptTel" placeholder="06 XX XX XX XX">
     <label>Adresse</label><input type="text" id="apptAdresse" placeholder="12 rue des Lilas, 26000 Valence">
+    <label>Immatriculation (véhicule client)</label><input type="text" id="apptImmat" placeholder="AA-123-AA" style="text-transform:uppercase;">
     <label>Technicien assigné</label>
     <select id="apptTech"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
     <label>Technicien 2 (optionnel)</label>
@@ -956,6 +957,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <label>Client / Véhicule</label><input type="text" id="editApptName">
     <label>Téléphone</label><input type="text" id="editApptTel">
     <label>Adresse</label><input type="text" id="editApptAdresse">
+    <label>Immatriculation (véhicule client)</label><input type="text" id="editApptImmat" placeholder="AA-123-AA" style="text-transform:uppercase;">
     <label>Technicien assigné</label>
     <select id="editApptTech"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
     <label>Technicien 2 (optionnel)</label>
@@ -1095,6 +1097,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <label>Client / Véhicule</label><input type="text" id="mApptName" placeholder="DUPONT – Peugeot 308">
     <label>Téléphone</label><input type="text" id="mApptTel" placeholder="06 XX XX XX XX">
     <label>Adresse</label><input type="text" id="mApptAdresse" placeholder="12 rue des Lilas">
+    <label>Immatriculation (véhicule client)</label><input type="text" id="mApptImmat" placeholder="AA-123-AA" style="text-transform:uppercase;">
     <label>Technicien assigné</label>
     <select id="mApptTech"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
     <label>Technicien 2 (optionnel)</label>
@@ -1315,6 +1318,7 @@ function renderTechView(){
           <div class="tech-rdv-row">⏱ <span><strong>${appt.hours||0}h</strong> de travail · <strong>${appt.totalDays||1}j</strong></span></div>
           ${appt.tel?`<div class="tech-rdv-row">📞 <span><a href="tel:${appt.tel}" style="color:var(--accent);font-weight:700;text-decoration:none;">${appt.tel}</a></span></div>`:''}
           ${appt.adresse?`<div class="tech-rdv-row">📍 <span>${appt.adresse}</span></div>`:''}
+          ${appt.immat?`<div class="tech-rdv-row">🚗 <span>${appt.immat}</span></div>`:''}
           ${appt.pieceStatus==='ordered'?`<div class="tech-rdv-row">📦 <span style="color:#e67e22;font-weight:600;">Pièce commandée${appt.pieceFournisseur?' chez '+appt.pieceFournisseur:''}</span></div>`:''}
           ${appt.pieceStatus==='delivered'?`<div class="tech-rdv-row">✅ <span style="color:#27ae60;font-weight:600;">Pièce livrée</span></div>`:''}
           <div class="tech-rdv-deadline ${deadlineClass}">${deadlineText}</div>
@@ -1519,7 +1523,7 @@ function dossierCardHTML(d){
   const photosHTML=(a.photos&&a.photos.length)?`<div class="dossier-section-mini"><div class="dossier-section-mini-title">📸 Photos (${a.photos.length}/${MAX_PHOTOS})</div><div class="dossier-photos-mini">${a.photos.map(ph=>`<img src="${ph}" class="dossier-photo-mini">`).join('')}</div></div>`:'';
   return `<div class="dossier-card" data-gid="${a.groupId}">
     <div class="dossier-header"><div class="dossier-color-dot" style="background:${a.color||'#2980b9'}"></div><div class="dossier-name">${a.name}</div><div class="dossier-poste">${posteNom}</div></div>
-    <div class="dossier-meta">${a.tel?`📞 ${a.tel} · `:''}${a.adresse?`📍 ${a.adresse}`:''}</div>
+    <div class="dossier-meta">${a.tel?`📞 ${a.tel} · `:''}${a.immat?`🚗 ${a.immat} · `:''}${a.adresse?`📍 ${a.adresse}`:''}</div>
     ${d.entries.length?`<div class="dossier-section-mini"><div class="dossier-section-mini-title">⏱ Heures saisies</div><div class="dossier-hours-list">${hoursRows}</div><div class="dossier-hours-total">Total : ${Math.round(totalH*10)/10}h</div></div>`:''}
     ${photosHTML}
   </div>`;
@@ -1787,6 +1791,7 @@ function na(a){
   if(a.heuresP===undefined||a.heuresP===null)a.heuresP=0;
   if(!Array.isArray(a.photos))a.photos=[];
   if(!a.heuresDate)a.heuresDate='';
+  if(!a.immat)a.immat='';
   return a;
 }
 function hSeg(h,td,sp){if(!td||td===0)return h;return Math.round((h*sp/td)*10)/10;}
@@ -1878,7 +1883,7 @@ function renderAppts(days){
     el.addEventListener('click',e=>{if(e.target.classList.contains('appt-del-btn')||e.target.classList.contains('btn-contrat-inline'))return;openEditModal(appt.groupId);});
     let tip=`${appt.name}\n📅 ${fFR(dd)} → ${fFR(df)} (${td}j)\n⏱ ${appt.hours}h — ${hS}h sem.`;
     if(techInfo)tip+=`\n🔧 ${techInfo.nom}`;
-    if(appt.tel)tip+=`\n📞 ${appt.tel}`;if(appt.adresse)tip+=`\n📍 ${appt.adresse}`;if(prio==='haute')tip+='\n🔴 HAUTE';if(appt.memo)tip+=`\n💬 ${appt.memo}`;
+    if(appt.tel)tip+=`\n📞 ${appt.tel}`;if(appt.adresse)tip+=`\n📍 ${appt.adresse}`;if(appt.immat)tip+=`\n🚗 ${appt.immat}`;if(prio==='haute')tip+='\n🔴 HAUTE';if(appt.memo)tip+=`\n💬 ${appt.memo}`;
     el.addEventListener('mouseenter',e=>showTip(e,tip));el.addEventListener('mouseleave',hideTip);el.addEventListener('mousemove',e=>moveTip(e));
     if(appt.segmentIndex===0){
       el.setAttribute('draggable',isRO()?'false':'true');
@@ -2046,11 +2051,12 @@ function openModal(type,row,day){
   document.getElementById('apptName').value=pendingPlacement?pendingPlacement.nom:'';
   document.getElementById('apptTel').value=pendingPlacement?pendingPlacement.tel:'';
   document.getElementById('apptAdresse').value=pendingPlacement?pendingPlacement.adresse:'';
+  document.getElementById('apptImmat').value=pendingPlacement?(pendingPlacement.immat||''):'';
   document.getElementById('apptTech').value='';
   document.getElementById('apptTech2').value='';
   document.getElementById('apptDays').value=1;
   document.getElementById('apptHours').value=4;
-  document.getElementById('apptMemo').value=pendingPlacement&&pendingPlacement.immat?`🚗 Immatriculation client : ${pendingPlacement.immat} (avis de sinistre)`:'';
+  document.getElementById('apptMemo').value='';
   newPrio='moyenne';
   document.querySelectorAll('#modalOverlay .status-row .status-btn').forEach(b=>b.classList.remove('active-basse','active-moyenne','active-haute'));
   document.getElementById('newPrioMoyenne').classList.add('active-moyenne');
@@ -2072,6 +2078,7 @@ async function saveAppt(){
   if(!name){alert('Le nom du client / véhicule est requis.');return;}
   const tel=document.getElementById('apptTel').value.trim();
   const adresse=document.getElementById('apptAdresse').value.trim();
+  const immat=document.getElementById('apptImmat').value.trim().toUpperCase();
   const tech=document.getElementById('apptTech').value;
   const tech2=document.getElementById('apptTech2').value;
   const days=Math.max(1,Math.min(20,parseInt(document.getElementById('apptDays').value)||1));
@@ -2080,7 +2087,7 @@ async function saveAppt(){
   const gid=genId();
   const weekDays=gWD(pendingAppt.weekOffset);
   const segs=split(pendingAppt.day,days,weekDays[0]);
-  const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:pendingAppt.type,row:pendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,technicien:tech,technicien2:tech2,hours,memo,priority:newPrio,color:COLORS[selColor],pieceStatus:'none',arrived:false}));
+  const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:pendingAppt.type,row:pendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,technicien:tech,technicien2:tech2,hours,memo,priority:newPrio,color:COLORS[selColor],pieceStatus:'none',arrived:false}));
   state.appointments=[...state.appointments,...newAppts];
   document.getElementById('modalOverlay').classList.remove('open');
   await saveFB();render();upStats();if(isMobile())renderMobile();
@@ -2114,6 +2121,7 @@ function openEditModal(gid){
   document.getElementById('editApptName').value=root.name||'';
   document.getElementById('editApptTel').value=root.tel||'';
   document.getElementById('editApptAdresse').value=root.adresse||'';
+  document.getElementById('editApptImmat').value=root.immat||'';
   document.getElementById('editApptTech').value=root.technicien||'';
   document.getElementById('editApptTech2').value=root.technicien2||'';
   document.getElementById('editApptHours').value=root.hours||'';
@@ -2156,6 +2164,7 @@ async function saveEditAppt(){
   if(!name){alert('Le nom du client / véhicule est requis.');return;}
   const tel=document.getElementById('editApptTel').value.trim();
   const adresse=document.getElementById('editApptAdresse').value.trim();
+  const immat=document.getElementById('editApptImmat').value.trim().toUpperCase();
   const tech=document.getElementById('editApptTech').value;
   const tech2=document.getElementById('editApptTech2').value;
   const days=Math.max(1,Math.min(20,parseInt(document.getElementById('editApptDays').value)||1));
@@ -2169,7 +2178,7 @@ async function saveEditAppt(){
   const others=state.appointments.filter(a=>a&&a.groupId!==editId);
   const weekDays=gWD(gWO(editRef.weekStart));
   const segs=split(editRef.day,days,weekDays[0]);
-  const newSegs=segs.map(s=>na({id:s.segmentIndex===0?editRef.id:genId(),groupId:editId,type:editRef.type,row:editRef.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,technicien:tech,technicien2:tech2,hours,memo,priority:editPrio,color:COLORS[editSelColor],pieceStatus:editPieceStat,pieceFournisseur,pieceNote,arrived:editStat==='arrived',heuresT1,heuresT2,heuresP,heuresDate:editRef.heuresDate||'',photos:[...editPhotos]}));
+  const newSegs=segs.map(s=>na({id:s.segmentIndex===0?editRef.id:genId(),groupId:editId,type:editRef.type,row:editRef.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,technicien:tech,technicien2:tech2,hours,memo,priority:editPrio,color:COLORS[editSelColor],pieceStatus:editPieceStat,pieceFournisseur,pieceNote,arrived:editStat==='arrived',heuresT1,heuresT2,heuresP,heuresDate:editRef.heuresDate||'',photos:[...editPhotos]}));
   state.appointments=[...others,...newSegs];
   document.getElementById('editModalOverlay').classList.remove('open');
   await saveFB();render();upStats();if(isMobile())renderMobile();
@@ -2654,8 +2663,9 @@ function openMobileModal(type,row,day){
   mPendingAppt={type,row,day,weekOffset:state.weekOffset};
   document.getElementById('mModalTitle').textContent=pendingPlacement?'Placer le dossier « '+pendingPlacement.nom+' »':'Nouveau rendez-vous';
   document.getElementById('mApptName').value=pendingPlacement?pendingPlacement.nom:'';document.getElementById('mApptTel').value=pendingPlacement?pendingPlacement.tel:'';document.getElementById('mApptAdresse').value=pendingPlacement?pendingPlacement.adresse:'';
+  document.getElementById('mApptImmat').value=pendingPlacement?(pendingPlacement.immat||''):'';
   document.getElementById('mApptTech').value='';document.getElementById('mApptTech2').value='';
-  document.getElementById('mApptDays').value=1;document.getElementById('mApptHours').value=4;document.getElementById('mApptMemo').value=pendingPlacement&&pendingPlacement.immat?`🚗 Immatriculation client : ${pendingPlacement.immat} (avis de sinistre)`:'';
+  document.getElementById('mApptDays').value=1;document.getElementById('mApptHours').value=4;document.getElementById('mApptMemo').value='';
   mNewPrio='moyenne';['mPrioBasse','mPrioMoyenne','mPrioHaute'].forEach(id=>document.getElementById(id).className='mprio-btn');document.getElementById('mPrioMoyenne').classList.add('active-moyenne');
   mSelColor=0;buildMCP(i=>mSelColor=i,0);
   upPrevM(day,state.weekOffset,1);
@@ -2668,6 +2678,7 @@ function openMobileEditModal(gid){
   isEditing=true;mEditGid=gid;
   document.getElementById('mModalTitle').textContent='Modifier le rendez-vous';
   document.getElementById('mApptName').value=root.name||'';document.getElementById('mApptTel').value=root.tel||'';document.getElementById('mApptAdresse').value=root.adresse||'';
+  document.getElementById('mApptImmat').value=root.immat||'';
   document.getElementById('mApptTech').value=root.technicien||'';document.getElementById('mApptTech2').value=root.technicien2||'';
   document.getElementById('mApptDays').value=root.totalDays||1;document.getElementById('mApptHours').value=root.hours||'';document.getElementById('mApptMemo').value=root.memo||'';
   mNewPrio=root.priority||'moyenne';['mPrioBasse','mPrioMoyenne','mPrioHaute'].forEach(id=>document.getElementById(id).className='mprio-btn');document.getElementById('mPrio'+mNewPrio.charAt(0).toUpperCase()+mNewPrio.slice(1)).classList.add('active-'+mNewPrio);
@@ -2688,6 +2699,7 @@ document.getElementById('mBtnSaveAppt').addEventListener('click',async()=>{
   if(!name){alert('Le nom du client / véhicule est requis.');return;}
   const tel=document.getElementById('mApptTel').value.trim();
   const adresse=document.getElementById('mApptAdresse').value.trim();
+  const immat=document.getElementById('mApptImmat').value.trim().toUpperCase();
   const tech=document.getElementById('mApptTech').value;
   const tech2=document.getElementById('mApptTech2').value;
   const days=Math.max(1,Math.min(20,parseInt(document.getElementById('mApptDays').value)||1));
@@ -2698,12 +2710,12 @@ document.getElementById('mBtnSaveAppt').addEventListener('click',async()=>{
     const others=state.appointments.filter(a=>a&&a.groupId!==mEditGid);
     const orig=state.appointments.find(a=>a&&a.groupId===mEditGid&&a.segmentIndex===0);
     const segs=split(mPendingAppt.day,days,weekDays[0]);
-    const newSegs=segs.map(s=>na({id:s.segmentIndex===0?orig.id:genId(),groupId:mEditGid,type:mPendingAppt.type,row:mPendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,technicien:tech,technicien2:tech2,hours,memo,priority:mNewPrio,color:COLORS[mSelColor],pieceStatus:orig.pieceStatus,pieceFournisseur:orig.pieceFournisseur,pieceNote:orig.pieceNote,arrived:orig.arrived,heuresT1:orig.heuresT1,heuresT2:orig.heuresT2,heuresP:orig.heuresP,heuresDate:orig.heuresDate,photos:orig.photos}));
+    const newSegs=segs.map(s=>na({id:s.segmentIndex===0?orig.id:genId(),groupId:mEditGid,type:mPendingAppt.type,row:mPendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,technicien:tech,technicien2:tech2,hours,memo,priority:mNewPrio,color:COLORS[mSelColor],pieceStatus:orig.pieceStatus,pieceFournisseur:orig.pieceFournisseur,pieceNote:orig.pieceNote,arrived:orig.arrived,heuresT1:orig.heuresT1,heuresT2:orig.heuresT2,heuresP:orig.heuresP,heuresDate:orig.heuresDate,photos:orig.photos}));
     state.appointments=[...others,...newSegs];
   }else{
     const gid=genId();
     const segs=split(mPendingAppt.day,days,weekDays[0]);
-    const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:mPendingAppt.type,row:mPendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,technicien:tech,technicien2:tech2,hours,memo,priority:mNewPrio,color:COLORS[mSelColor],pieceStatus:'none',arrived:false}));
+    const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:mPendingAppt.type,row:mPendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,technicien:tech,technicien2:tech2,hours,memo,priority:mNewPrio,color:COLORS[mSelColor],pieceStatus:'none',arrived:false}));
     state.appointments=[...state.appointments,...newAppts];
   }
   document.getElementById('mobileModalOverlay').classList.remove('open');
