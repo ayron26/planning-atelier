@@ -1584,26 +1584,79 @@ function tryPatterns(text,patterns){
   return '';
 }
 
+// Liste des principales compagnies d'assurance françaises pour la détection du nom (pas leurs coordonnées)
+const INSURERS_LIST=['MAIF','MACIF','MAAF','GMF','Groupama','Allianz','AXA','Generali','MMA','Matmut','Direct Assurance','April','Malakoff Humanis','Covéa','Aviva','Abeille Assurances','Amaguiz','L\'olivier Assurance','Euro Assurance','Assu2000','Eurofil','La Banque Postale Assurance','Société Générale Assurances','BNP Paribas Cardif','CNP Assurances','SMACL','Thélem Assurances','Areas Assurances','SwissLife','HDI','Wakam','Leocare','Lovys','Luko','Crédit Agricole Assurances','Crédit Mutuel Assurances','Pacifica','Predica','Allianz France','Generali France'];
+
+// Ne garde que les numéros de mobile français (06/07) trouvés n'importe où dans le texte,
+// en ignorant volontairement tout numéro fixe (01-05) ou spécial (08/09) — souvent celui de l'assureur.
+function extractClientMobile(text){
+  const matches=text.match(/(?:\+33[\s.\-]?0?|0033[\s.\-]?0?|0)[1-9](?:[\s.\-]?\d{2}){4}/g)||[];
+  for(const raw of matches){
+    let digits=raw.replace(/[^\d]/g,'');
+    if(digits.length===11&&digits.startsWith('33'))digits='0'+digits.slice(2);
+    if(digits.length===9)digits='0'+digits;
+    if(/^0[67]\d{8}$/.test(digits)){
+      return digits.match(/.{1,2}/g).join(' ');
+    }
+  }
+  return '';
+}
+
+function extractClientName(text){
+  return tryPatterns(text,[
+    /Assur\u00e9e?\s*:?\s*(?:M\.|Mme|Monsieur|Madame)?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ'\-]+(?:\s+[A-ZÀ-Ü][A-Za-zÀ-ÿ'\-]+){0,3})/,
+    /Soci[ée]taire\s*:?\s*(?:M\.|Mme|Monsieur|Madame)?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ'\-]+(?:\s+[A-ZÀ-Ü][A-Za-zÀ-ÿ'\-]+){0,3})/i,
+    /Client(?:e)?\s*:?\s*(?:M\.|Mme|Monsieur|Madame)?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ'\-]+(?:\s+[A-ZÀ-Ü][A-Za-zÀ-ÿ'\-]+){0,3})/i,
+    /Nom\s*(?:et\s*)?(?:\/\s*)?Pr[ée]nom\s*:?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ'\-]+(?:\s+[A-ZÀ-Ü][A-Za-zÀ-ÿ'\-]+){0,3})/i,
+    /Nom\s*:?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ'\-]+(?:\s+[A-ZÀ-Ü][A-Za-zÀ-ÿ'\-]+){0,3})/i
+  ]);
+}
+
+// Écarte toute adresse qui ressemble aux mentions légales de l'assureur (siège social, RCS, ORIAS...)
+function looksLikeInsurerAddress(val){
+  const lower=val.toLowerCase();
+  return ['siège social','rcs ','rcs\n','siren','siret','orias','capital de','société anonyme','entreprise régie','société d\'assurance','s.a. au capital'].some(k=>lower.includes(k));
+}
+function extractClientAddress(text){
+  const patterns=[
+    /Assur\u00e9e?[^\n]{0,100}?Adresse\s*:?\s*([0-9]{1,4}[^\n]{4,90})/i,
+    /Domicili\u00e9e?\s*(?:au)?\s*:?\s*([0-9]{1,4}[^\n]{4,90})/i,
+    /Adresse\s*(?:du\s*client|de\s*l['’]assur\u00e9e?)\s*:?\s*([0-9]{1,4}[^\n]{4,90})/i,
+    /Adresse\s*:?\s*([0-9]{1,4}[^\n]{4,90})/i
+  ];
+  for(const p of patterns){
+    const m=text.match(p);
+    if(m&&m[1]){
+      const val=m[1].trim().replace(/\s{2,}/g,' ');
+      if(!looksLikeInsurerAddress(val))return val;
+    }
+  }
+  return '';
+}
+
+function extractCompagnie(text){
+  for(const name of INSURERS_LIST){
+    const re=new RegExp('\\b'+name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i');
+    if(re.test(text))return name;
+  }
+  return tryPatterns(text,[
+    /Compagnie\s*(?:d['’]assurance)?\s*:?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ0-9&\-\' ]{2,40})/i,
+    /Assureur\s*:?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ0-9&\-\' ]{2,40})/i
+  ]);
+}
+
 function extractSinistreFields(text){
-  const nom=tryPatterns(text,[
-    /Assur[ée]e?\s*:?\s*(?:M\.|Mme|Monsieur|Madame)?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ]+(?:[\s\-][A-ZÀ-Ü][A-Za-zÀ-ÿ]+){0,3})/,
-    /Nom\s*(?:et\s*)?(?:\/\s*)?Pr[ée]nom\s*:?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ]+(?:[\s\-][A-ZÀ-Ü][A-Za-zÀ-ÿ]+){0,3})/,
-    /Nom\s*:?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ]+(?:[\s\-][A-ZÀ-Ü][A-Za-zÀ-ÿ]+){0,3})/
-  ]);
-  const tel=tryPatterns(text,[
-    /(?:T[ée]l(?:[ée]phone)?|Mobile|Portable|GSM)\s*:?\s*((?:0|\+33[\s.]?)[0-9](?:[\s.\-]?[0-9]{2}){4})/i
-  ]);
-  const adresse=tryPatterns(text,[
-    /Adresse\s*:?\s*([0-9]{1,4}[^\n]{4,90}?(?:\d{5}[^\n]{0,40})?)(?=\n|$)/i,
-    /Domicili[ée]e?\s*(?:au)?\s*:?\s*([0-9]{1,4}[^\n]{4,90})/i
-  ]);
+  const nom=extractClientName(text);
+  const tel=extractClientMobile(text);
+  const adresse=extractClientAddress(text);
   const immat=tryPatterns(text,[
     /Immatriculation\s*:?\s*([A-Z]{2}[\-\s]?\d{3}[\-\s]?[A-Z]{2})/i,
     /Immatriculation\s*:?\s*(\d{1,4}[\-\s]?[A-Z]{1,3}[\-\s]?\d{2,3})/i,
     /N°\s*d.?immatriculation\s*:?\s*([A-Z0-9\-\s]{5,12})/i,
     /Immatricul[ée]e?\s*:?\s*([A-Z0-9\-\s]{5,12})/i
   ]);
-  return {nom,tel,adresse:adresse.replace(/\s{2,}/g,' '),immat:immat.replace(/\s+/g,'').toUpperCase()};
+  const compagnie=extractCompagnie(text);
+  return {nom,tel,adresse,immat:immat.replace(/\s+/g,'').toUpperCase(),compagnie};
 }
 
 function renderSinReview(fields,rawText,mobile){
@@ -1618,6 +1671,7 @@ function renderSinReview(fields,rawText,mobile){
       <div><label>Téléphone</label><input type="text" id="${mobile?'m':''}sinTel" value="${fields.tel||''}"></div>
       <div class="full"><label>Adresse</label><input type="text" id="${mobile?'m':''}sinAdresse" value="${fields.adresse||''}"></div>
       <div><label>Immatriculation</label><input type="text" id="${mobile?'m':''}sinImmat" value="${fields.immat||''}"></div>
+      <div><label>Compagnie d'assurance</label><input type="text" id="${mobile?'m':''}sinCompagnie" value="${fields.compagnie||''}"></div>
     </div>
     <span class="sinistre-raw-toggle" id="${mobile?'m':''}sinRawToggle">Voir le texte extrait du PDF</span>
     <div class="sinistre-raw-text" id="${mobile?'m':''}sinRawText">${(rawText||'').replace(/</g,'&lt;')}</div>
@@ -1633,6 +1687,7 @@ function renderSinReview(fields,rawText,mobile){
       tel:document.getElementById((mobile?'m':'')+'sinTel').value.trim(),
       adresse:document.getElementById((mobile?'m':'')+'sinAdresse').value.trim(),
       immat:document.getElementById((mobile?'m':'')+'sinImmat').value.trim(),
+      compagnie:document.getElementById((mobile?'m':'')+'sinCompagnie').value.trim(),
       createdAt:Date.now()
     };
     if(!item.nom){alert('Le nom du client est requis.');return;}
@@ -1661,7 +1716,7 @@ async function handleSinistreFile(file,mobile){
 
 function dossierPendingCardHTML(d){
   return `<div class="dossier-pending-card" data-did="${d.id}">
-    <div class="dpc-info"><div class="dpc-nom">${d.nom}</div><div class="dpc-meta">${d.tel?'📞 '+d.tel+' · ':''}${d.immat?'🚗 '+d.immat+' · ':''}${d.adresse||''}</div></div>
+    <div class="dpc-info"><div class="dpc-nom">${d.nom}</div><div class="dpc-meta">${d.tel?'📞 '+d.tel+' · ':''}${d.immat?'🚗 '+d.immat+' · ':''}${d.compagnie?'🏢 '+d.compagnie+' · ':''}${d.adresse||''}</div></div>
     <div class="dpc-actions"><button class="btn-placer dpc-place-btn">📍 Placer sur le planning</button><button class="btn-del-contrat dpc-del-btn">🗑️</button></div>
   </div>`;
 }
@@ -2056,7 +2111,7 @@ function openModal(type,row,day){
   document.getElementById('apptTech2').value='';
   document.getElementById('apptDays').value=1;
   document.getElementById('apptHours').value=4;
-  document.getElementById('apptMemo').value='';
+  document.getElementById('apptMemo').value=pendingPlacement&&pendingPlacement.compagnie?`🏢 Assurance : ${pendingPlacement.compagnie}`:'';
   newPrio='moyenne';
   document.querySelectorAll('#modalOverlay .status-row .status-btn').forEach(b=>b.classList.remove('active-basse','active-moyenne','active-haute'));
   document.getElementById('newPrioMoyenne').classList.add('active-moyenne');
@@ -2665,7 +2720,7 @@ function openMobileModal(type,row,day){
   document.getElementById('mApptName').value=pendingPlacement?pendingPlacement.nom:'';document.getElementById('mApptTel').value=pendingPlacement?pendingPlacement.tel:'';document.getElementById('mApptAdresse').value=pendingPlacement?pendingPlacement.adresse:'';
   document.getElementById('mApptImmat').value=pendingPlacement?(pendingPlacement.immat||''):'';
   document.getElementById('mApptTech').value='';document.getElementById('mApptTech2').value='';
-  document.getElementById('mApptDays').value=1;document.getElementById('mApptHours').value=4;document.getElementById('mApptMemo').value='';
+  document.getElementById('mApptDays').value=1;document.getElementById('mApptHours').value=4;document.getElementById('mApptMemo').value=pendingPlacement&&pendingPlacement.compagnie?`🏢 Assurance : ${pendingPlacement.compagnie}`:'';
   mNewPrio='moyenne';['mPrioBasse','mPrioMoyenne','mPrioHaute'].forEach(id=>document.getElementById(id).className='mprio-btn');document.getElementById('mPrioMoyenne').classList.add('active-moyenne');
   mSelColor=0;buildMCP(i=>mSelColor=i,0);
   upPrevM(day,state.weekOffset,1);
