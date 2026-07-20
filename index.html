@@ -328,7 +328,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .tech-rdv-deadline.green{background:#eafaf1;color:#1e8449;}
 .tech-rdv-memo{background:var(--surface);border-radius:6px;padding:8px 10px;font-size:.8rem;color:var(--muted);margin-top:6px;border-left:3px solid var(--border);}
 .mobile-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--bottom-nav-h);background:var(--steel);z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.2);border-top:1px solid var(--steel-mid);}
-.mobile-bottom-nav .mbn-inner{display:grid;grid-template-columns:repeat(4,1fr);height:100%;}
+.mobile-bottom-nav .mbn-inner{display:grid;grid-template-columns:repeat(5,1fr);height:100%;}
 .heures-wrap{padding:20px;max-width:900px;margin:0 auto;}
 .heures-filter-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
 .heures-day-group{margin-bottom:16px;}
@@ -379,9 +379,39 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .dossier-photos-mini{display:flex;gap:8px;flex-wrap:wrap;}
 .dossier-photo-mini{width:56px;height:56px;border-radius:6px;object-fit:cover;border:2px solid var(--border);cursor:pointer;}
 .dossier-empty{text-align:center;color:var(--muted);padding:50px 20px;font-size:.9rem;}
-.mbn-tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:rgba(255,255,255,.55);font-size:.65rem;font-weight:600;border:none;background:transparent;font-family:inherit;transition:color .15s;-webkit-tap-highlight-color:transparent;}
-.mbn-tab .mbn-icon{font-size:1.3rem;line-height:1;}
-.mbn-tab .mbn-icon-wrap{padding:4px 16px;border-radius:12px;transition:background .15s;}
+.sinistre-wrap{padding:20px;max-width:800px;margin:0 auto;}
+.sinistre-dropzone{border:2.5px dashed #aed6f1;border-radius:14px;padding:36px 20px;text-align:center;cursor:pointer;background:#f0f7ff;transition:all .15s;}
+.sinistre-dropzone:hover,.sinistre-dropzone.dragover{border-color:#2980b9;background:#e3f1fc;}
+.sinistre-dropzone .sdz-icon{font-size:2.4rem;margin-bottom:8px;}
+.sinistre-dropzone .sdz-text{font-weight:700;color:#1a5276;font-size:.95rem;}
+.sinistre-dropzone .sdz-sub{font-size:.8rem;color:var(--muted);margin-top:4px;}
+.sinistre-analyzing{text-align:center;padding:30px;color:#1a5276;font-weight:700;font-size:.9rem;}
+.sinistre-review{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-top:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.sinistre-review-title{font-size:.9rem;font-weight:700;color:var(--steel);margin-bottom:4px;}
+.sinistre-review-note{font-size:.78rem;color:var(--muted);margin-bottom:14px;}
+.sinistre-review-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.sinistre-review-grid .full{grid-column:1/-1;}
+.sinistre-review-grid label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
+.sinistre-review-grid input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:.9rem;font-family:inherit;outline:none;}
+.sinistre-review-grid input:focus{border-color:var(--accent);}
+.sinistre-raw-toggle{font-size:.78rem;color:#2980b9;cursor:pointer;margin-top:12px;display:inline-block;text-decoration:underline;}
+.sinistre-raw-text{display:none;background:var(--surface);border-radius:8px;padding:10px 12px;font-size:.72rem;color:var(--muted);white-space:pre-wrap;max-height:180px;overflow-y:auto;margin-top:8px;}
+.sinistre-raw-text.open{display:block;}
+.sinistre-review .btn-row{margin-top:16px;}
+.dossiers-pending-title{font-size:.85rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:24px 0 10px;}
+.dossier-pending-card{background:var(--card);border:1px solid var(--border);border-left:4px solid #2980b9;border-radius:10px;padding:12px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.dpc-info{flex:1;min-width:180px;}
+.dpc-nom{font-weight:700;color:var(--steel);font-size:.92rem;}
+.dpc-meta{font-size:.78rem;color:var(--muted);margin-top:2px;}
+.dpc-actions{display:flex;gap:8px;flex-shrink:0;}
+.btn-placer{background:#2980b9;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.btn-placer:hover{background:#1a5276;}
+.placement-banner{background:var(--accent);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.85rem;font-weight:700;flex-wrap:wrap;}
+.placement-banner button{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:6px;padding:5px 12px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;}
+.mobile-sinistre{display:none;padding:16px 14px calc(16px + var(--bottom-nav-h)) 14px;}
+.mbn-tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:rgba(255,255,255,.55);font-size:.58rem;font-weight:600;border:none;background:transparent;font-family:inherit;transition:color .15s;-webkit-tap-highlight-color:transparent;padding:0 2px;}
+.mbn-tab .mbn-icon{font-size:1.15rem;line-height:1;}
+.mbn-tab .mbn-icon-wrap{padding:4px 10px;border-radius:12px;transition:background .15s;}
 .mbn-tab.active{color:#fff;}
 .mbn-tab.active .mbn-icon-wrap{background:var(--accent);}
 .mobile-topbar{display:none;background:var(--steel);color:#fff;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3);align-items:center;padding:0 16px;gap:12px;}
@@ -557,13 +587,15 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   .conges-wrap{display:none;}
   #pageContrats>div:not(.mobile-contrats){display:none;}
   #pageHeures>div:not(.mobile-heures){display:none;}
+  #pageSinistre>div:not(.mobile-sinistre){display:none;}
   .mobile-planning{display:block;}
   .mobile-conges{display:block;}
   .mobile-contrats{display:block;}
   .mobile-heures{display:block;}
+  .mobile-sinistre{display:block;}
 }
 @media(min-width:769px){
-  .mobile-topbar,.mobile-bottom-nav,.mobile-planning,.mobile-conges,.mobile-contrats,.mobile-heures,.mobile-modal-overlay,.tech-view{display:none !important;}
+  .mobile-topbar,.mobile-bottom-nav,.mobile-planning,.mobile-conges,.mobile-contrats,.mobile-heures,.mobile-sinistre,.mobile-modal-overlay,.tech-view{display:none !important;}
 }
 .heures-section{background:#f0f7ff;border-radius:10px;padding:12px 14px;margin-top:14px;border:1px solid #aed6f1;}
 .heures-section-title{font-size:.78rem;font-weight:700;color:#1a5276;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
@@ -613,6 +645,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .appt.alerte-48h{outline:2px solid #f5a623;outline-offset:-2px;}
 .badge-alerte{font-size:.55rem;font-weight:800;background:rgba(245,166,35,.9);color:#fff;border-radius:3px;padding:1px 4px;flex-shrink:0;}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 </head>
 <body>
   <div id="loginPage">
@@ -638,6 +671,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <button class="sb-btn" id="navConges" onclick="switchPage('conges')">🏖️ Congés Techniciens</button>
     <button class="sb-btn" id="navContrats" onclick="switchPage('contrats')">📄 Contrats</button>
     <button class="sb-btn" id="navHeures" onclick="switchPage('heures')">🗂️ Suivi Technicien</button>
+    <button class="sb-btn" id="navSinistre" onclick="switchPage('sinistre')">🆕 Nouveau dossier</button>
   </nav>
   <div class="sb-footer">
     <div class="sb-user"><span id="userEmail"></span><span id="userRole"></span></div>
@@ -726,9 +760,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     </div>
     <span style="font-size:.75rem;color:var(--muted);">Clic droit → congé / absence</span>
   </div>
+  <div id="placementBanner" class="placement-banner" style="display:none;"><span id="placementBannerText"></span><button id="btnCancelPlacement">✕ Annuler le placement</button></div>
   <div id="alerte48hBar" style="display:none;" class="alerte-48h-bar"><span class="alerte-title">🔔 Pièces à commander — RDV dans moins de 48h :</span><div id="alerte48hItems" style="display:flex;gap:6px;flex-wrap:wrap;"></div></div>
   <div class="planner-wrap"><div id="planner"><div class="loader">Chargement…</div></div></div>
   <div class="mobile-planning" id="mobilePlanning">
+    <div id="mPlacementBanner" class="placement-banner" style="display:none;"><span id="mPlacementBannerText"></span><button id="mBtnCancelPlacement">✕ Annuler</button></div>
     <div class="mobile-search-bar"><input type="text" id="mobileSearchInput" placeholder="🔍 Rechercher…"></div>
     <div class="mobile-week-label" id="mobileWeekLabel"></div>
     <div class="mobile-stats-bar">
@@ -811,12 +847,43 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
+<div class="page" id="pageSinistre">
+  <div class="sinistre-wrap">
+    <div style="font-size:1.3rem;font-weight:700;color:var(--steel);margin-bottom:6px;">🆕 Nouveau dossier — avis de sinistre</div>
+    <div style="font-size:.82rem;color:var(--muted);margin-bottom:16px;">Dépose le PDF de l'avis de sinistre : le nom, le téléphone, l'adresse et l'immatriculation sont pré-remplis automatiquement. Vérifie toujours les infos avant de créer le dossier.</div>
+    <div class="sinistre-dropzone" id="sinDropzone">
+      <div class="sdz-icon">📄</div>
+      <div class="sdz-text">Clique ici ou dépose le PDF de l'avis de sinistre</div>
+      <div class="sdz-sub">Format PDF uniquement</div>
+      <input type="file" id="sinFileInput" accept="application/pdf" style="display:none;">
+    </div>
+    <div id="sinAnalyzing" class="sinistre-analyzing" style="display:none;">⏳ Lecture du PDF en cours…</div>
+    <div id="sinReview" style="display:none;"></div>
+    <div class="dossiers-pending-title">📋 Dossiers en attente de placement</div>
+    <div id="dossiersPendingList"></div>
+  </div>
+  <div class="mobile-sinistre" id="mobileSinistre">
+    <div style="font-size:1.1rem;font-weight:700;color:var(--steel);margin-bottom:6px;">🆕 Nouveau dossier</div>
+    <div style="font-size:.8rem;color:var(--muted);margin-bottom:14px;">Dépose le PDF de l'avis de sinistre pour pré-remplir un dossier.</div>
+    <div class="sinistre-dropzone" id="mSinDropzone">
+      <div class="sdz-icon">📄</div>
+      <div class="sdz-text">Toucher pour choisir le PDF</div>
+      <input type="file" id="mSinFileInput" accept="application/pdf" style="display:none;">
+    </div>
+    <div id="mSinAnalyzing" class="sinistre-analyzing" style="display:none;">⏳ Lecture du PDF en cours…</div>
+    <div id="mSinReview" style="display:none;"></div>
+    <div class="dossiers-pending-title">📋 En attente de placement</div>
+    <div id="mDossiersPendingList"></div>
+  </div>
+</div>
+
 <div class="mobile-bottom-nav" id="mainBottomNav">
   <div class="mbn-inner">
     <button class="mbn-tab active" id="mbnAtelier" onclick="switchPage('atelier')"><div class="mbn-icon-wrap"><div class="mbn-icon">🔧</div></div><span>Planning</span></button>
     <button class="mbn-tab" id="mbnConges" onclick="switchPage('conges')"><div class="mbn-icon-wrap"><div class="mbn-icon">🏖️</div></div><span>Congés</span></button>
     <button class="mbn-tab" id="mbnContrats" onclick="switchPage('contrats')"><div class="mbn-icon-wrap"><div class="mbn-icon">📄</div></div><span>Contrats</span></button>
     <button class="mbn-tab" id="mbnHeures" onclick="switchPage('heures')"><div class="mbn-icon-wrap"><div class="mbn-icon">🗂️</div></div><span>Suivi</span></button>
+    <button class="mbn-tab" id="mbnSinistre" onclick="switchPage('sinistre')"><div class="mbn-icon-wrap"><div class="mbn-icon">🆕</div></div><span>Dossier</span></button>
   </div>
 </div>
 
@@ -1092,6 +1159,7 @@ const docRef=doc(db,"planning","main");
 const docConges=doc(db,"planning","conges");
 const docContrats=doc(db,"planning","contrats");
 const docHeures=doc(db,"planning","heures");
+const docDossiers=doc(db,"planning","dossiersEnAttente");
 
 const COLORS=['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
 const DL=['BAYON 01','BAYON 02','BAYON 03','BAYON 04','BAYON 05','BAYON 06','BAYON 07','BAYON 08'];
@@ -1108,6 +1176,10 @@ let ctState={contrats:[]};
 let hState={entries:[]};
 let isSavH=false;
 let dossierSearch='',mDossierSearch='';
+let dState={items:[]};
+let isSavD=false;
+let pendingPlacement=null;
+let currentDraftForm=null;
 let nbTech=parseInt(localStorage.getItem('carrosserie_tech')||'3');
 let isSav=false,isSavC=false,isSavCt=false;
 let currentUser=null,currentRole=null,currentTech=null;
@@ -1398,24 +1470,26 @@ function setupFirebaseListeners(){
   onSnapshot(docConges,snap=>{if(isSavC)return;if(snap.exists()){cState={...snap.data()};if(!Array.isArray(cState.absences))cState.absences=[];}else cState={absences:[]};ssc('ok');if(curPage==='conges'){if(isMobile())renderMobileConges();else renderConges();}},err=>{console.error(err);ssc('err');});
   onSnapshot(docContrats,snap=>{if(isSavCt)return;if(snap.exists()){ctState={...snap.data()};if(!Array.isArray(ctState.contrats))ctState.contrats=[];}else ctState={contrats:[]};if(curPage==='contrats'){renderContrats();if(isMobile())renderMobileContrats();}},err=>{console.error(err);});
   onSnapshot(docHeures,snap=>{if(isSavH)return;if(snap.exists()){hState={...snap.data()};if(!Array.isArray(hState.entries))hState.entries=[];}else hState={entries:[]};if(curPage==='heures'){renderDossiers();if(isMobile())renderMobileDossiers();}},err=>{console.error(err);});
+  onSnapshot(docDossiers,snap=>{if(isSavD)return;if(snap.exists()){dState={...snap.data()};if(!Array.isArray(dState.items))dState.items=[];}else dState={items:[]};renderDossiersPending();if(isMobile())renderMobileDossiersPending();},err=>{console.error(err);});
 }
 
 window.switchPage=function(page){
   curPage=page;
-  ['atelier','conges','contrats','heures'].forEach(p=>{document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active',p===page);});
-  ['navAtelier','navConges','navContrats','navHeures'].forEach(b=>document.getElementById(b)?.classList.remove('active'));
-  const nm={atelier:'navAtelier',conges:'navConges',contrats:'navContrats',heures:'navHeures'};document.getElementById(nm[page])?.classList.add('active');
-  ['mbnAtelier','mbnConges','mbnContrats','mbnHeures'].forEach(b=>document.getElementById(b)?.classList.remove('active'));
-  const mb={atelier:'mbnAtelier',conges:'mbnConges',contrats:'mbnContrats',heures:'mbnHeures'};document.getElementById(mb[page])?.classList.add('active');
+  ['atelier','conges','contrats','heures','sinistre'].forEach(p=>{document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active',p===page);});
+  ['navAtelier','navConges','navContrats','navHeures','navSinistre'].forEach(b=>document.getElementById(b)?.classList.remove('active'));
+  const nm={atelier:'navAtelier',conges:'navConges',contrats:'navContrats',heures:'navHeures',sinistre:'navSinistre'};document.getElementById(nm[page])?.classList.add('active');
+  ['mbnAtelier','mbnConges','mbnContrats','mbnHeures','mbnSinistre'].forEach(b=>document.getElementById(b)?.classList.remove('active'));
+  const mb={atelier:'mbnAtelier',conges:'mbnConges',contrats:'mbnContrats',heures:'mbnHeures',sinistre:'mbnSinistre'};document.getElementById(mb[page])?.classList.add('active');
   document.getElementById('atelierTopRight').style.display=page==='atelier'?'flex':'none';
   document.getElementById('congesTopRight').style.display=page==='conges'?'flex':'none';
   document.getElementById('contratsTopRight').style.display=page==='contrats'?'flex':'none';
   document.getElementById('mobileWeekNav').style.display=page==='atelier'?'flex':'none';
-  const titles={atelier:'🔧 Planning Atelier',conges:'🏖️ Congés Techniciens',contrats:'📄 Contrats de prêt',heures:'🗂️ Suivi Technicien'};
+  const titles={atelier:'🔧 Planning Atelier',conges:'🏖️ Congés Techniciens',contrats:'📄 Contrats de prêt',heures:'🗂️ Suivi Technicien',sinistre:'🆕 Nouveau dossier'};
   const tt=document.getElementById('topbarTitle');if(tt)tt.textContent=titles[page]||'';
   if(page==='conges'){if(isMobile())renderMobileConges();else renderConges();}
   if(page==='contrats'){renderContrats();if(isMobile())renderMobileContrats();}
   if(page==='heures'){renderDossiers();if(isMobile())renderMobileDossiers();}
+  if(page==='sinistre'){renderDossiersPending();if(isMobile())renderMobileDossiersPending();}
 };
 
 function buildDossierList(searchTerm){
@@ -1481,6 +1555,186 @@ function renderMobileDossiers(){
   wireDossierCardEvents(wrap);
 }
 
+// ===== Nouveau dossier (avis de sinistre PDF) =====
+if(typeof pdfjsLib!=='undefined'){
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+}
+
+async function extractPdfText(file){
+  const buf=await file.arrayBuffer();
+  const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+  let text='';
+  for(let i=1;i<=pdf.numPages;i++){
+    const page=await pdf.getPage(i);
+    const content=await page.getTextContent();
+    text+=content.items.map(it=>it.str).join(' ')+'\n';
+  }
+  return text;
+}
+
+function tryPatterns(text,patterns){
+  for(const p of patterns){
+    const m=text.match(p);
+    if(m&&m[1])return m[1].trim().replace(/\s{2,}/g,' ');
+  }
+  return '';
+}
+
+function extractSinistreFields(text){
+  const nom=tryPatterns(text,[
+    /Assur[ée]e?\s*:?\s*(?:M\.|Mme|Monsieur|Madame)?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ]+(?:[\s\-][A-ZÀ-Ü][A-Za-zÀ-ÿ]+){0,3})/,
+    /Nom\s*(?:et\s*)?(?:\/\s*)?Pr[ée]nom\s*:?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ]+(?:[\s\-][A-ZÀ-Ü][A-Za-zÀ-ÿ]+){0,3})/,
+    /Nom\s*:?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ]+(?:[\s\-][A-ZÀ-Ü][A-Za-zÀ-ÿ]+){0,3})/
+  ]);
+  const tel=tryPatterns(text,[
+    /(?:T[ée]l(?:[ée]phone)?|Mobile|Portable|GSM)\s*:?\s*((?:0|\+33[\s.]?)[0-9](?:[\s.\-]?[0-9]{2}){4})/i
+  ]);
+  const adresse=tryPatterns(text,[
+    /Adresse\s*:?\s*([0-9]{1,4}[^\n]{4,90}?(?:\d{5}[^\n]{0,40})?)(?=\n|$)/i,
+    /Domicili[ée]e?\s*(?:au)?\s*:?\s*([0-9]{1,4}[^\n]{4,90})/i
+  ]);
+  const immat=tryPatterns(text,[
+    /Immatriculation\s*:?\s*([A-Z]{2}[\-\s]?\d{3}[\-\s]?[A-Z]{2})/i,
+    /Immatriculation\s*:?\s*(\d{1,4}[\-\s]?[A-Z]{1,3}[\-\s]?\d{2,3})/i,
+    /N°\s*d.?immatriculation\s*:?\s*([A-Z0-9\-\s]{5,12})/i,
+    /Immatricul[ée]e?\s*:?\s*([A-Z0-9\-\s]{5,12})/i
+  ]);
+  return {nom,tel,adresse:adresse.replace(/\s{2,}/g,' '),immat:immat.replace(/\s+/g,'').toUpperCase()};
+}
+
+function renderSinReview(fields,rawText,mobile){
+  const reviewId=mobile?'mSinReview':'sinReview';
+  const el=document.getElementById(reviewId);
+  el.style.display='block';
+  el.innerHTML=`<div class="sinistre-review">
+    <div class="sinistre-review-title">✅ Informations extraites</div>
+    <div class="sinistre-review-note">Vérifie et corrige si besoin avant de créer le dossier.</div>
+    <div class="sinistre-review-grid">
+      <div><label>Nom du client</label><input type="text" id="${mobile?'m':''}sinNom" value="${fields.nom||''}"></div>
+      <div><label>Téléphone</label><input type="text" id="${mobile?'m':''}sinTel" value="${fields.tel||''}"></div>
+      <div class="full"><label>Adresse</label><input type="text" id="${mobile?'m':''}sinAdresse" value="${fields.adresse||''}"></div>
+      <div><label>Immatriculation</label><input type="text" id="${mobile?'m':''}sinImmat" value="${fields.immat||''}"></div>
+    </div>
+    <span class="sinistre-raw-toggle" id="${mobile?'m':''}sinRawToggle">Voir le texte extrait du PDF</span>
+    <div class="sinistre-raw-text" id="${mobile?'m':''}sinRawText">${(rawText||'').replace(/</g,'&lt;')}</div>
+    <div class="btn-row"><button class="btn-secondary" id="${mobile?'m':''}sinCancelBtn">Annuler</button><button class="btn-primary" id="${mobile?'m':''}sinCreateBtn">➕ Créer le dossier en attente</button></div>
+  </div>`;
+  document.getElementById((mobile?'m':'')+'sinRawToggle').addEventListener('click',()=>{document.getElementById((mobile?'m':'')+'sinRawText').classList.toggle('open');});
+  document.getElementById((mobile?'m':'')+'sinCancelBtn').addEventListener('click',()=>{el.style.display='none';el.innerHTML='';});
+  document.getElementById((mobile?'m':'')+'sinCreateBtn').addEventListener('click',async()=>{
+    if(isRO()){showRO();return;}
+    const item={
+      id:genId(),
+      nom:document.getElementById((mobile?'m':'')+'sinNom').value.trim(),
+      tel:document.getElementById((mobile?'m':'')+'sinTel').value.trim(),
+      adresse:document.getElementById((mobile?'m':'')+'sinAdresse').value.trim(),
+      immat:document.getElementById((mobile?'m':'')+'sinImmat').value.trim(),
+      createdAt:Date.now()
+    };
+    if(!item.nom){alert('Le nom du client est requis.');return;}
+    dState.items=[...(dState.items||[]),item];
+    await saveDossiers();
+    el.style.display='none';el.innerHTML='';
+    renderDossiersPending();if(isMobile())renderMobileDossiersPending();
+  });
+}
+
+async function handleSinistreFile(file,mobile){
+  if(isRO()){showRO();return;}
+  if(!file||file.type!=='application/pdf'){alert('Merci de déposer un fichier PDF.');return;}
+  document.getElementById(mobile?'mSinAnalyzing':'sinAnalyzing').style.display='block';
+  document.getElementById(mobile?'mSinReview':'sinReview').style.display='none';
+  try{
+    const text=await extractPdfText(file);
+    const fields=extractSinistreFields(text);
+    renderSinReview(fields,text,mobile);
+  }catch(e){
+    console.error(e);
+    alert("Impossible de lire ce PDF. Vérifie qu'il ne s'agit pas d'un scan/image (dans ce cas la lecture automatique n'est pas possible) et réessaie, ou remplis le dossier manuellement.");
+  }
+  document.getElementById(mobile?'mSinAnalyzing':'sinAnalyzing').style.display='none';
+}
+
+function dossierPendingCardHTML(d){
+  return `<div class="dossier-pending-card" data-did="${d.id}">
+    <div class="dpc-info"><div class="dpc-nom">${d.nom}</div><div class="dpc-meta">${d.tel?'📞 '+d.tel+' · ':''}${d.immat?'🚗 '+d.immat+' · ':''}${d.adresse||''}</div></div>
+    <div class="dpc-actions"><button class="btn-placer dpc-place-btn">📍 Placer sur le planning</button><button class="btn-del-contrat dpc-del-btn">🗑️</button></div>
+  </div>`;
+}
+function wireDossierPendingEvents(container){
+  container.querySelectorAll('.dpc-place-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const did=btn.closest('[data-did]').dataset.did;
+      const d=(dState.items||[]).find(x=>x.id===did);if(!d)return;
+      startPlacement(d);
+    });
+  });
+  container.querySelectorAll('.dpc-del-btn').forEach(btn=>{
+    btn.addEventListener('click',async()=>{
+      if(isRO()){showRO();return;}
+      const did=btn.closest('[data-did]').dataset.did;
+      dState.items=(dState.items||[]).filter(x=>x.id!==did);
+      await saveDossiers();renderDossiersPending();if(isMobile())renderMobileDossiersPending();
+    });
+  });
+}
+function renderDossiersPending(){
+  const wrap=document.getElementById('dossiersPendingList');if(!wrap)return;
+  const items=dState.items||[];
+  if(!items.length){wrap.innerHTML='<div class="dossier-empty">📭 Aucun dossier en attente. Dépose un PDF ci-dessus pour en créer un.</div>';return;}
+  wrap.innerHTML=items.map(dossierPendingCardHTML).join('');
+  wireDossierPendingEvents(wrap);
+}
+function renderMobileDossiersPending(){
+  const wrap=document.getElementById('mDossiersPendingList');if(!wrap)return;
+  const items=dState.items||[];
+  if(!items.length){wrap.innerHTML='<div class="dossier-empty">📭 Aucun dossier en attente.</div>';return;}
+  wrap.innerHTML=items.map(dossierPendingCardHTML).join('');
+  wireDossierPendingEvents(wrap);
+}
+
+// ===== Mode placement sur le planning =====
+function startPlacement(draft){
+  pendingPlacement=draft;
+  switchPage('atelier');
+  const txt=`📍 Placement du dossier « ${draft.nom} » — clique sur une case libre du planning pour le positionner`;
+  document.getElementById('placementBannerText').textContent=txt;
+  document.getElementById('placementBanner').style.display='flex';
+  document.getElementById('mPlacementBannerText').textContent=txt;
+  document.getElementById('mPlacementBanner').style.display='flex';
+}
+function cancelPlacement(){
+  pendingPlacement=null;
+  document.getElementById('placementBanner').style.display='none';
+  document.getElementById('mPlacementBanner').style.display='none';
+}
+document.getElementById('btnCancelPlacement').addEventListener('click',cancelPlacement);
+document.getElementById('mBtnCancelPlacement').addEventListener('click',cancelPlacement);
+
+async function completePlacement(){
+  if(!pendingPlacement)return;
+  dState.items=(dState.items||[]).filter(x=>x.id!==pendingPlacement.id);
+  await saveDossiers();
+  cancelPlacement();
+  renderDossiersPending();if(isMobile())renderMobileDossiersPending();
+}
+
+// ===== Câblage dépôt PDF (desktop + mobile) =====
+function wireSinDropzone(zoneId,inputId,mobile){
+  const zone=document.getElementById(zoneId),input=document.getElementById(inputId);
+  if(!zone||!input)return;
+  zone.addEventListener('click',()=>input.click());
+  input.addEventListener('change',e=>{if(e.target.files[0])handleSinistreFile(e.target.files[0],mobile);e.target.value='';});
+  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('dragover');});
+  zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
+  zone.addEventListener('drop',e=>{
+    e.preventDefault();zone.classList.remove('dragover');
+    if(e.dataTransfer.files[0])handleSinistreFile(e.dataTransfer.files[0],mobile);
+  });
+}
+wireSinDropzone('sinDropzone','sinFileInput',false);
+wireSinDropzone('mSinDropzone','mSinFileInput',true);
+
 function ss(s){['syncStatus','syncStatusMobile'].forEach(id=>{const el=document.getElementById(id);if(!el)return;const m={ok:['✅','sync-ok'],wait:['⏳','sync-wait'],save:['💾','sync-wait'],err:['❌','sync-err']};el.textContent=m[s][0];el.className='sync-indicator '+(id==='syncStatusMobile'?'mtb-sync ':'')+m[s][1];});}
 
 async function saveFB(){
@@ -1518,6 +1772,7 @@ function ssc(s){const el=document.getElementById('syncStatusConges');if(!el)retu
 async function saveCG(){if(isRO()){showRO();return;}isSavC=true;ssc('save');try{await setDoc(docConges,{...cState,updatedAt:Date.now()});ssc('ok');}catch(e){console.error(e);ssc('err');}setTimeout(()=>isSavC=false,600);}
 async function saveCT(){isSavCt=true;try{await setDoc(docContrats,{...ctState,updatedAt:Date.now()});}catch(e){console.error(e);}setTimeout(()=>isSavCt=false,600);}
 async function saveHeures(){isSavH=true;try{await setDoc(docHeures,{...hState,updatedAt:Date.now()});}catch(e){console.error(e);}setTimeout(()=>isSavH=false,600);}
+async function saveDossiers(){isSavD=true;try{await setDoc(docDossiers,{...dState,updatedAt:Date.now()});}catch(e){console.error(e);}setTimeout(()=>isSavD=false,600);}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
 function todayISO(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function dFR(iso){try{const [y,m,d]=iso.split('-');return `${d}/${m}/${y.slice(2)}`;}catch(e){return iso;}}
@@ -1788,21 +2043,21 @@ function doSearch(term,resEl,mobile){
 function openModal(type,row,day){
   if(isRO()){showRO();return;}
   pendingAppt={type,row,day,weekOffset:state.weekOffset};
-  document.getElementById('apptName').value='';
-  document.getElementById('apptTel').value='';
-  document.getElementById('apptAdresse').value='';
+  document.getElementById('apptName').value=pendingPlacement?pendingPlacement.nom:'';
+  document.getElementById('apptTel').value=pendingPlacement?pendingPlacement.tel:'';
+  document.getElementById('apptAdresse').value=pendingPlacement?pendingPlacement.adresse:'';
   document.getElementById('apptTech').value='';
   document.getElementById('apptTech2').value='';
   document.getElementById('apptDays').value=1;
   document.getElementById('apptHours').value=4;
-  document.getElementById('apptMemo').value='';
+  document.getElementById('apptMemo').value=pendingPlacement&&pendingPlacement.immat?`🚗 Immatriculation client : ${pendingPlacement.immat} (avis de sinistre)`:'';
   newPrio='moyenne';
   document.querySelectorAll('#modalOverlay .status-row .status-btn').forEach(b=>b.classList.remove('active-basse','active-moyenne','active-haute'));
   document.getElementById('newPrioMoyenne').classList.add('active-moyenne');
   selColor=0;buildCP('colorPicker',i=>selColor=i,0);
   upPrev('apptPreview',day,state.weekOffset,1);
   document.getElementById('modalOverlay').classList.add('open');
-  setTimeout(()=>document.getElementById('apptName').focus(),50);
+  setTimeout(()=>document.getElementById(pendingPlacement?'apptHours':'apptName').focus(),50);
 }
 document.getElementById('newPrioBasse').addEventListener('click',()=>{newPrio='basse';['newPrioBasse','newPrioMoyenne','newPrioHaute'].forEach(id=>document.getElementById(id).className='status-btn');document.getElementById('newPrioBasse').classList.add('active-basse');});
 document.getElementById('newPrioMoyenne').addEventListener('click',()=>{newPrio='moyenne';['newPrioBasse','newPrioMoyenne','newPrioHaute'].forEach(id=>document.getElementById(id).className='status-btn');document.getElementById('newPrioMoyenne').classList.add('active-moyenne');});
@@ -1829,6 +2084,7 @@ async function saveAppt(){
   state.appointments=[...state.appointments,...newAppts];
   document.getElementById('modalOverlay').classList.remove('open');
   await saveFB();render();upStats();if(isMobile())renderMobile();
+  if(pendingPlacement)await completePlacement();
 }
 document.getElementById('btnSaveAppt').addEventListener('click',saveAppt);
 
@@ -2396,10 +2652,10 @@ function openMobileModal(type,row,day){
   if(isRO()){showRO();return;}
   isEditing=false;mEditGid=null;
   mPendingAppt={type,row,day,weekOffset:state.weekOffset};
-  document.getElementById('mModalTitle').textContent='Nouveau rendez-vous';
-  document.getElementById('mApptName').value='';document.getElementById('mApptTel').value='';document.getElementById('mApptAdresse').value='';
+  document.getElementById('mModalTitle').textContent=pendingPlacement?'Placer le dossier « '+pendingPlacement.nom+' »':'Nouveau rendez-vous';
+  document.getElementById('mApptName').value=pendingPlacement?pendingPlacement.nom:'';document.getElementById('mApptTel').value=pendingPlacement?pendingPlacement.tel:'';document.getElementById('mApptAdresse').value=pendingPlacement?pendingPlacement.adresse:'';
   document.getElementById('mApptTech').value='';document.getElementById('mApptTech2').value='';
-  document.getElementById('mApptDays').value=1;document.getElementById('mApptHours').value=4;document.getElementById('mApptMemo').value='';
+  document.getElementById('mApptDays').value=1;document.getElementById('mApptHours').value=4;document.getElementById('mApptMemo').value=pendingPlacement&&pendingPlacement.immat?`🚗 Immatriculation client : ${pendingPlacement.immat} (avis de sinistre)`:'';
   mNewPrio='moyenne';['mPrioBasse','mPrioMoyenne','mPrioHaute'].forEach(id=>document.getElementById(id).className='mprio-btn');document.getElementById('mPrioMoyenne').classList.add('active-moyenne');
   mSelColor=0;buildMCP(i=>mSelColor=i,0);
   upPrevM(day,state.weekOffset,1);
@@ -2452,6 +2708,7 @@ document.getElementById('mBtnSaveAppt').addEventListener('click',async()=>{
   }
   document.getElementById('mobileModalOverlay').classList.remove('open');
   await saveFB();renderMobile();
+  if(!isEditing&&pendingPlacement)await completePlacement();
 });
 
 // ===== Impression planning =====
