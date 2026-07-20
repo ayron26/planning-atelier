@@ -343,13 +343,17 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .heures-entry-hours{font-weight:700;color:var(--accent);min-width:40px;text-align:right;}
 .heures-entry-del{background:none;border:none;color:#e74c3c;cursor:pointer;font-size:.9rem;padding:2px 4px;}
 .heures-empty{text-align:center;color:var(--muted);padding:40px;font-size:.9rem;}
-.tech-heures-add-form{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:6px;align-items:end;margin-top:4px;}
-.tech-heures-add-form .thf-field{display:flex;flex-direction:column;gap:2px;}
-.tech-heures-add-form label{font-size:.6rem;font-weight:700;color:var(--muted);text-transform:uppercase;}
-.tech-heures-add-form input,.tech-heures-add-form select{border:1.5px solid #aed6f1;border-radius:6px;padding:7px 6px;font-size:.82rem;font-family:inherit;background:#fff;outline:none;}
-.tech-heures-add-btn{background:#2980b9;color:#fff;border:none;border-radius:6px;padding:9px 12px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;height:34px;}
+.tech-heures-add-form{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
+.tech-heures-add-form .thf-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.tech-heures-add-form .thf-field{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.tech-heures-add-form label{font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;}
+.tech-heures-add-form input,.tech-heures-add-form select{border:1.5px solid #aed6f1;border-radius:8px;padding:10px 8px;font-size:.95rem;font-family:inherit;background:#fff;outline:none;width:100%;min-width:0;box-sizing:border-box;}
+.tech-heures-add-btn{background:#2980b9;color:#fff;border:none;border-radius:8px;padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit;width:100%;}
 .tech-heures-add-btn:hover{background:#1a5276;}
+.tech-heures-quota{margin-top:6px;padding:6px 10px;background:#1a5276;color:#fff;border-radius:6px;font-size:.78rem;font-weight:700;text-align:center;}
 .tech-heures-entry-list{margin-top:10px;display:flex;flex-direction:column;gap:5px;}
+.tech-view-quota{display:inline-block;margin-top:10px;background:rgba(255,255,255,.15);border-radius:20px;padding:6px 16px;font-size:.85rem;font-weight:700;}
+.tech-view-quota span{color:var(--amber);}
 .tech-heures-entry-item{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #aed6f1;border-radius:6px;padding:6px 10px;font-size:.78rem;}
 .tech-heures-entry-item .thei-date{font-weight:700;color:#1a5276;min-width:66px;}
 .tech-heures-entry-item .thei-type{background:#e8f4fd;border-radius:4px;padding:1px 6px;font-weight:700;font-size:.72rem;}
@@ -698,6 +702,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   <div class="tech-view-header">
     <div class="tech-view-name" id="techViewName">Mes RDV</div>
     <div class="tech-view-sub" id="techViewSub">Carrosserie Brun — Valence Motors</div>
+    <div class="tech-view-quota" id="techViewQuota" style="display:none;"></div>
     <div class="tech-week-nav">
       <button id="tvBtnPrev">‹</button>
       <div class="twl" id="tvWeekLabel"></div>
@@ -1202,6 +1207,11 @@ function renderTechView(){
   const ws=days[0];const we=days[4];
   document.getElementById('tvWeekLabel').textContent=`${ws.getDate()} ${MF[ws.getMonth()].slice(0,3)} → ${we.getDate()} ${MF[we.getMonth()].slice(0,3)} ${we.getFullYear()}`;
   const today=new Date();today.setHours(0,0,0,0);
+  const todayIso=todayISO();
+  const quotaEl=document.getElementById('techViewQuota');
+  const todayTotal=Math.round(hState.entries.filter(e=>e&&e.techId===currentTech&&e.date===todayIso).reduce((s,e)=>s+(parseFloat(e.hours)||0),0)*10)/10;
+  if(todayTotal>0){quotaEl.style.display='inline-block';quotaEl.innerHTML=`⏱ Aujourd'hui : <span>${todayTotal}h</span> ajoutées`;}
+  else{quotaEl.style.display='none';}
   const myAppts=state.appointments.filter(a=>{
     if(!a||!a.technicien||a.technicien!==currentTech)return false;
     if(a.segmentIndex!==0)return false;
@@ -1241,11 +1251,14 @@ function renderTechView(){
             <div class="tech-heures-title">⏱ Ajouter des heures</div>
             <div class="tech-heures-add-form">
               <div class="thf-field"><label>Date</label><input type="date" class="thf-date" id="thfDate_${appt.groupId}" value="${todayISO()}"></div>
-              <div class="thf-field"><label>Type</label><select class="thf-type" id="thfType_${appt.groupId}"><option value="T1">T1 Tôlerie 1</option><option value="T2">T2 Tôlerie 2</option><option value="P">P Peinture</option></select></div>
-              <div class="thf-field"><label>Heures</label><input type="number" class="thf-hours" id="thfHours_${appt.groupId}" min="0" step="0.5" placeholder="0"></div>
-              <button class="tech-heures-add-btn" data-gid="${appt.groupId}">➕</button>
+              <div class="thf-row">
+                <div class="thf-field"><label>Type</label><select class="thf-type" id="thfType_${appt.groupId}"><option value="T1">T1 Tôlerie 1</option><option value="T2">T2 Tôlerie 2</option><option value="P">P Peinture</option></select></div>
+                <div class="thf-field"><label>Heures</label><input type="number" class="thf-hours" id="thfHours_${appt.groupId}" min="0" step="0.5" placeholder="0"></div>
+              </div>
+              <button class="tech-heures-add-btn" data-gid="${appt.groupId}">➕ Ajouter l'heure</button>
             </div>
             <div class="tech-heures-entry-list" id="thEntryList_${appt.groupId}"></div>
+            <div class="tech-heures-quota" id="thQuota_${appt.groupId}" style="display:none;"></div>
           </div>
           ${(appt.photos&&appt.photos.length)?`<div class="tech-photos-section"><div class="tech-photos-title">📸 Photos (${appt.photos.length}/${MAX_PHOTOS})</div><div class="tech-photos-grid">${appt.photos.map(ph=>`<img src="${ph}" class="tech-photo-thumb">`).join('')}</div></div>`:''}
           <div class="tech-photos-section">
@@ -1260,13 +1273,19 @@ function renderTechView(){
   // Rendu des entrées d'heures déjà saisies par ce technicien pour chaque RDV
   myAppts.forEach(appt=>{
     const box=document.getElementById('thEntryList_'+appt.groupId);
+    const quotaBox=document.getElementById('thQuota_'+appt.groupId);
     if(!box)return;
     const mine=hState.entries.filter(e=>e&&e.groupId===appt.groupId&&e.techId===currentTech).sort((a,b)=>b.date.localeCompare(a.date)||b.createdAt-a.createdAt);
-    if(!mine.length){box.innerHTML='';return;}
+    if(!mine.length){box.innerHTML='';if(quotaBox)quotaBox.style.display='none';return;}
     box.innerHTML=mine.map(e=>{
       const typeLabel={T1:'T1',T2:'T2',P:'P'}[e.type]||e.type;
       return `<div class="tech-heures-entry-item"><span class="thei-date">${dFR(e.date)}</span><span class="thei-type">${typeLabel}</span><span class="thei-hours">${e.hours}h</span><button class="thei-del" data-eid="${e.id}">✕</button></div>`;
     }).join('');
+    if(quotaBox){
+      const total=Math.round(mine.reduce((s,e)=>s+(parseFloat(e.hours)||0),0)*10)/10;
+      quotaBox.style.display='block';
+      quotaBox.textContent=`⏱ Total ajouté sur ce dossier : ${total}h`;
+    }
     box.querySelectorAll('.thei-del').forEach(btn=>{
       btn.addEventListener('click',async()=>{
         hState.entries=hState.entries.filter(e=>e.id!==btn.dataset.eid);
