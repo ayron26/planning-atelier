@@ -140,6 +140,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .appt-name{font-size:.76rem;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;flex:1;}
 .appt-bottom{display:flex;align-items:center;gap:4px;overflow:hidden;}
 .appt-hours-tag{font-size:.64rem;background:rgba(255,255,255,.22);color:#fff;border-radius:4px;padding:1px 5px;font-weight:700;flex-shrink:0;}
+.appt-immat-tag{font-size:.62rem;background:rgba(255,255,255,.3);color:#fff;border-radius:4px;padding:1px 5px;font-weight:700;flex-shrink:0;letter-spacing:.02em;}
 .appt-tel-tag{font-size:.62rem;color:rgba(255,255,255,.75);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .appt-memo-dot{font-size:.65rem;flex-shrink:0;opacity:.85;}
 .btn-contrat-inline{font-size:.63rem;font-weight:700;background:rgba(255,255,255,.9);color:#1a5276;border:none;border-radius:4px;padding:2px 6px;cursor:pointer;display:flex;align-items:center;gap:3px;flex-shrink:0;white-space:nowrap;transition:background .12s;font-family:inherit;}
@@ -1977,7 +1978,7 @@ function renderAppts(days){
     const photosDot=appt.photos&&appt.photos.length?`<span class="appt-memo-dot">📸</span>`:'';
     el.innerHTML=`<div class="prio-strip"></div><button class="appt-del-btn">✕</button>
       <div class="appt-top">${appt.hasPrev?'<span class="badge-prev">◀</span>':''}<span class="appt-name">${appt.name}</span>${techBadge}${techBadge2}${prio==='haute'?'<span class="badge badge-red">🔴</span>':''}${appt.arrived?'<span class="badge badge-green">✔</span>':''}${pb}${appt.memo?'<span class="appt-memo-dot">📝</span>':''}${heuresDot}${photosDot}${appt.hasNext?'<span class="badge-next">▶</span>':''}</div>
-      <div class="appt-bottom"><span class="appt-hours-tag">${hS}h·${span}j</span>${appt.tel?`<span class="appt-tel-tag">📞 ${appt.tel}</span>`:''}${cb}</div>`;
+      <div class="appt-bottom"><span class="appt-hours-tag">${hS}h·${span}j</span>${appt.immat?`<span class="appt-immat-tag">🚗 ${appt.immat}</span>`:''}${appt.tel?`<span class="appt-tel-tag">📞 ${appt.tel}</span>`:''}${cb}</div>`;
     el.querySelector('.appt-del-btn').addEventListener('click',e=>{e.stopPropagation();if(isRO()){showRO();return;}confirmDel(appt.groupId,appt.name);});
     if(isLF)el.querySelector('.btn-contrat-inline').addEventListener('click',e=>{e.stopPropagation();openContrat(appt,dd,df,td);});
     el.addEventListener('click',e=>{if(e.target.classList.contains('appt-del-btn')||e.target.classList.contains('btn-contrat-inline'))return;openEditModal(appt.groupId);});
@@ -2040,7 +2041,7 @@ function renderMobileRow(type,ri,name,days,occ,gc,tW){
       const techInfo=getTechInfo(appt.technicien);
       const ea=document.createElement('div');ea.className='mg-appt';ea.dataset.gid=appt.groupId;ea.style.background=appt.color||'#2980b9';
       if(span>1){ea.style.width=`calc(${span*100}% + ${span-1}px)`;ea.style.zIndex=10;}
-      ea.innerHTML=`<div class="mg-appt-name">${appt.hasPrev?'◀ ':''}<b>${appt.name}</b>${appt.hasNext?' ▶':''}${techInfo?` <span style="font-size:.5rem;opacity:.85;">${techInfo.nom.slice(0,3).toUpperCase()}</span>`:''}</div><div class="mg-appt-info">${hS}h${appt.tel?' · '+appt.tel:''}</div>`;
+      ea.innerHTML=`<div class="mg-appt-name">${appt.hasPrev?'◀ ':''}<b>${appt.name}</b>${appt.hasNext?' ▶':''}${techInfo?` <span style="font-size:.5rem;opacity:.85;">${techInfo.nom.slice(0,3).toUpperCase()}</span>`:''}</div><div class="mg-appt-info">${hS}h${appt.immat?' · 🚗'+appt.immat:''}${appt.tel?' · '+appt.tel:''}</div>`;
       ea.addEventListener('click',e=>{e.stopPropagation();openMobileEditModal(appt.groupId);});
       cell.appendChild(ea);
     });
