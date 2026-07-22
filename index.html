@@ -391,6 +391,17 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .tech-manage-add input:focus{border-color:var(--accent);}
 .tech-manage-add button{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
 .tech-manage-add button:hover{background:#c43f18;}
+.period-add-panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:18px;}
+.period-add-title{font-size:.85rem;font-weight:700;color:var(--steel);margin-bottom:10px;}
+.period-add-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:end;}
+.period-add-grid .full{grid-column:1/-1;}
+.period-add-field{display:flex;flex-direction:column;gap:4px;}
+.period-add-field label{font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+.period-add-field input,.period-add-field select{border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.85rem;font-family:inherit;outline:none;background:#fff;}
+.period-add-field input:focus,.period-add-field select:focus{border-color:var(--accent);}
+.btn-add-period{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;height:37px;}
+.btn-add-period:hover{background:#c43f18;}
+@media(max-width:768px){.period-add-grid{grid-template-columns:1fr 1fr;}}
 .sinistre-wrap{padding:20px;max-width:800px;margin:0 auto;}
 .sinistre-dropzone{border:2.5px dashed #aed6f1;border-radius:14px;padding:36px 20px;text-align:center;cursor:pointer;background:#f0f7ff;transition:all .15s;}
 .sinistre-dropzone:hover,.sinistre-dropzone.dragover{border-color:#2980b9;background:#e3f1fc;}
@@ -808,11 +819,23 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
         <button id="btnAddTech">➕ Ajouter</button>
       </div>
     </div>
+    <div class="period-add-panel">
+      <div class="period-add-title">➕ Ajouter une période d'absence (école, congés, formation…)</div>
+      <div class="period-add-grid">
+        <div class="period-add-field"><label>Technicien</label><select id="periodTechSelect"></select></div>
+        <div class="period-add-field"><label>Type</label><select id="periodTypeSelect"></select></div>
+        <div class="period-add-field"><label>Du</label><input type="date" id="periodDateDebut"></div>
+        <div class="period-add-field"><label>Au</label><input type="date" id="periodDateFin"></div>
+        <button class="btn-add-period" id="btnAddPeriod">Ajouter la période</button>
+        <div class="period-add-field full"><label>Note (optionnel)</label><input type="text" id="periodNote" placeholder="Ex : rentrée CFA, stage pratique…"></div>
+      </div>
+    </div>
     <div class="conges-legend">
       <div class="legend-item"><div class="legend-dot" style="background:#2ecc71"></div>Congés payés</div>
       <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div>Arrêt maladie</div>
       <div class="legend-item"><div class="legend-dot" style="background:#e67e22"></div>Accident travail</div>
       <div class="legend-item"><div class="legend-dot" style="background:#2980b9"></div>Formation</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#16a085"></div>École (apprenti)</div>
       <div class="legend-item"><div class="legend-dot" style="background:#8e44ad"></div>RTT</div>
       <div class="legend-item"><div class="legend-dot" style="background:#7f8c8d"></div>Sans solde</div>
       <div class="legend-item"><div class="legend-dot" style="background:#f39c12"></div>Jour férié</div>
@@ -827,6 +850,25 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
       <div class="tech-manage-add">
         <input type="text" id="mNewTechName" placeholder="Nom du nouveau technicien">
         <button id="mBtnAddTech">➕ Ajouter</button>
+      </div>
+    </div>
+    <div class="tech-manage-panel">
+      <div class="tech-manage-title">👥 Techniciens actifs</div>
+      <div class="tech-manage-list" id="mTechManageList"></div>
+      <div class="tech-manage-add">
+        <input type="text" id="mNewTechName" placeholder="Nom du nouveau technicien">
+        <button id="mBtnAddTech">➕ Ajouter</button>
+      </div>
+    </div>
+    <div class="period-add-panel">
+      <div class="period-add-title">➕ Ajouter une période d'absence</div>
+      <div class="period-add-grid">
+        <div class="period-add-field"><label>Technicien</label><select id="mPeriodTechSelect"></select></div>
+        <div class="period-add-field"><label>Type</label><select id="mPeriodTypeSelect"></select></div>
+        <div class="period-add-field"><label>Du</label><input type="date" id="mPeriodDateDebut"></div>
+        <div class="period-add-field"><label>Au</label><input type="date" id="mPeriodDateFin"></div>
+        <div class="period-add-field full"><label>Note (optionnel)</label><input type="text" id="mPeriodNote" placeholder="Ex : rentrée CFA…"></div>
+        <button class="btn-add-period" id="mBtnAddPeriod" style="grid-column:1/-1;">Ajouter la période</button>
       </div>
     </div>
     <div class="mobile-conges-nav">
@@ -1210,7 +1252,7 @@ const MF=['janvier','février','mars','avril','mai','juin','juillet','août','se
 const DEFAULT_TECHS=[{id:'fabien',nom:'Fabien',color:'#2980b9'},{id:'eric',nom:'Éric',color:'#27ae60'},{id:'david',nom:'David',color:'#8e44ad'},{id:'alois',nom:'Aloïs',color:'#c0392b'},{id:'anthony',nom:'Anthony',color:'#d35400'}];
 let TECHS=[...DEFAULT_TECHS];
 const TECH_COLOR_PALETTE=['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50','#e67e22','#f39c12'];
-const TABS=[{id:'conge',label:'Congés payés',color:'#2ecc71',icon:'🏖️'},{id:'maladie',label:'Arrêt maladie',color:'#e74c3c',icon:'🤒'},{id:'accident',label:'Accident travail',color:'#e67e22',icon:'🚑'},{id:'formation',label:'Formation',color:'#2980b9',icon:'📚'},{id:'rtt',label:'RTT',color:'#8e44ad',icon:'📅'},{id:'sans-solde',label:'Sans solde',color:'#7f8c8d',icon:'📋'},{id:'ferie',label:'Jour férié',color:'#f39c12',icon:'🎉'}];
+const TABS=[{id:'conge',label:'Congés payés',color:'#2ecc71',icon:'🏖️'},{id:'maladie',label:'Arrêt maladie',color:'#e74c3c',icon:'🤒'},{id:'accident',label:'Accident travail',color:'#e67e22',icon:'🚑'},{id:'formation',label:'Formation',color:'#2980b9',icon:'📚'},{id:'ecole',label:'École (apprenti)',color:'#16a085',icon:'🎓'},{id:'rtt',label:'RTT',color:'#8e44ad',icon:'📅'},{id:'sans-solde',label:'Sans solde',color:'#7f8c8d',icon:'📋'},{id:'ferie',label:'Jour férié',color:'#f39c12',icon:'🎉'}];
 const MAX_PHOTOS=10;
 
 let state={loanNames:[...DL],noLoanNames:[...DNL],appointments:[],absences:[],weekOffset:0};
@@ -1494,7 +1536,7 @@ document.getElementById('btnAddUser').addEventListener('click',async()=>{
 
 function initApp(){
   buildCP('colorPicker',i=>selColor=i);buildMCP(i=>mSelColor=i);upTech();
-  rebuildTechSelects();renderTechManageList();renderMobileTechManageList();
+  rebuildTechSelects();renderTechManageList();renderMobileTechManageList();rebuildPeriodTypeSelects();
   setupFirebaseListeners();setupEvents();
   if(isMobile())renderMobile();
 }
@@ -2561,7 +2603,7 @@ function renderCongesStats(){
 
 // ===== Gestion dynamique des techniciens (ajout/retrait selon les mois) =====
 function rebuildTechSelects(){
-  const selects=['apptTech','apptTech2','editApptTech','editApptTech2','mApptTech','mApptTech2','newUserTech'];
+  const selects=['apptTech','apptTech2','editApptTech','editApptTech2','mApptTech','mApptTech2','newUserTech','periodTechSelect','mPeriodTechSelect'];
   selects.forEach(id=>{
     const el=document.getElementById(id);if(!el)return;
     const current=el.value;
@@ -2612,6 +2654,50 @@ async function removeTechnicien(id){
   render();if(isMobile())renderMobile();
   if(curPage==='conges'){if(isMobile())renderMobileConges();else renderConges();}
 }
+
+function rebuildPeriodTypeSelects(){
+  const opts=TABS.map(t=>`<option value="${t.id}">${t.icon} ${t.label}</option>`).join('');
+  ['periodTypeSelect','mPeriodTypeSelect'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const current=el.value;
+    el.innerHTML=opts;
+    if(TABS.some(t=>t.id===current))el.value=current;
+  });
+}
+
+// Ajoute une période d'absence (école, congés, formation...) d'une date à une autre en une seule action,
+// en remplissant tous les jours ouvrés (lundi-vendredi) de la plage, sans avoir à cliquer jour par jour.
+async function addAbsencePeriod(mobile){
+  if(isRO()){showRO();return;}
+  const p=mobile?'m':'';
+  const techId=document.getElementById(p+'PeriodTechSelect').value;
+  const type=document.getElementById(p+'PeriodTypeSelect').value;
+  const dateDebutVal=document.getElementById(p+'PeriodDateDebut').value;
+  const dateFinVal=document.getElementById(p+'PeriodDateFin').value;
+  const note=document.getElementById(p+'PeriodNote').value.trim();
+  if(!techId){alert('Choisis un technicien.');return;}
+  if(!dateDebutVal||!dateFinVal){alert('Renseigne une date de début et une date de fin.');return;}
+  const dStart=new Date(dateDebutVal),dEnd=new Date(dateFinVal);
+  if(dEnd<dStart){alert('La date de fin doit être après la date de début.');return;}
+  const newEntries=[];
+  const cur=new Date(dStart);
+  while(cur<=dEnd){
+    const dow=cur.getDay();
+    if(dow!==0&&dow!==6){newEntries.push({id:genId(),techId,date:dKey(cur),type,note});}
+    cur.setDate(cur.getDate()+1);
+  }
+  if(!newEntries.length){alert('Aucun jour ouvré dans cette plage de dates.');return;}
+  const keys=new Set(newEntries.map(e=>e.techId+'|'+e.date));
+  cState.absences=[...(cState.absences||[]).filter(a=>!keys.has(a.techId+'|'+a.date)),...newEntries];
+  await saveCG();
+  document.getElementById(p+'PeriodDateDebut').value='';
+  document.getElementById(p+'PeriodDateFin').value='';
+  document.getElementById(p+'PeriodNote').value='';
+  renderConges();if(isMobile())renderMobileConges();
+  alert(`${newEntries.length} jour(s) ajouté(s).`);
+}
+document.getElementById('btnAddPeriod').addEventListener('click',()=>addAbsencePeriod(false));
+document.getElementById('mBtnAddPeriod').addEventListener('click',()=>addAbsencePeriod(true));
 
 function buildTypeGrid(gridId,cb){
   const el=document.getElementById(gridId);el.innerHTML='';
