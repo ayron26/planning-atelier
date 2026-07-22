@@ -819,6 +819,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
         <button id="btnAddTech">➕ Ajouter</button>
       </div>
     </div>
+    <div class="tech-manage-panel">
+      <div class="tech-manage-title">🛎️ Réception</div>
+      <div class="tech-manage-list" id="receptionManageList"></div>
+      <div class="tech-manage-add">
+        <input type="text" id="newReceptionName" placeholder="Nom (réception)">
+        <button id="btnAddReception">➕ Ajouter</button>
+      </div>
+    </div>
     <div class="period-add-panel">
       <div class="period-add-title">➕ Ajouter une période d'absence (école, congés, formation…)</div>
       <div class="period-add-grid">
@@ -853,11 +861,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
       </div>
     </div>
     <div class="tech-manage-panel">
-      <div class="tech-manage-title">👥 Techniciens actifs</div>
-      <div class="tech-manage-list" id="mTechManageList"></div>
+      <div class="tech-manage-title">🛎️ Réception</div>
+      <div class="tech-manage-list" id="mReceptionManageList"></div>
       <div class="tech-manage-add">
-        <input type="text" id="mNewTechName" placeholder="Nom du nouveau technicien">
-        <button id="mBtnAddTech">➕ Ajouter</button>
+        <input type="text" id="mNewReceptionName" placeholder="Nom (réception)">
+        <button id="mBtnAddReception">➕ Ajouter</button>
       </div>
     </div>
     <div class="period-add-panel">
@@ -1243,6 +1251,7 @@ const docContrats=doc(db,"planning","contrats");
 const docHeures=doc(db,"planning","heures");
 const docDossiers=doc(db,"planning","dossiersEnAttente");
 const docTechs=doc(db,"planning","techniciens");
+const docReception=doc(db,"planning","reception");
 
 const COLORS=['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
 const DL=['BAYON 01','BAYON 02','BAYON 03','BAYON 04','BAYON 05','BAYON 06','BAYON 07','BAYON 08'];
@@ -1251,7 +1260,10 @@ const JF=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 const MF=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 const DEFAULT_TECHS=[{id:'fabien',nom:'Fabien',color:'#2980b9'},{id:'eric',nom:'Éric',color:'#27ae60'},{id:'david',nom:'David',color:'#8e44ad'},{id:'alois',nom:'Aloïs',color:'#c0392b'},{id:'anthony',nom:'Anthony',color:'#d35400'}];
 let TECHS=[...DEFAULT_TECHS];
+const DEFAULT_RECEPTION=[];
+let RECEPTION=[...DEFAULT_RECEPTION];
 const TECH_COLOR_PALETTE=['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50','#e67e22','#f39c12'];
+const RECEPTION_COLOR_PALETTE=['#e67e22','#16a085','#8e44ad','#2980b9','#c0392b','#27ae60','#d35400','#2c3e50'];
 const TABS=[{id:'conge',label:'Congés payés',color:'#2ecc71',icon:'🏖️'},{id:'maladie',label:'Arrêt maladie',color:'#e74c3c',icon:'🤒'},{id:'accident',label:'Accident travail',color:'#e67e22',icon:'🚑'},{id:'formation',label:'Formation',color:'#2980b9',icon:'📚'},{id:'ecole',label:'École (apprenti)',color:'#16a085',icon:'🎓'},{id:'rtt',label:'RTT',color:'#8e44ad',icon:'📅'},{id:'sans-solde',label:'Sans solde',color:'#7f8c8d',icon:'📋'},{id:'ferie',label:'Jour férié',color:'#f39c12',icon:'🎉'}];
 const MAX_PHOTOS=10;
 
@@ -1536,7 +1548,7 @@ document.getElementById('btnAddUser').addEventListener('click',async()=>{
 
 function initApp(){
   buildCP('colorPicker',i=>selColor=i);buildMCP(i=>mSelColor=i);upTech();
-  rebuildTechSelects();renderTechManageList();renderMobileTechManageList();rebuildPeriodTypeSelects();
+  rebuildTechSelects();renderTechManageList();renderMobileTechManageList();rebuildPeriodTypeSelects();rebuildPeriodTechSelects();renderReceptionManageList();renderMobileReceptionManageList();
   setupFirebaseListeners();setupEvents();
   if(isMobile())renderMobile();
 }
@@ -1566,6 +1578,12 @@ function setupFirebaseListeners(){
     if(snap.exists()&&Array.isArray(snap.data().list)&&snap.data().list.length){TECHS=snap.data().list;}else{TECHS=[...DEFAULT_TECHS];}
     rebuildTechSelects();renderTechManageList();if(isMobile())renderMobileTechManageList();
     render();if(isMobile())renderMobile();
+    if(curPage==='conges'){if(isMobile())renderMobileConges();else renderConges();}
+  },err=>{console.error(err);});
+  onSnapshot(docReception,snap=>{
+    if(snap.exists()&&Array.isArray(snap.data().list)){RECEPTION=snap.data().list;}else{RECEPTION=[...DEFAULT_RECEPTION];}
+    renderReceptionManageList();if(isMobile())renderMobileReceptionManageList();
+    rebuildPeriodTechSelects();
     if(curPage==='conges'){if(isMobile())renderMobileConges();else renderConges();}
   },err=>{console.error(err);});
 }
@@ -1970,6 +1988,7 @@ async function saveCT(){if(isRO())return;isSavCt=true;try{await setDoc(docContra
 async function saveHeures(){isSavH=true;try{await setDoc(docHeures,{...hState,updatedAt:Date.now()});}catch(e){console.error(e);}setTimeout(()=>isSavH=false,600);}
 async function saveDossiers(){if(isRO())return;isSavD=true;try{await setDoc(docDossiers,{...dState,updatedAt:Date.now()});}catch(e){console.error(e);}setTimeout(()=>isSavD=false,600);}
 async function saveTechs(){if(isRO())return;try{await setDoc(docTechs,{list:TECHS,updatedAt:Date.now()});}catch(e){console.error(e);}}
+async function saveReception(){if(isRO())return;try{await setDoc(docReception,{list:RECEPTION,updatedAt:Date.now()});}catch(e){console.error(e);}}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
 function todayISO(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function dFR(iso){try{const [y,m,d]=iso.split('-');return `${d}/${m}/${y.slice(2)}`;}catch(e){return iso;}}
@@ -2141,7 +2160,34 @@ function renderMobileRow(type,ri,name,days,occ,gc,tW){
   });
   grid.appendChild(row);
 }
-  function renderMobileConges(){
+function buildMobileCongesRow(person,gc,tW,year,month,dim,today,openFn){
+  const row=document.createElement('div');row.style.cssText=`display:grid;grid-template-columns:${gc};width:${tW}px;border-bottom:1px solid var(--border);min-height:36px;`;
+  row.innerHTML=`<div style="display:flex;align-items:center;padding:0 3px;background:var(--card);border-right:2px solid var(--border);"><div style="width:18px;height:18px;border-radius:50%;background:${person.color};display:flex;align-items:center;justify-content:center;color:#fff;font-size:.5rem;font-weight:700;">${person.nom.slice(0,2).toUpperCase()}</div></div>`;
+  for(let d=1;d<=dim;d++){
+    const date=new Date(year,month,d);const dow=date.getDay();const isWE=dow===0||dow===6;const isTod=date.toDateString()===today.toDateString();const dk=dKey(date);
+    const cell=document.createElement('div');cell.style.cssText=`border-right:1px solid var(--border);position:relative;cursor:${isWE?'default':'pointer'};${isWE?'background:#fafafa;':''}${isTod?'background:rgba(232,76,30,.05);':''}`;
+    if(!isWE)cell.addEventListener('click',()=>{if(isRO()){showRO();return;}openFn(person,date);});
+    const abs=cState.absences.find(a=>a.techId===person.id&&a.date===dk);
+    if(abs){const ti=TABS.find(t=>t.id===abs.type)||TABS[0];const bloc=document.createElement('div');bloc.style.cssText=`position:absolute;inset:2px;border-radius:3px;background:${ti.color};display:flex;align-items:center;justify-content:center;font-size:.65rem;cursor:pointer;`;bloc.textContent=ti.icon;bloc.addEventListener('click',e=>{e.stopPropagation();if(isRO()){showRO();return;}delCongesAbs(abs.id);});cell.appendChild(bloc);}
+    row.appendChild(cell);
+  }
+  return row;
+}
+function buildMobileCongesSectionHeader(label,tW){
+  const div=document.createElement('div');
+  div.style.cssText=`width:${tW}px;background:var(--steel-mid);color:#fff;font-size:.62rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:4px 8px;`;
+  div.textContent=label;
+  return div;
+}
+function buildMobileCongesStatCard(person,year,month){
+  const absM=cState.absences.filter(a=>{if(a.techId!==person.id)return false;const d=new Date(a.date);return d.getFullYear()===year&&d.getMonth()===month;});
+  if(!absM.length)return null;
+  const counts={};TABS.forEach(t=>counts[t.id]=0);absM.forEach(a=>{if(counts[a.type]!==undefined)counts[a.type]++;});
+  const card=document.createElement('div');card.style.cssText='background:var(--card);border-radius:8px;border:1px solid var(--border);padding:10px 12px;margin-bottom:8px;';
+  card.innerHTML=`<div style="font-weight:700;font-size:.82rem;color:var(--steel);margin-bottom:6px;display:flex;align-items:center;gap:6px;"><div style="width:20px;height:20px;border-radius:50%;background:${person.color};display:flex;align-items:center;justify-content:center;color:#fff;font-size:.55rem;font-weight:700;">${person.nom.slice(0,2).toUpperCase()}</div>${person.nom}</div>${TABS.filter(t=>counts[t.id]>0).map(t=>`<div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:3px;"><span style="color:var(--muted);">${t.icon} ${t.label}</span><span style="font-weight:700;color:${t.color};">${counts[t.id]}j</span></div>`).join('')}<div style="border-top:1px solid var(--border);margin-top:5px;padding-top:4px;font-size:.72rem;display:flex;justify-content:space-between;"><span style="font-weight:700;">Total</span><span style="font-weight:700;">${absM.length}j</span></div>`;
+  return card;
+}
+function renderMobileConges(){
   const year=congesYear,month=congesMonth;const dim=new Date(year,month+1,0).getDate();const today=new Date();
   document.getElementById('mCongesMonth').textContent=`${MF[month].charAt(0).toUpperCase()+MF[month].slice(1)} ${year}`;
   const lW=55;const dW=Math.max(26,(window.innerWidth-lW-24)/Math.min(dim,14));
@@ -2149,31 +2195,22 @@ function renderMobileRow(type,ri,name,days,occ,gc,tW){
   const wrap=document.getElementById('mobileCongesGrid');wrap.innerHTML='';
   const outer=document.createElement('div');outer.style.width=tW+'px';
   const hdr=document.createElement('div');hdr.style.cssText=`display:grid;grid-template-columns:${gc};background:var(--steel);width:${tW}px;`;
-  hdr.innerHTML=`<div style="display:flex;align-items:center;padding:0 4px;color:rgba(255,255,255,.5);font-size:.55rem;font-weight:700;text-transform:uppercase;border-right:1px solid rgba(255,255,255,.1);">Tech</div>`;
+  hdr.innerHTML=`<div style="display:flex;align-items:center;padding:0 4px;color:rgba(255,255,255,.5);font-size:.55rem;font-weight:700;text-transform:uppercase;border-right:1px solid rgba(255,255,255,.1);">Perso.</div>`;
   for(let d=1;d<=dim;d++){const date=new Date(year,month,d);const dow=date.getDay();const isWE=dow===0||dow===6;const isTod=date.toDateString()===today.toDateString();const jc=['D','L','M','M','J','V','S'][dow];hdr.innerHTML+=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px 0;${isTod?'background:var(--accent);':''}${isWE?'opacity:.35;':''}border-right:1px solid rgba(255,255,255,.08);font-size:.55rem;color:#fff;font-weight:700;"><span style="font-size:.45rem;opacity:.7;">${jc}</span><span>${d}</span></div>`;}
   outer.appendChild(hdr);
-  TECHS.forEach(tech=>{
-    const row=document.createElement('div');row.style.cssText=`display:grid;grid-template-columns:${gc};width:${tW}px;border-bottom:1px solid var(--border);min-height:36px;`;
-    row.innerHTML=`<div style="display:flex;align-items:center;padding:0 3px;background:var(--card);border-right:2px solid var(--border);"><div style="width:18px;height:18px;border-radius:50%;background:${tech.color};display:flex;align-items:center;justify-content:center;color:#fff;font-size:.5rem;font-weight:700;">${tech.nom.slice(0,2).toUpperCase()}</div></div>`;
-    for(let d=1;d<=dim;d++){
-      const date=new Date(year,month,d);const dow=date.getDay();const isWE=dow===0||dow===6;const isTod=date.toDateString()===today.toDateString();const dk=dKey(date);
-      const cell=document.createElement('div');cell.style.cssText=`border-right:1px solid var(--border);position:relative;cursor:${isWE?'default':'pointer'};${isWE?'background:#fafafa;':''}${isTod?'background:rgba(232,76,30,.05);':''}`;
-      if(!isWE)cell.addEventListener('click',()=>{if(isRO()){showRO();return;}openMobileCongesModal(tech,date);});
-      const abs=cState.absences.find(a=>a.techId===tech.id&&a.date===dk);
-      if(abs){const ti=TABS.find(t=>t.id===abs.type)||TABS[0];const bloc=document.createElement('div');bloc.style.cssText=`position:absolute;inset:2px;border-radius:3px;background:${ti.color};display:flex;align-items:center;justify-content:center;font-size:.65rem;cursor:pointer;`;bloc.textContent=ti.icon;bloc.addEventListener('click',e=>{e.stopPropagation();if(isRO()){showRO();return;}delCongesAbs(abs.id);});cell.appendChild(bloc);}
-      row.appendChild(cell);
-    }
-    outer.appendChild(row);
-  });
+  if(TECHS.length){
+    outer.appendChild(buildMobileCongesSectionHeader('🔧 Techniciens',tW));
+    TECHS.forEach(tech=>outer.appendChild(buildMobileCongesRow(tech,gc,tW,year,month,dim,today,openMobileCongesModal)));
+  }
+  if(RECEPTION.length){
+    outer.appendChild(buildMobileCongesSectionHeader('🛎️ Réception',tW));
+    RECEPTION.forEach(r=>outer.appendChild(buildMobileCongesRow(r,gc,tW,year,month,dim,today,openMobileCongesModal)));
+  }
   wrap.appendChild(outer);
   const se=document.getElementById('mobileCongesStats');se.innerHTML='';
-  TECHS.forEach(tech=>{
-    const absM=cState.absences.filter(a=>{if(a.techId!==tech.id)return false;const d=new Date(a.date);return d.getFullYear()===year&&d.getMonth()===month;});
-    if(!absM.length)return;
-    const counts={};TABS.forEach(t=>counts[t.id]=0);absM.forEach(a=>{if(counts[a.type]!==undefined)counts[a.type]++;});
-    const card=document.createElement('div');card.style.cssText='background:var(--card);border-radius:8px;border:1px solid var(--border);padding:10px 12px;margin-bottom:8px;';
-    card.innerHTML=`<div style="font-weight:700;font-size:.82rem;color:var(--steel);margin-bottom:6px;display:flex;align-items:center;gap:6px;"><div style="width:20px;height:20px;border-radius:50%;background:${tech.color};display:flex;align-items:center;justify-content:center;color:#fff;font-size:.55rem;font-weight:700;">${tech.nom.slice(0,2).toUpperCase()}</div>${tech.nom}</div>${TABS.filter(t=>counts[t.id]>0).map(t=>`<div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:3px;"><span style="color:var(--muted);">${t.icon} ${t.label}</span><span style="font-weight:700;color:${t.color};">${counts[t.id]}j</span></div>`).join('')}<div style="border-top:1px solid var(--border);margin-top:5px;padding-top:4px;font-size:.72rem;display:flex;justify-content:space-between;"><span style="font-weight:700;">Total</span><span style="font-weight:700;">${absM.length}j</span></div>`;
-    se.appendChild(card);
+  [...TECHS,...RECEPTION].forEach(person=>{
+    const card=buildMobileCongesStatCard(person,year,month);
+    if(card)se.appendChild(card);
   });
 }
 
@@ -2557,53 +2594,69 @@ document.getElementById('btnCongesPrev').addEventListener('click',()=>{congesMon
 document.getElementById('btnCongesNext').addEventListener('click',()=>{congesMonth++;if(congesMonth>11){congesMonth=0;congesYear++;}renderConges();});
 document.getElementById('btnCongesToday').addEventListener('click',()=>{const n=new Date();congesYear=n.getFullYear();congesMonth=n.getMonth();renderConges();});
 
+function buildCongesRow(person,gc,year,month,dim,today){
+  const row=document.createElement('div');row.className='conges-grid-body-row';row.style.display='grid';row.style.gridTemplateColumns=gc;
+  const lbl=document.createElement('div');lbl.className='conges-tech-label';
+  lbl.innerHTML=`<div class="conges-tech-avatar" style="background:${person.color};">${person.nom.slice(0,2).toUpperCase()}</div>${person.nom}`;
+  row.appendChild(lbl);
+  for(let d=1;d<=dim;d++){
+    const date=new Date(year,month,d);const dow=date.getDay();const isWE=dow===0||dow===6;const isTod=date.toDateString()===today.toDateString();const dk=dKey(date);
+    const cell=document.createElement('div');cell.className=`conges-cell${isTod?' today-col':''}${isWE?' weekend-col':''}`;
+    if(!isWE)cell.addEventListener('click',()=>{if(isRO()){showRO();return;}openCongesModal(person,date);});
+    const abs=cState.absences.find(a=>a.techId===person.id&&a.date===dk);
+    if(abs){
+      const ti=TABS.find(t=>t.id===abs.type)||TABS[0];
+      const bloc=document.createElement('div');bloc.className=`conges-bloc type-${abs.type}`;bloc.title=abs.note||ti.label;
+      bloc.innerHTML=`${ti.icon}<span class="bloc-del">✕</span>`;
+      bloc.querySelector('.bloc-del').addEventListener('click',e=>{e.stopPropagation();if(isRO()){showRO();return;}delCongesAbs(abs.id);});
+      cell.appendChild(bloc);
+    }
+    row.appendChild(cell);
+  }
+  return row;
+}
+function buildCongesSectionHeader(label,gc){
+  const div=document.createElement('div');
+  div.style.cssText=`grid-column:1/-1;background:var(--steel-mid);color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 14px;`;
+  div.textContent=label;
+  return div;
+}
 function renderConges(){
   const year=congesYear,month=congesMonth;const dim=new Date(year,month+1,0).getDate();const today=new Date();
   document.getElementById('congesMonthLabel').textContent=`${MF[month].charAt(0).toUpperCase()+MF[month].slice(1)} ${year}`;
   const lW=170;const gc=`${lW}px repeat(${dim},1fr)`;
   const grid=document.getElementById('congesGrid');grid.innerHTML='';
   const hdr=document.createElement('div');hdr.className='conges-grid-header';hdr.style.gridTemplateColumns=gc;
-  hdr.innerHTML=`<div class="conges-h-label">Technicien</div>`;
+  hdr.innerHTML=`<div class="conges-h-label">Personnel</div>`;
   for(let d=1;d<=dim;d++){const date=new Date(year,month,d);const dow=date.getDay();const isWE=dow===0||dow===6;const isTod=date.toDateString()===today.toDateString();hdr.innerHTML+=`<div class="conges-h-day${isTod?' today':''}${isWE?' weekend':''}">${JF[dow].slice(0,1)}<br>${d}</div>`;}
   grid.appendChild(hdr);
-  TECHS.forEach(tech=>{
-    const row=document.createElement('div');row.className='conges-grid-body-row';row.style.display='grid';row.style.gridTemplateColumns=gc;
-    const lbl=document.createElement('div');lbl.className='conges-tech-label';
-    lbl.innerHTML=`<div class="conges-tech-avatar" style="background:${tech.color};">${tech.nom.slice(0,2).toUpperCase()}</div>${tech.nom}`;
-    row.appendChild(lbl);
-    for(let d=1;d<=dim;d++){
-      const date=new Date(year,month,d);const dow=date.getDay();const isWE=dow===0||dow===6;const isTod=date.toDateString()===today.toDateString();const dk=dKey(date);
-      const cell=document.createElement('div');cell.className=`conges-cell${isTod?' today-col':''}${isWE?' weekend-col':''}`;
-      if(!isWE)cell.addEventListener('click',()=>{if(isRO()){showRO();return;}openCongesModal(tech,date);});
-      const abs=cState.absences.find(a=>a.techId===tech.id&&a.date===dk);
-      if(abs){
-        const ti=TABS.find(t=>t.id===abs.type)||TABS[0];
-        const bloc=document.createElement('div');bloc.className=`conges-bloc type-${abs.type}`;bloc.title=abs.note||ti.label;
-        bloc.innerHTML=`${ti.icon}<span class="bloc-del">✕</span>`;
-        bloc.querySelector('.bloc-del').addEventListener('click',e=>{e.stopPropagation();if(isRO()){showRO();return;}delCongesAbs(abs.id);});
-        cell.appendChild(bloc);
-      }
-      row.appendChild(cell);
-    }
-    grid.appendChild(row);
-  });
+  if(TECHS.length){
+    grid.appendChild(buildCongesSectionHeader('🔧 Techniciens',gc));
+    TECHS.forEach(tech=>grid.appendChild(buildCongesRow(tech,gc,year,month,dim,today)));
+  }
+  if(RECEPTION.length){
+    grid.appendChild(buildCongesSectionHeader('🛎️ Réception',gc));
+    RECEPTION.forEach(r=>grid.appendChild(buildCongesRow(r,gc,year,month,dim,today)));
+  }
   renderCongesStats();
 }
 
+function buildCongesStatCard(person,year,month){
+  const absM=cState.absences.filter(a=>{if(a.techId!==person.id)return false;const d=new Date(a.date);return d.getFullYear()===year&&d.getMonth()===month;});
+  const counts={};TABS.forEach(t=>counts[t.id]=0);absM.forEach(a=>{if(counts[a.type]!==undefined)counts[a.type]++;});
+  const card=document.createElement('div');card.className='conges-stat-card';
+  card.innerHTML=`<div class="conges-stat-name"><div class="conges-tech-avatar" style="background:${person.color};width:22px;height:22px;font-size:.62rem;">${person.nom.slice(0,2).toUpperCase()}</div>${person.nom}</div>${TABS.map(t=>`<div class="conges-stat-row"><span class="label">${t.icon} ${t.label}</span><span class="val" style="color:${t.color};">${counts[t.id]}j</span></div>`).join('')}<div class="conges-stat-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px;"><span class="label" style="font-weight:700;">Total</span><span class="val">${absM.length}j</span></div>`;
+  return card;
+}
 function renderCongesStats(){
   const year=congesYear,month=congesMonth;const se=document.getElementById('congesStats');se.innerHTML='';
-  TECHS.forEach(tech=>{
-    const absM=cState.absences.filter(a=>{if(a.techId!==tech.id)return false;const d=new Date(a.date);return d.getFullYear()===year&&d.getMonth()===month;});
-    const counts={};TABS.forEach(t=>counts[t.id]=0);absM.forEach(a=>{if(counts[a.type]!==undefined)counts[a.type]++;});
-    const card=document.createElement('div');card.className='conges-stat-card';
-    card.innerHTML=`<div class="conges-stat-name"><div class="conges-tech-avatar" style="background:${tech.color};width:22px;height:22px;font-size:.62rem;">${tech.nom.slice(0,2).toUpperCase()}</div>${tech.nom}</div>${TABS.map(t=>`<div class="conges-stat-row"><span class="label">${t.icon} ${t.label}</span><span class="val" style="color:${t.color};">${counts[t.id]}j</span></div>`).join('')}<div class="conges-stat-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px;"><span class="label" style="font-weight:700;">Total</span><span class="val">${absM.length}j</span></div>`;
-    se.appendChild(card);
-  });
+  TECHS.forEach(tech=>se.appendChild(buildCongesStatCard(tech,year,month)));
+  RECEPTION.forEach(r=>se.appendChild(buildCongesStatCard(r,year,month)));
 }
 
 // ===== Gestion dynamique des techniciens (ajout/retrait selon les mois) =====
 function rebuildTechSelects(){
-  const selects=['apptTech','apptTech2','editApptTech','editApptTech2','mApptTech','mApptTech2','newUserTech','periodTechSelect','mPeriodTechSelect'];
+  const selects=['apptTech','apptTech2','editApptTech','editApptTech2','mApptTech','mApptTech2','newUserTech'];
   selects.forEach(id=>{
     const el=document.getElementById(id);if(!el)return;
     const current=el.value;
@@ -2653,6 +2706,67 @@ async function removeTechnicien(id){
   rebuildTechSelects();renderTechManageList();renderMobileTechManageList();
   render();if(isMobile())renderMobile();
   if(curPage==='conges'){if(isMobile())renderMobileConges();else renderConges();}
+}
+
+// ===== Gestion du personnel de Réception (distinct des techniciens, mêmes congés) =====
+function receptionManageItemHTML(r){
+  return `<div class="tech-manage-item"><div class="tech-manage-dot" style="background:${r.color}"></div><span>${r.nom}</span><button class="tech-manage-del" data-rid="${r.id}">✕</button></div>`;
+}
+function wireReceptionManageEvents(container){
+  container.querySelectorAll('.tech-manage-del').forEach(btn=>{
+    btn.addEventListener('click',()=>removeReceptionStaff(btn.dataset.rid));
+  });
+}
+function renderReceptionManageList(){
+  const el=document.getElementById('receptionManageList');if(!el)return;
+  el.innerHTML=RECEPTION.map(receptionManageItemHTML).join('')||'<span style="color:var(--muted);font-size:.82rem;">Personne pour le moment.</span>';
+  wireReceptionManageEvents(el);
+}
+function renderMobileReceptionManageList(){
+  const el=document.getElementById('mReceptionManageList');if(!el)return;
+  el.innerHTML=RECEPTION.map(receptionManageItemHTML).join('')||'<span style="color:var(--muted);font-size:.82rem;">Personne pour le moment.</span>';
+  wireReceptionManageEvents(el);
+}
+async function addReceptionStaff(mobile){
+  if(isRO()){showRO();return;}
+  const input=document.getElementById(mobile?'mNewReceptionName':'newReceptionName');
+  const name=input.value.trim();
+  if(!name){input.focus();return;}
+  const id='recep_'+genId();
+  RECEPTION=[...RECEPTION,{id,nom:name,color:RECEPTION_COLOR_PALETTE[RECEPTION.length%RECEPTION_COLOR_PALETTE.length]}];
+  input.value='';
+  await saveReception();
+  rebuildPeriodTechSelects();renderReceptionManageList();renderMobileReceptionManageList();
+  if(curPage==='conges'){if(isMobile())renderMobileConges();else renderConges();}
+}
+document.getElementById('btnAddReception').addEventListener('click',()=>addReceptionStaff(false));
+document.getElementById('mBtnAddReception').addEventListener('click',()=>addReceptionStaff(true));
+document.getElementById('newReceptionName').addEventListener('keydown',e=>{if(e.key==='Enter')addReceptionStaff(false);});
+document.getElementById('mNewReceptionName').addEventListener('keydown',e=>{if(e.key==='Enter')addReceptionStaff(true);});
+async function removeReceptionStaff(id){
+  if(isRO()){showRO();return;}
+  const r=RECEPTION.find(x=>x.id===id);if(!r)return;
+  if(!confirm(`Retirer ${r.nom} de la liste Réception ?\n\nSon historique de congés reste conservé, mais il n'apparaîtra plus dans le calendrier.`))return;
+  RECEPTION=RECEPTION.filter(x=>x.id!==id);
+  await saveReception();
+  rebuildPeriodTechSelects();renderReceptionManageList();renderMobileReceptionManageList();
+  if(curPage==='conges'){if(isMobile())renderMobileConges();else renderConges();}
+}
+
+// Sélecteurs du formulaire "Ajouter une période" : techniciens ET réception, regroupés
+function rebuildPeriodTechSelects(){
+  const buildOpts=()=>{
+    let html='<option value="">— Choisir —</option>';
+    if(TECHS.length)html+=`<optgroup label="🔧 Techniciens">${TECHS.map(t=>`<option value="${t.id}">${t.nom}</option>`).join('')}</optgroup>`;
+    if(RECEPTION.length)html+=`<optgroup label="🛎️ Réception">${RECEPTION.map(r=>`<option value="${r.id}">${r.nom}</option>`).join('')}</optgroup>`;
+    return html;
+  };
+  ['periodTechSelect','mPeriodTechSelect'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const current=el.value;
+    el.innerHTML=buildOpts();
+    if([...TECHS,...RECEPTION].some(p=>p.id===current))el.value=current;
+  });
 }
 
 function rebuildPeriodTypeSelects(){
