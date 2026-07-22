@@ -380,6 +380,17 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .dossier-photos-mini{display:flex;gap:8px;flex-wrap:wrap;}
 .dossier-photo-mini{width:56px;height:56px;border-radius:6px;object-fit:cover;border:2px solid var(--border);cursor:pointer;}
 .dossier-empty{text-align:center;color:var(--muted);padding:50px 20px;font-size:.9rem;}
+.tech-manage-panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:18px;}
+.tech-manage-title{font-size:.85rem;font-weight:700;color:var(--steel);margin-bottom:10px;}
+.tech-manage-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.tech-manage-item{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 6px 5px 10px;font-size:.82rem;font-weight:600;}
+.tech-manage-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.tech-manage-del{background:none;border:none;color:#e74c3c;cursor:pointer;font-size:.8rem;padding:2px 4px;line-height:1;}
+.tech-manage-add{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.tech-manage-add input{flex:1;min-width:160px;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:.85rem;font-family:inherit;outline:none;}
+.tech-manage-add input:focus{border-color:var(--accent);}
+.tech-manage-add button{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.tech-manage-add button:hover{background:#c43f18;}
 .sinistre-wrap{padding:20px;max-width:800px;margin:0 auto;}
 .sinistre-dropzone{border:2.5px dashed #aed6f1;border-radius:14px;padding:36px 20px;text-align:center;cursor:pointer;background:#f0f7ff;transition:all .15s;}
 .sinistre-dropzone:hover,.sinistre-dropzone.dragover{border-color:#2980b9;background:#e3f1fc;}
@@ -789,6 +800,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
         <button class="conges-today-btn" id="btnCongesToday">Aujourd'hui</button>
       </div>
     </div>
+    <div class="tech-manage-panel">
+      <div class="tech-manage-title">👥 Techniciens actifs</div>
+      <div class="tech-manage-list" id="techManageList"></div>
+      <div class="tech-manage-add">
+        <input type="text" id="newTechName" placeholder="Nom du nouveau technicien">
+        <button id="btnAddTech">➕ Ajouter</button>
+      </div>
+    </div>
     <div class="conges-legend">
       <div class="legend-item"><div class="legend-dot" style="background:#2ecc71"></div>Congés payés</div>
       <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div>Arrêt maladie</div>
@@ -802,6 +821,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <div class="conges-stats" id="congesStats"></div>
   </div>
   <div class="mobile-conges" id="mobileConges">
+    <div class="tech-manage-panel">
+      <div class="tech-manage-title">👥 Techniciens actifs</div>
+      <div class="tech-manage-list" id="mTechManageList"></div>
+      <div class="tech-manage-add">
+        <input type="text" id="mNewTechName" placeholder="Nom du nouveau technicien">
+        <button id="mBtnAddTech">➕ Ajouter</button>
+      </div>
+    </div>
     <div class="mobile-conges-nav">
       <button id="mBtnCongesPrev">‹</button>
       <div class="mobile-conges-month" id="mCongesMonth"></div>
@@ -1173,13 +1200,16 @@ const docConges=doc(db,"planning","conges");
 const docContrats=doc(db,"planning","contrats");
 const docHeures=doc(db,"planning","heures");
 const docDossiers=doc(db,"planning","dossiersEnAttente");
+const docTechs=doc(db,"planning","techniciens");
 
 const COLORS=['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
 const DL=['BAYON 01','BAYON 02','BAYON 03','BAYON 04','BAYON 05','BAYON 06','BAYON 07','BAYON 08'];
 const DNL=['Poste 1','Poste 2','Poste 3','Poste 4','Poste 5','Poste 6','Poste 7','Poste 8'];
 const JF=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 const MF=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-const TECHS=[{id:'fabien',nom:'Fabien',color:'#2980b9'},{id:'eric',nom:'Éric',color:'#27ae60'},{id:'david',nom:'David',color:'#8e44ad'},{id:'alois',nom:'Aloïs',color:'#c0392b'},{id:'anthony',nom:'Anthony',color:'#d35400'}];
+const DEFAULT_TECHS=[{id:'fabien',nom:'Fabien',color:'#2980b9'},{id:'eric',nom:'Éric',color:'#27ae60'},{id:'david',nom:'David',color:'#8e44ad'},{id:'alois',nom:'Aloïs',color:'#c0392b'},{id:'anthony',nom:'Anthony',color:'#d35400'}];
+let TECHS=[...DEFAULT_TECHS];
+const TECH_COLOR_PALETTE=['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50','#e67e22','#f39c12'];
 const TABS=[{id:'conge',label:'Congés payés',color:'#2ecc71',icon:'🏖️'},{id:'maladie',label:'Arrêt maladie',color:'#e74c3c',icon:'🤒'},{id:'accident',label:'Accident travail',color:'#e67e22',icon:'🚑'},{id:'formation',label:'Formation',color:'#2980b9',icon:'📚'},{id:'rtt',label:'RTT',color:'#8e44ad',icon:'📅'},{id:'sans-solde',label:'Sans solde',color:'#7f8c8d',icon:'📋'},{id:'ferie',label:'Jour férié',color:'#f39c12',icon:'🎉'}];
 const MAX_PHOTOS=10;
 
@@ -1280,6 +1310,10 @@ function showTechView(){
   onSnapshot(docHeures,snap=>{
     if(isSavH)return;
     if(snap.exists()){hState={...snap.data()};if(!Array.isArray(hState.entries))hState.entries=[];}else hState={entries:[]};
+    renderTechView();
+  });
+  onSnapshot(docTechs,snap=>{
+    if(snap.exists()&&Array.isArray(snap.data().list)&&snap.data().list.length){TECHS=snap.data().list;}else{TECHS=[...DEFAULT_TECHS];}
     renderTechView();
   });
   document.getElementById('tvBtnPrev').addEventListener('click',()=>{tvWeekOffset--;renderTechView();});
@@ -1460,6 +1494,7 @@ document.getElementById('btnAddUser').addEventListener('click',async()=>{
 
 function initApp(){
   buildCP('colorPicker',i=>selColor=i);buildMCP(i=>mSelColor=i);upTech();
+  rebuildTechSelects();renderTechManageList();renderMobileTechManageList();
   setupFirebaseListeners();setupEvents();
   if(isMobile())renderMobile();
 }
@@ -1485,6 +1520,12 @@ function setupFirebaseListeners(){
   onSnapshot(docContrats,snap=>{if(isSavCt)return;if(snap.exists()){ctState={...snap.data()};if(!Array.isArray(ctState.contrats))ctState.contrats=[];}else ctState={contrats:[]};if(curPage==='contrats'){renderContrats();if(isMobile())renderMobileContrats();}},err=>{console.error(err);});
   onSnapshot(docHeures,snap=>{if(isSavH)return;if(snap.exists()){hState={...snap.data()};if(!Array.isArray(hState.entries))hState.entries=[];}else hState={entries:[]};if(curPage==='heures'){renderDossiers();if(isMobile())renderMobileDossiers();}},err=>{console.error(err);});
   onSnapshot(docDossiers,snap=>{if(isSavD)return;if(snap.exists()){dState={...snap.data()};if(!Array.isArray(dState.items))dState.items=[];}else dState={items:[]};renderDossiersPending();if(isMobile())renderMobileDossiersPending();},err=>{console.error(err);});
+  onSnapshot(docTechs,snap=>{
+    if(snap.exists()&&Array.isArray(snap.data().list)&&snap.data().list.length){TECHS=snap.data().list;}else{TECHS=[...DEFAULT_TECHS];}
+    rebuildTechSelects();renderTechManageList();if(isMobile())renderMobileTechManageList();
+    render();if(isMobile())renderMobile();
+    if(curPage==='conges'){if(isMobile())renderMobileConges();else renderConges();}
+  },err=>{console.error(err);});
 }
 
 window.switchPage=function(page){
@@ -1886,6 +1927,7 @@ async function saveCG(){if(isRO()){showRO();return;}isSavC=true;ssc('save');try{
 async function saveCT(){if(isRO())return;isSavCt=true;try{await setDoc(docContrats,{...ctState,updatedAt:Date.now()});}catch(e){console.error(e);}setTimeout(()=>isSavCt=false,600);}
 async function saveHeures(){isSavH=true;try{await setDoc(docHeures,{...hState,updatedAt:Date.now()});}catch(e){console.error(e);}setTimeout(()=>isSavH=false,600);}
 async function saveDossiers(){if(isRO())return;isSavD=true;try{await setDoc(docDossiers,{...dState,updatedAt:Date.now()});}catch(e){console.error(e);}setTimeout(()=>isSavD=false,600);}
+async function saveTechs(){if(isRO())return;try{await setDoc(docTechs,{list:TECHS,updatedAt:Date.now()});}catch(e){console.error(e);}}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
 function todayISO(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function dFR(iso){try{const [y,m,d]=iso.split('-');return `${d}/${m}/${y.slice(2)}`;}catch(e){return iso;}}
@@ -2515,6 +2557,60 @@ function renderCongesStats(){
     card.innerHTML=`<div class="conges-stat-name"><div class="conges-tech-avatar" style="background:${tech.color};width:22px;height:22px;font-size:.62rem;">${tech.nom.slice(0,2).toUpperCase()}</div>${tech.nom}</div>${TABS.map(t=>`<div class="conges-stat-row"><span class="label">${t.icon} ${t.label}</span><span class="val" style="color:${t.color};">${counts[t.id]}j</span></div>`).join('')}<div class="conges-stat-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px;"><span class="label" style="font-weight:700;">Total</span><span class="val">${absM.length}j</span></div>`;
     se.appendChild(card);
   });
+}
+
+// ===== Gestion dynamique des techniciens (ajout/retrait selon les mois) =====
+function rebuildTechSelects(){
+  const selects=['apptTech','apptTech2','editApptTech','editApptTech2','mApptTech','mApptTech2','newUserTech'];
+  selects.forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const current=el.value;
+    el.innerHTML='<option value="">— Aucun —</option>'+TECHS.map(t=>`<option value="${t.id}">${t.nom}</option>`).join('');
+    if(TECHS.some(t=>t.id===current))el.value=current;
+  });
+}
+function techManageItemHTML(t){
+  return `<div class="tech-manage-item"><div class="tech-manage-dot" style="background:${t.color}"></div><span>${t.nom}</span><button class="tech-manage-del" data-tid="${t.id}">✕</button></div>`;
+}
+function wireTechManageEvents(container){
+  container.querySelectorAll('.tech-manage-del').forEach(btn=>{
+    btn.addEventListener('click',()=>removeTechnicien(btn.dataset.tid));
+  });
+}
+function renderTechManageList(){
+  const el=document.getElementById('techManageList');if(!el)return;
+  el.innerHTML=TECHS.map(techManageItemHTML).join('')||'<span style="color:var(--muted);font-size:.82rem;">Aucun technicien.</span>';
+  wireTechManageEvents(el);
+}
+function renderMobileTechManageList(){
+  const el=document.getElementById('mTechManageList');if(!el)return;
+  el.innerHTML=TECHS.map(techManageItemHTML).join('')||'<span style="color:var(--muted);font-size:.82rem;">Aucun technicien.</span>';
+  wireTechManageEvents(el);
+}
+async function addTechnicien(mobile){
+  if(isRO()){showRO();return;}
+  const input=document.getElementById(mobile?'mNewTechName':'newTechName');
+  const name=input.value.trim();
+  if(!name){input.focus();return;}
+  const id='tech_'+genId();
+  TECHS=[...TECHS,{id,nom:name,color:TECH_COLOR_PALETTE[TECHS.length%TECH_COLOR_PALETTE.length]}];
+  input.value='';
+  await saveTechs();
+  rebuildTechSelects();renderTechManageList();renderMobileTechManageList();
+}
+document.getElementById('btnAddTech').addEventListener('click',()=>addTechnicien(false));
+document.getElementById('mBtnAddTech').addEventListener('click',()=>addTechnicien(true));
+document.getElementById('newTechName').addEventListener('keydown',e=>{if(e.key==='Enter')addTechnicien(false);});
+document.getElementById('mNewTechName').addEventListener('keydown',e=>{if(e.key==='Enter')addTechnicien(true);});
+async function removeTechnicien(id){
+  if(isRO()){showRO();return;}
+  const t=TECHS.find(x=>x.id===id);if(!t)return;
+  if(!confirm(`Retirer ${t.nom} de la liste des techniciens ?\n\nSon historique (congés, heures, rendez-vous passés) reste conservé, mais il n'apparaîtra plus dans les congés ni dans les listes de choix.`))return;
+  TECHS=TECHS.filter(x=>x.id!==id);
+  await saveTechs();
+  rebuildTechSelects();renderTechManageList();renderMobileTechManageList();
+  render();if(isMobile())renderMobile();
+  if(curPage==='conges'){if(isMobile())renderMobileConges();else renderConges();}
 }
 
 function buildTypeGrid(gridId,cb){
