@@ -1070,21 +1070,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
       <button class="status-btn" id="btnArrived">✅ Client arrivé</button>
     </div>
     
-    <div class="heures-section">
-      <div class="heures-section-title">⏱ Heures travaillées</div>
-      <div class="heures-grid">
-        <div class="heure-item"><label>T1 — Tôlerie 1</label><input type="number" id="editHeuresT1" min="0" step="0.5" placeholder="0"></div>
-        <div class="heure-item"><label>T2 — Tôlerie 2</label><input type="number" id="editHeuresT2" min="0" step="0.5" placeholder="0"></div>
-        <div class="heure-item"><label>P — Peinture</label><input type="number" id="editHeuresP" min="0" step="0.5" placeholder="0"></div>
-      </div>
-      <div class="heures-total" id="editHeuresTotal">Total saisi : 0h</div>
-      <div id="editHeuresDate" style="font-size:.75rem;color:#1a5276;margin-top:6px;text-align:center;"></div>
-    </div>
-    <div class="photos-section">
-      <div class="photos-section-title">📸 Photos du dossier (max 10)</div>
-      <div class="photos-grid" id="editPhotosGrid"></div>
-      <input type="file" id="editPhotoInput" accept="image/*" multiple style="display:none;">
-    </div>
+    <div style="font-size:.78rem;color:#1a5276;background:#e8f4fd;border-radius:6px;padding:8px 12px;margin-top:14px;">ℹ️ Les heures travaillées et les photos saisies par le technicien sont visibles dans l'onglet <strong>🗂️ Suivi Technicien</strong>.</div>
     <label>Couleur</label><div class="color-picker" id="editColorPicker"></div>
     <div class="btn-row"><button class="btn-secondary" id="btnCloseEditModal">Annuler</button><button class="btn-primary" id="btnSaveEditAppt">Enregistrer</button></div>
   </div>
@@ -1282,7 +1268,7 @@ let isSav=false,isSavC=false,isSavCt=false;
 let currentUser=null,currentRole=null,currentTech=null;
 let contratAppt=null,pendingConges=null,selCongesType='conge';
 let curPage='atelier',pendingAppt=null,selColor=0,newPrio='moyenne';
-let editId=null,editSelColor=0,editStat='pending',editPieceStat='none',editPrio='moyenne',editRef=null,editPhotos=[];
+let editId=null,editSelColor=0,editStat='pending',editPieceStat='none',editPrio='moyenne',editRef=null;
 let pendingAbs=null,absType='conge',dragId=null,histPage=0,pendingDelId=null,restitId=null;
 let ctFilter='tous',ctSearch='',mCtFilter='tous',mCtSearch='';
 let mPendingAppt=null,mSelColor=0,mNewPrio='moyenne';
@@ -2337,13 +2323,6 @@ function updatePieceButtons(){
   document.querySelector('.piece-fournisseur').style.display=(editPieceStat==='ordered')?'block':'none';
 }
 function updateArrivedButtons(){['btnPending','btnArrived'].forEach(id=>document.getElementById(id).className='status-btn');document.getElementById(editStat==='arrived'?'btnArrived':'btnPending').classList.add(editStat==='arrived'?'active-arrived':'active-pending');}
-function upEditHeuresTotal(){
-  const t1=parseFloat(document.getElementById('editHeuresT1').value)||0;
-  const t2=parseFloat(document.getElementById('editHeuresT2').value)||0;
-  const p=parseFloat(document.getElementById('editHeuresP').value)||0;
-  document.getElementById('editHeuresTotal').textContent=`Total saisi : ${Math.round((t1+t2+p)*10)/10}h`;
-}
-['editHeuresT1','editHeuresT2','editHeuresP'].forEach(id=>document.getElementById(id).addEventListener('input',upEditHeuresTotal));
 
 function openEditModal(gid){
   const appts=state.appointments.filter(a=>a&&a.groupId===gid);
@@ -2364,15 +2343,8 @@ function openEditModal(gid){
   document.getElementById('editPieceFournisseur').value=root.pieceFournisseur||'';
   document.getElementById('editPieceNote').value=root.pieceNote||'';
   editStat=root.arrived?'arrived':'pending';updateArrivedButtons();
-  document.getElementById('editHeuresT1').value=root.heuresT1||'';
-  document.getElementById('editHeuresT2').value=root.heuresT2||'';
-  document.getElementById('editHeuresP').value=root.heuresP||'';
-  document.getElementById('editHeuresDate').textContent=root.heuresDate?`📅 Dernier pointage : ${root.heuresDate}`:'';
-  upEditHeuresTotal();
   editSelColor=Math.max(0,COLORS.indexOf(root.color));
   buildCP('editColorPicker',i=>editSelColor=i,editSelColor);
-  editPhotos=[...(root.photos||[])];
-  renderEditPhotos();
   upPrev('editApptPreview',root.day,gWO(root.weekStart),root.totalDays);
   document.getElementById('editModalOverlay').classList.add('open');
 }
@@ -2404,13 +2376,13 @@ async function saveEditAppt(){
   const memo=document.getElementById('editApptMemo').value.trim();
   const pieceFournisseur=document.getElementById('editPieceFournisseur').value.trim();
   const pieceNote=document.getElementById('editPieceNote').value.trim();
-  const heuresT1=parseFloat(document.getElementById('editHeuresT1').value)||0;
-  const heuresT2=parseFloat(document.getElementById('editHeuresT2').value)||0;
-  const heuresP=parseFloat(document.getElementById('editHeuresP').value)||0;
+  const heuresT1=editRef.heuresT1||0;
+  const heuresT2=editRef.heuresT2||0;
+  const heuresP=editRef.heuresP||0;
   const others=state.appointments.filter(a=>a&&a.groupId!==editId);
   const weekDays=gWD(gWO(editRef.weekStart));
   const segs=split(editRef.day,days,weekDays[0]);
-  const newSegs=segs.map(s=>na({id:s.segmentIndex===0?editRef.id:genId(),groupId:editId,type:editRef.type,row:editRef.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,technicien:tech,technicien2:tech2,hours,memo,priority:editPrio,color:COLORS[editSelColor],pieceStatus:editPieceStat,pieceFournisseur,pieceNote,arrived:editStat==='arrived',heuresT1,heuresT2,heuresP,heuresDate:editRef.heuresDate||'',photos:[...editPhotos]}));
+  const newSegs=segs.map(s=>na({id:s.segmentIndex===0?editRef.id:genId(),groupId:editId,type:editRef.type,row:editRef.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,technicien:tech,technicien2:tech2,hours,memo,priority:editPrio,color:COLORS[editSelColor],pieceStatus:editPieceStat,pieceFournisseur,pieceNote,arrived:editStat==='arrived',heuresT1,heuresT2,heuresP,heuresDate:editRef.heuresDate||'',photos:[...(editRef.photos||[])]}));
   state.appointments=[...others,...newSegs];
   document.getElementById('editModalOverlay').classList.remove('open');
   await saveFB();render();upStats();if(isMobile())renderMobile();
@@ -2554,40 +2526,6 @@ document.getElementById('lightbox').addEventListener('click',function(e){if(e.ta
 document.getElementById('lightboxDl').addEventListener('click',()=>{downloadPhoto(document.getElementById('lightboxImg').src,'photo_'+Date.now()+'.jpg');});
 
 function sanitizeFilename(s){return (s||'photo').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_+|_+$/g,'')||'photo';}
-
-function renderEditPhotos(){
-  const grid=document.getElementById('editPhotosGrid');grid.innerHTML='';
-  const baseName=sanitizeFilename(editRef?editRef.name:'photo');
-  editPhotos.forEach((ph,i)=>{
-    const wrap=document.createElement('div');wrap.className='photo-wrap';
-    const img=document.createElement('img');img.className='photo-thumb';img.src=ph;
-    img.addEventListener('click',()=>openLightbox(ph));
-    const del=document.createElement('button');del.className='photo-del-btn';del.textContent='✕';
-    del.addEventListener('click',e=>{e.stopPropagation();editPhotos.splice(i,1);renderEditPhotos();});
-    const dl=document.createElement('button');dl.className='photo-dl-btn';dl.textContent='⬇';dl.title='Télécharger';
-    dl.addEventListener('click',e=>{e.stopPropagation();downloadPhoto(ph,`${baseName}_photo_${i+1}.jpg`);});
-    wrap.appendChild(img);wrap.appendChild(del);wrap.appendChild(dl);grid.appendChild(wrap);
-  });
-  if(editPhotos.length<MAX_PHOTOS){
-    const add=document.createElement('label');add.className='photo-add-btn';add.setAttribute('for','editPhotoInput');
-    add.innerHTML='<span class="add-icon">📷</span>Ajouter';
-    grid.appendChild(add);
-  }
-  const existingBtn=grid.parentElement.querySelector('#btnDlAllPhotos');if(existingBtn)existingBtn.remove();
-  if(editPhotos.length>0){
-    const dlAll=document.createElement('button');dlAll.id='btnDlAllPhotos';dlAll.className='btn-dl-all';
-    dlAll.textContent=`⬇️ Télécharger toutes les photos (${editPhotos.length})`;
-    dlAll.addEventListener('click',()=>{editPhotos.forEach((ph,i)=>{setTimeout(()=>downloadPhoto(ph,`${baseName}_photo_${i+1}.jpg`),i*350);});});
-    grid.parentElement.appendChild(dlAll);
-  }
-}
-document.getElementById('editPhotoInput').addEventListener('change',async e=>{
-  const files=Array.from(e.target.files);if(!files.length)return;
-  const remaining=MAX_PHOTOS-editPhotos.length;
-  if(remaining<=0){alert('Maximum '+MAX_PHOTOS+' photos par dossier.');e.target.value='';return;}
-  for(const file of files.slice(0,remaining)){editPhotos.push(await fileToBase64(file));}
-  renderEditPhotos();e.target.value='';
-});
 
 // ===== Congés (desktop) =====
 document.getElementById('btnCongesPrev').addEventListener('click',()=>{congesMonth--;if(congesMonth<0){congesMonth=11;congesYear--;}renderConges();});
