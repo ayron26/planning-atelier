@@ -2669,12 +2669,12 @@ function rebuildPeriodTypeSelects(){
 // en remplissant tous les jours ouvrés (lundi-vendredi) de la plage, sans avoir à cliquer jour par jour.
 async function addAbsencePeriod(mobile){
   if(isRO()){showRO();return;}
-  const p=mobile?'m':'';
-  const techId=document.getElementById(p+'PeriodTechSelect').value;
-  const type=document.getElementById(p+'PeriodTypeSelect').value;
-  const dateDebutVal=document.getElementById(p+'PeriodDateDebut').value;
-  const dateFinVal=document.getElementById(p+'PeriodDateFin').value;
-  const note=document.getElementById(p+'PeriodNote').value.trim();
+  const ids=mobile?{tech:'mPeriodTechSelect',type:'mPeriodTypeSelect',debut:'mPeriodDateDebut',fin:'mPeriodDateFin',note:'mPeriodNote'}:{tech:'periodTechSelect',type:'periodTypeSelect',debut:'periodDateDebut',fin:'periodDateFin',note:'periodNote'};
+  const techId=document.getElementById(ids.tech).value;
+  const type=document.getElementById(ids.type).value;
+  const dateDebutVal=document.getElementById(ids.debut).value;
+  const dateFinVal=document.getElementById(ids.fin).value;
+  const note=document.getElementById(ids.note).value.trim();
   if(!techId){alert('Choisis un technicien.');return;}
   if(!dateDebutVal||!dateFinVal){alert('Renseigne une date de début et une date de fin.');return;}
   const dStart=new Date(dateDebutVal),dEnd=new Date(dateFinVal);
@@ -2690,9 +2690,9 @@ async function addAbsencePeriod(mobile){
   const keys=new Set(newEntries.map(e=>e.techId+'|'+e.date));
   cState.absences=[...(cState.absences||[]).filter(a=>!keys.has(a.techId+'|'+a.date)),...newEntries];
   await saveCG();
-  document.getElementById(p+'PeriodDateDebut').value='';
-  document.getElementById(p+'PeriodDateFin').value='';
-  document.getElementById(p+'PeriodNote').value='';
+  document.getElementById(ids.debut).value='';
+  document.getElementById(ids.fin).value='';
+  document.getElementById(ids.note).value='';
   renderConges();if(isMobile())renderMobileConges();
   alert(`${newEntries.length} jour(s) ajouté(s).`);
 }
