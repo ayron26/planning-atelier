@@ -1015,9 +1015,17 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 
 <div class="modal-overlay" id="confirmModalOverlay">
   <div class="confirm-modal">
-    <h3>⚠️ Confirmer la suppression</h3>
-    <p id="confirmText">Supprimer ce rendez-vous ?</p>
-    <div class="btn-row"><button class="btn-secondary" id="btnConfirmNon">Annuler</button><button class="btn-danger" id="btnConfirmOui">Supprimer</button></div>
+    <h3>Que faire de ce rendez-vous ?</h3>
+    <p id="confirmText">Rendez-vous : ...</p>
+    <div style="text-align:left;margin-top:10px;">
+      <label style="display:block;font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;">Note (optionnel, si mise en attente)</label>
+      <input type="text" id="holdNoteInput" placeholder="Ex : attente pièce, rappeler le client…" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.85rem;font-family:inherit;outline:none;">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
+      <button class="btn-primary" id="btnConfirmHold" style="background:#2980b9;">⏸️ Mettre en attente (à replacer plus tard)</button>
+      <button class="btn-danger" id="btnConfirmOui">🗑️ Supprimer définitivement</button>
+      <button class="btn-secondary" id="btnConfirmNon">Annuler</button>
+    </div>
   </div>
 </div>
 
@@ -1761,8 +1769,8 @@ async function handleSinistreFile(file,mobile){
 }
 
 function dossierPendingCardHTML(d){
-  return `<div class="dossier-pending-card" data-did="${d.id}">
-    <div class="dpc-info"><div class="dpc-nom">${d.nom}</div><div class="dpc-meta">${d.tel?'📞 '+d.tel+' · ':''}${d.immat?'🚗 '+d.immat+' · ':''}${d.compagnie?'🏢 '+d.compagnie+' · ':''}${d.adresse||''}</div></div>
+  return `<div class="dossier-pending-card" data-did="${d.id}" style="${d.held?'border-left-color:#8e44ad;':''}">
+    <div class="dpc-info"><div class="dpc-nom">${d.held?'⏸️ ':''}${d.nom}</div><div class="dpc-meta">${d.tel?'📞 '+d.tel+' · ':''}${d.immat?'🚗 '+d.immat+' · ':''}${d.compagnie?'🏢 '+d.compagnie+' · ':''}${d.adresse||''}</div>${d.note?`<div class="dpc-meta" style="color:#8e44ad;font-weight:600;margin-top:3px;">📝 ${d.note}</div>`:''}</div>
     <div class="dpc-actions"><button class="btn-placer dpc-place-btn">📍 Placer sur le planning</button><button class="btn-del-contrat dpc-del-btn">🗑️</button></div>
   </div>`;
 }
@@ -2149,20 +2157,21 @@ function doSearch(term,resEl,mobile){
 function openModal(type,row,day){
   if(isRO()){showRO();return;}
   pendingAppt={type,row,day,weekOffset:state.weekOffset};
+  const he=pendingPlacement&&pendingPlacement.heldExtra;
   document.getElementById('apptName').value=pendingPlacement?pendingPlacement.nom:'';
   document.getElementById('apptTel').value=pendingPlacement?pendingPlacement.tel:'';
   document.getElementById('apptAdresse').value=pendingPlacement?pendingPlacement.adresse:'';
   document.getElementById('apptImmat').value=pendingPlacement?(pendingPlacement.immat||''):'';
-  document.getElementById('apptTech').value='';
-  document.getElementById('apptTech2').value='';
-  document.getElementById('apptDays').value=1;
-  document.getElementById('apptHours').value=4;
-  document.getElementById('apptMemo').value=pendingPlacement&&pendingPlacement.compagnie?`🏢 Assurance : ${pendingPlacement.compagnie}`:'';
-  newPrio='moyenne';
+  document.getElementById('apptTech').value=he?(he.technicien||''):'';
+  document.getElementById('apptTech2').value=he?(he.technicien2||''):'';
+  document.getElementById('apptDays').value=he?(he.totalDays||1):1;
+  document.getElementById('apptHours').value=he?(he.hours||4):4;
+  document.getElementById('apptMemo').value=he?(he.memo||''):(pendingPlacement&&pendingPlacement.compagnie?`🏢 Assurance : ${pendingPlacement.compagnie}`:'');
+  newPrio=he?(he.priority||'moyenne'):'moyenne';
   document.querySelectorAll('#modalOverlay .status-row .status-btn').forEach(b=>b.classList.remove('active-basse','active-moyenne','active-haute'));
-  document.getElementById('newPrioMoyenne').classList.add('active-moyenne');
-  selColor=0;buildCP('colorPicker',i=>selColor=i,0);
-  upPrev('apptPreview',day,state.weekOffset,1);
+  document.getElementById('newPrio'+newPrio.charAt(0).toUpperCase()+newPrio.slice(1)).classList.add('active-'+newPrio);
+  selColor=he&&he.color?Math.max(0,COLORS.indexOf(he.color)):0;buildCP('colorPicker',i=>selColor=i,selColor);
+  upPrev('apptPreview',day,state.weekOffset,he?(he.totalDays||1):1);
   document.getElementById('modalOverlay').classList.add('open');
   setTimeout(()=>document.getElementById(pendingPlacement?'apptHours':'apptName').focus(),50);
 }
@@ -2188,7 +2197,8 @@ async function saveAppt(){
   const gid=genId();
   const weekDays=gWD(pendingAppt.weekOffset);
   const segs=split(pendingAppt.day,days,weekDays[0]);
-  const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:pendingAppt.type,row:pendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,technicien:tech,technicien2:tech2,hours,memo,priority:newPrio,color:COLORS[selColor],pieceStatus:'none',arrived:false}));
+  const he=pendingPlacement&&pendingPlacement.heldExtra;
+  const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:pendingAppt.type,row:pendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,technicien:tech,technicien2:tech2,hours,memo,priority:newPrio,color:COLORS[selColor],pieceStatus:he?(he.pieceStatus||'none'):'none',pieceFournisseur:he?(he.pieceFournisseur||''):'',pieceNote:he?(he.pieceNote||''):'',arrived:false,heuresT1:he?(he.heuresT1||0):0,heuresT2:he?(he.heuresT2||0):0,heuresP:he?(he.heuresP||0):0,heuresDate:he?(he.heuresDate||''):'',photos:he?(he.photos||[]):[]}));
   state.appointments=[...state.appointments,...newAppts];
   document.getElementById('modalOverlay').classList.remove('open');
   await saveFB();render();upStats();if(isMobile())renderMobile();
@@ -2289,7 +2299,8 @@ document.getElementById('btnSaveEditAppt').addEventListener('click',saveEditAppt
 // ===== Suppression =====
 function confirmDel(gid,name){
   pendingDelId=gid;
-  document.getElementById('confirmText').textContent=`Supprimer le rendez-vous « ${name} » ?`;
+  document.getElementById('confirmText').textContent=`Rendez-vous : « ${name} »`;
+  document.getElementById('holdNoteInput').value='';
   document.getElementById('confirmModalOverlay').classList.add('open');
 }
 function closeConfirm(){pendingDelId=null;document.getElementById('confirmModalOverlay').classList.remove('open');}
@@ -2301,6 +2312,50 @@ document.getElementById('btnConfirmOui').addEventListener('click',async()=>{
   closeConfirm();
   await saveFB();render();upStats();if(isMobile())renderMobile();
 });
+
+// Met un RDV "en pause" : il quitte le planning et va dans les dossiers en attente (onglet Nouveau dossier),
+// avec toutes ses infos conservées (heures, photos, technicien...), pour être replacé plus tard.
+async function holdAppointment(gid){
+  const segs=state.appointments.filter(a=>a&&a.groupId===gid);
+  const root=segs.find(a=>a.segmentIndex===0)||segs[0];
+  if(!root)return;
+  const note=document.getElementById('holdNoteInput').value.trim();
+  const item={
+    id:genId(),
+    nom:root.name||'',
+    tel:root.tel||'',
+    adresse:root.adresse||'',
+    immat:root.immat||'',
+    compagnie:'',
+    note,
+    held:true,
+    heldExtra:{
+      memo:root.memo||'',
+      hours:root.hours||0,
+      totalDays:root.totalDays||1,
+      technicien:root.technicien||'',
+      technicien2:root.technicien2||'',
+      priority:root.priority||'moyenne',
+      color:root.color||COLORS[0],
+      pieceStatus:root.pieceStatus||'none',
+      pieceFournisseur:root.pieceFournisseur||'',
+      pieceNote:root.pieceNote||'',
+      heuresT1:root.heuresT1||0,
+      heuresT2:root.heuresT2||0,
+      heuresP:root.heuresP||0,
+      heuresDate:root.heuresDate||'',
+      photos:root.photos||[]
+    },
+    createdAt:Date.now()
+  };
+  state.appointments=state.appointments.filter(a=>!a||a.groupId!==gid);
+  dState.items=[...(dState.items||[]),item];
+  closeConfirm();
+  await saveFB();await saveDossiers();
+  render();upStats();if(isMobile())renderMobile();
+  renderDossiersPending();if(isMobile())renderMobileDossiersPending();
+}
+document.getElementById('btnConfirmHold').addEventListener('click',()=>{if(pendingDelId)holdAppointment(pendingDelId);});
 
 // ===== Drag & drop =====
 function handleDrop(type,row,day){
@@ -2762,14 +2817,15 @@ function openMobileModal(type,row,day){
   if(isRO()){showRO();return;}
   isEditing=false;mEditGid=null;
   mPendingAppt={type,row,day,weekOffset:state.weekOffset};
+  const he=pendingPlacement&&pendingPlacement.heldExtra;
   document.getElementById('mModalTitle').textContent=pendingPlacement?'Placer le dossier « '+pendingPlacement.nom+' »':'Nouveau rendez-vous';
   document.getElementById('mApptName').value=pendingPlacement?pendingPlacement.nom:'';document.getElementById('mApptTel').value=pendingPlacement?pendingPlacement.tel:'';document.getElementById('mApptAdresse').value=pendingPlacement?pendingPlacement.adresse:'';
   document.getElementById('mApptImmat').value=pendingPlacement?(pendingPlacement.immat||''):'';
-  document.getElementById('mApptTech').value='';document.getElementById('mApptTech2').value='';
-  document.getElementById('mApptDays').value=1;document.getElementById('mApptHours').value=4;document.getElementById('mApptMemo').value=pendingPlacement&&pendingPlacement.compagnie?`🏢 Assurance : ${pendingPlacement.compagnie}`:'';
-  mNewPrio='moyenne';['mPrioBasse','mPrioMoyenne','mPrioHaute'].forEach(id=>document.getElementById(id).className='mprio-btn');document.getElementById('mPrioMoyenne').classList.add('active-moyenne');
-  mSelColor=0;buildMCP(i=>mSelColor=i,0);
-  upPrevM(day,state.weekOffset,1);
+  document.getElementById('mApptTech').value=he?(he.technicien||''):'';document.getElementById('mApptTech2').value=he?(he.technicien2||''):'';
+  document.getElementById('mApptDays').value=he?(he.totalDays||1):1;document.getElementById('mApptHours').value=he?(he.hours||4):4;document.getElementById('mApptMemo').value=he?(he.memo||''):(pendingPlacement&&pendingPlacement.compagnie?`🏢 Assurance : ${pendingPlacement.compagnie}`:'');
+  mNewPrio=he?(he.priority||'moyenne'):'moyenne';['mPrioBasse','mPrioMoyenne','mPrioHaute'].forEach(id=>document.getElementById(id).className='mprio-btn');document.getElementById('mPrio'+mNewPrio.charAt(0).toUpperCase()+mNewPrio.slice(1)).classList.add('active-'+mNewPrio);
+  mSelColor=he&&he.color?Math.max(0,COLORS.indexOf(he.color)):0;buildMCP(i=>mSelColor=i,mSelColor);
+  upPrevM(day,state.weekOffset,he?(he.totalDays||1):1);
   document.getElementById('mobileModalOverlay').classList.add('open');
 }
 function openMobileEditModal(gid){
@@ -2816,7 +2872,8 @@ document.getElementById('mBtnSaveAppt').addEventListener('click',async()=>{
   }else{
     const gid=genId();
     const segs=split(mPendingAppt.day,days,weekDays[0]);
-    const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:mPendingAppt.type,row:mPendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,technicien:tech,technicien2:tech2,hours,memo,priority:mNewPrio,color:COLORS[mSelColor],pieceStatus:'none',arrived:false}));
+    const he=pendingPlacement&&pendingPlacement.heldExtra;
+    const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:mPendingAppt.type,row:mPendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,technicien:tech,technicien2:tech2,hours,memo,priority:mNewPrio,color:COLORS[mSelColor],pieceStatus:he?(he.pieceStatus||'none'):'none',pieceFournisseur:he?(he.pieceFournisseur||''):'',pieceNote:he?(he.pieceNote||''):'',arrived:false,heuresT1:he?(he.heuresT1||0):0,heuresT2:he?(he.heuresT2||0):0,heuresP:he?(he.heuresP||0):0,heuresDate:he?(he.heuresDate||''):'',photos:he?(he.photos||[]):[]}));
     state.appointments=[...state.appointments,...newAppts];
   }
   document.getElementById('mobileModalOverlay').classList.remove('open');
