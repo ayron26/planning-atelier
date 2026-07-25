@@ -2021,18 +2021,37 @@ function wireDossierPendingEvents(container){
     });
   });
 }
+// Catégorise un dossier selon l'état de ses liens EAD/RDV, pour bien les séparer visuellement
+function getDossierLinkStatus(d){
+  const eadLink=eadLinks.find(l=>l.forDossier===d.id);
+  const eadBooking=eadLink?eadBookings.find(b=>b.token===eadLink.id):null;
+  const rdvLink=rdvLinks.find(l=>l.forDossier===d.id);
+  const rdvResponded=rdvLink&&rdvLink.dateChoisie;
+  if(eadBooking||rdvResponded)return'responded';
+  if(eadLink||rdvLink)return'waiting';
+  return'none';
+}
+function buildDossiersPendingHTML(items){
+  const groups={none:[],waiting:[],responded:[]};
+  items.forEach(d=>groups[getDossierLinkStatus(d)].push(d));
+  let html='';
+  if(groups.responded.length)html+=`<div class="dossiers-pending-title" style="margin-top:0;color:#1e8449;">✅ Le client a répondu — prêt à placer</div>${groups.responded.map(dossierPendingCardHTML).join('')}`;
+  if(groups.waiting.length)html+=`<div class="dossiers-pending-title" style="color:#9a6a00;">⏳ En attente de réponse du client</div>${groups.waiting.map(dossierPendingCardHTML).join('')}`;
+  if(groups.none.length)html+=`<div class="dossiers-pending-title" style="color:var(--muted);">🆕 Nouveaux dossiers (aucun lien envoyé)</div>${groups.none.map(dossierPendingCardHTML).join('')}`;
+  return html;
+}
 function renderDossiersPending(){
   const wrap=document.getElementById('dossiersPendingList');if(!wrap)return;
   const items=dState.items||[];
   if(!items.length){wrap.innerHTML='<div class="dossier-empty">📭 Aucun dossier en attente. Dépose un PDF ci-dessus pour en créer un.</div>';return;}
-  wrap.innerHTML=items.map(dossierPendingCardHTML).join('');
+  wrap.innerHTML=buildDossiersPendingHTML(items);
   wireDossierPendingEvents(wrap);
 }
 function renderMobileDossiersPending(){
   const wrap=document.getElementById('mDossiersPendingList');if(!wrap)return;
   const items=dState.items||[];
   if(!items.length){wrap.innerHTML='<div class="dossier-empty">📭 Aucun dossier en attente.</div>';return;}
-  wrap.innerHTML=items.map(dossierPendingCardHTML).join('');
+  wrap.innerHTML=buildDossiersPendingHTML(items);
   wireDossierPendingEvents(wrap);
 }
 
