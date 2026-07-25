@@ -426,7 +426,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .dpc-info{flex:1;min-width:180px;}
 .dpc-nom{font-weight:700;color:var(--steel);font-size:.92rem;}
 .dpc-meta{font-size:.78rem;color:var(--muted);margin-top:2px;}
-.dpc-actions{display:flex;gap:8px;flex-shrink:0;}
+.dpc-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;}
 .btn-placer{background:#2980b9;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
 .btn-genlink{background:#16a085;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
 .btn-genlink:hover{background:#128a72;}
@@ -1257,6 +1257,7 @@ const docReception=doc(db,"planning","reception");
 const EAD_HOURS=['09:00','10:00','11:00','14:00','15:00','16:00'];
 let eadBookings=[];
 let eadLinks=[];
+let rdvLinks=[];
 
 const COLORS=['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
 const DL=['BAYON 01','BAYON 02','BAYON 03','BAYON 04','BAYON 05','BAYON 06','BAYON 07','BAYON 08'];
@@ -1572,6 +1573,7 @@ function setupFirebaseListeners(){
       while(state.noLoanNames.length<8)state.noLoanNames.push('Poste '+state.noLoanNames.length);
       state.weekOffset=off;
       ss('ok');
+      updateDispoPublique();
     }else ss('ok');
     render();if(isMobile())renderMobile();
   },err=>{console.error(err);ss('err');render();});
@@ -1597,6 +1599,10 @@ function setupFirebaseListeners(){
   },err=>{console.error(err);});
   onSnapshot(collection(db,'eadLinks'),snap=>{
     eadLinks=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(curPage==='sinistre'){renderDossiersPending();if(isMobile())renderMobileDossiersPending();}
+  },err=>{console.error(err);});
+  onSnapshot(collection(db,'rdvLinks'),snap=>{
+    rdvLinks=snap.docs.map(d=>({id:d.id,...d.data()}));
     if(curPage==='sinistre'){renderDossiersPending();if(isMobile())renderMobileDossiersPending();}
   },err=>{console.error(err);});
 }
@@ -1824,7 +1830,11 @@ function extractSinistreFields(text){
     /Assureur\s*:?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ0-9&\-\' ]{2,40})/i
   ]);
 
-  return {nom:(nom||'').trim(),tel,adresse:adresse.trim(),immat:(immat||'').replace(/\s+/g,'').toUpperCase(),compagnie:(compagnie||'').trim()};
+  // Email du client : dans le bloc ASSURE en priorité (pour ne pas prendre l'email d'un tiers)
+  let email=tryPatterns(searchZone,[/([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/]);
+  if(!email)email=tryPatterns(text,[/([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/]);
+
+  return {nom:(nom||'').trim(),tel,adresse:adresse.trim(),immat:(immat||'').replace(/\s+/g,'').toUpperCase(),compagnie:(compagnie||'').trim(),email:(email||'').trim().toLowerCase()};
 }
 
 function renderSinReview(fields,rawText,mobile){
@@ -1840,6 +1850,7 @@ function renderSinReview(fields,rawText,mobile){
       <div class="full"><label>Adresse</label><input type="text" id="${mobile?'m':''}sinAdresse" value="${fields.adresse||''}"></div>
       <div><label>Immatriculation</label><input type="text" id="${mobile?'m':''}sinImmat" value="${fields.immat||''}"></div>
       <div><label>Compagnie d'assurance</label><input type="text" id="${mobile?'m':''}sinCompagnie" value="${fields.compagnie||''}"></div>
+      <div class="full"><label>Email</label><input type="email" id="${mobile?'m':''}sinEmail" value="${fields.email||''}"></div>
     </div>
     <span class="sinistre-raw-toggle" id="${mobile?'m':''}sinRawToggle">Voir le texte extrait du PDF</span>
     <div class="sinistre-raw-text" id="${mobile?'m':''}sinRawText">${(rawText||'').replace(/</g,'&lt;')}</div>
@@ -1856,6 +1867,7 @@ function renderSinReview(fields,rawText,mobile){
       adresse:document.getElementById((mobile?'m':'')+'sinAdresse').value.trim(),
       immat:document.getElementById((mobile?'m':'')+'sinImmat').value.trim(),
       compagnie:document.getElementById((mobile?'m':'')+'sinCompagnie').value.trim(),
+      email:document.getElementById((mobile?'m':'')+'sinEmail').value.trim(),
       createdAt:Date.now()
     };
     if(!item.nom){alert('Le nom du client est requis.');return;}
@@ -1882,18 +1894,70 @@ async function handleSinistreFile(file,mobile){
   document.getElementById(mobile?'mSinAnalyzing':'sinAnalyzing').style.display='none';
 }
 
-async function generateEadLink(d){
-  if(isRO()){showRO();return;}
+async function ensureEadLink(d){
   let link=eadLinks.find(l=>l.forDossier===d.id);
   let token=link?link.id:genToken();
   if(!link){
-    try{
-      await setDoc(doc(db,'eadLinks',token),{nom:d.nom||'',tel:d.tel||'',immat:d.immat||'',compagnie:d.compagnie||'',forDossier:d.id,createdAt:Date.now()});
-    }catch(e){console.error(e);alert("Erreur lors de la création du lien. As-tu bien ajouté les collections eadLinks dans les règles Firebase ?");return;}
+    await setDoc(doc(db,'eadLinks',token),{nom:d.nom||'',tel:d.tel||'',immat:d.immat||'',compagnie:d.compagnie||'',email:d.email||'',forDossier:d.id,createdAt:Date.now()});
   }
+  return token;
+}
+async function generateEadLink(d){
+  if(isRO()){showRO();return;}
+  let token;
+  try{token=await ensureEadLink(d);}
+  catch(e){console.error(e);alert("Erreur lors de la création du lien. As-tu bien ajouté les collections eadLinks dans les règles Firebase ?");return;}
   const url=getEadLinkUrl(token);
   const copied=await copyToClipboard(url);
   alert((copied?'✅ Lien copié dans le presse-papier !\n\n':'📋 Copie-le manuellement :\n\n')+url);
+}
+async function emailEadLink(d){
+  if(isRO()){showRO();return;}
+  let email=d.email;
+  if(!email){
+    email=prompt("Aucun email enregistré pour ce dossier.\nSaisis l'adresse email du client :","");
+    if(!email)return;
+  }
+  let token;
+  try{token=await ensureEadLink(d);}
+  catch(e){console.error(e);alert("Erreur lors de la création du lien. As-tu bien ajouté les collections eadLinks dans les règles Firebase ?");return;}
+  const url=getEadLinkUrl(token);
+  const subject="Rendez-vous EAD — Carrosserie Brun";
+  const body=`Bonjour ${d.nom||''},\n\nMerci de choisir un créneau pour l'expertise à distance (EAD) de votre véhicule en cliquant sur le lien ci-dessous :\n${url}\n\nCordialement,\nCarrosserie Brun — Valence Motors\n04 75 55 64 39`;
+  window.location.href=`mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+async function ensureRdvLink(d){
+  let link=rdvLinks.find(l=>l.forDossier===d.id);
+  let token=link?link.id:genToken();
+  if(!link){
+    await setDoc(doc(db,'rdvLinks',token),{nom:d.nom||'',tel:d.tel||'',adresse:d.adresse||'',immat:d.immat||'',compagnie:d.compagnie||'',email:d.email||'',forDossier:d.id,createdAt:Date.now()});
+  }
+  return token;
+}
+async function generateRdvLink(d){
+  if(isRO()){showRO();return;}
+  let token;
+  try{token=await ensureRdvLink(d);}
+  catch(e){console.error(e);alert("Erreur lors de la création du lien. As-tu bien ajouté les collections rdvLinks dans les règles Firebase ?");return;}
+  const url=getRdvLinkUrl(token);
+  const copied=await copyToClipboard(url);
+  alert((copied?'✅ Lien copié dans le presse-papier !\n\n':'📋 Copie-le manuellement :\n\n')+url);
+}
+async function emailRdvLink(d){
+  if(isRO()){showRO();return;}
+  let email=d.email;
+  if(!email){
+    email=prompt("Aucun email enregistré pour ce dossier.\nSaisis l'adresse email du client :","");
+    if(!email)return;
+  }
+  let token;
+  try{token=await ensureRdvLink(d);}
+  catch(e){console.error(e);alert("Erreur lors de la création du lien. As-tu bien ajouté les collections rdvLinks dans les règles Firebase ?");return;}
+  const url=getRdvLinkUrl(token);
+  const subject="Prendre rendez-vous — Carrosserie Brun";
+  const body=`Bonjour ${d.nom||''},\n\nMerci de choisir la date qui vous conviendrait pour votre rendez-vous en cliquant sur le lien ci-dessous. Nous vous recontacterons pour confirmer :\n${url}\n\nCordialement,\nCarrosserie Brun — Valence Motors\n04 75 55 64 39`;
+  window.location.href=`mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 function dossierPendingCardHTML(d){
   const link=eadLinks.find(l=>l.forDossier===d.id);
@@ -1901,9 +1965,15 @@ function dossierPendingCardHTML(d){
   let eadStatusHTML='';
   if(booking)eadStatusHTML=`<div class="dpc-link-status chosen">📷 EAD réservé : ${dFR(booking.date)} à ${booking.heure}</div>`;
   else if(link)eadStatusHTML=`<div class="dpc-link-status waiting">📷 Lien EAD envoyé, en attente du choix du client</div>`;
+  const rdvLink=rdvLinks.find(l=>l.forDossier===d.id);
+  let rdvStatusHTML='';
+  if(rdvLink&&rdvLink.dateChoisie){
+    const vp=rdvLink.vehiculePret?'🚗 avec véhicule de prêt':'🔧 sans véhicule de prêt';
+    rdvStatusHTML=`<div class="dpc-link-status chosen">📅 Date souhaitée : ${dFR(new Date(rdvLink.dateChoisie))} — ${vp}</div>`;
+  }else if(rdvLink)rdvStatusHTML=`<div class="dpc-link-status waiting">📅 Lien RDV envoyé, en attente du choix du client</div>`;
   return `<div class="dossier-pending-card" data-did="${d.id}" style="${d.held?'border-left-color:#8e44ad;':''}">
-    <div class="dpc-info"><div class="dpc-nom">${d.held?'⏸️ ':''}${d.nom}</div><div class="dpc-meta">${d.tel?'📞 '+d.tel+' · ':''}${d.immat?'🚗 '+d.immat+' · ':''}${d.compagnie?'🏢 '+d.compagnie+' · ':''}${d.adresse||''}</div>${d.note?`<div class="dpc-meta" style="color:#8e44ad;font-weight:600;margin-top:3px;">📝 ${d.note}</div>`:''}${eadStatusHTML}</div>
-    <div class="dpc-actions"><button class="btn-placer dpc-place-btn">📍 Placer sur le planning</button><button class="btn-genlink dpc-ead-btn">📷 Lien EAD</button><button class="btn-del-contrat dpc-del-btn">🗑️</button></div>
+    <div class="dpc-info"><div class="dpc-nom">${d.held?'⏸️ ':''}${d.nom}</div><div class="dpc-meta">${d.tel?'📞 '+d.tel+' · ':''}${d.immat?'🚗 '+d.immat+' · ':''}${d.compagnie?'🏢 '+d.compagnie+' · ':''}${d.email?'✉️ '+d.email+' · ':''}${d.adresse||''}</div>${d.note?`<div class="dpc-meta" style="color:#8e44ad;font-weight:600;margin-top:3px;">📝 ${d.note}</div>`:''}${eadStatusHTML}${rdvStatusHTML}</div>
+    <div class="dpc-actions"><button class="btn-placer dpc-place-btn">📍 Placer sur le planning</button><button class="btn-genlink dpc-rdv-btn" style="background:#8e44ad;">📅 Lien RDV</button><button class="btn-genlink dpc-rdvemail-btn" style="background:#6c3483;">✉️ Envoyer (RDV)</button><button class="btn-genlink dpc-ead-btn">📷 Lien EAD</button><button class="btn-genlink dpc-email-btn" style="background:#2980b9;">✉️ Envoyer (EAD)</button><button class="btn-del-contrat dpc-del-btn">🗑️</button></div>
   </div>`;
 }
 function wireDossierPendingEvents(container){
@@ -1927,6 +1997,27 @@ function wireDossierPendingEvents(container){
       const did=btn.closest('[data-did]').dataset.did;
       const d=(dState.items||[]).find(x=>x.id===did);if(!d)return;
       generateEadLink(d);
+    });
+  });
+  container.querySelectorAll('.dpc-email-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const did=btn.closest('[data-did]').dataset.did;
+      const d=(dState.items||[]).find(x=>x.id===did);if(!d)return;
+      emailEadLink(d);
+    });
+  });
+  container.querySelectorAll('.dpc-rdv-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const did=btn.closest('[data-did]').dataset.did;
+      const d=(dState.items||[]).find(x=>x.id===did);if(!d)return;
+      generateRdvLink(d);
+    });
+  });
+  container.querySelectorAll('.dpc-rdvemail-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const did=btn.closest('[data-did]').dataset.did;
+      const d=(dState.items||[]).find(x=>x.id===did);if(!d)return;
+      emailRdvLink(d);
     });
   });
 }
@@ -1984,7 +2075,14 @@ function renderMobileEadCalendar(){
 function startPlacement(draft){
   pendingPlacement=draft;
   switchPage('atelier');
-  const txt=`📍 Placement du dossier « ${draft.nom} » — clique sur une case libre du planning pour le positionner`;
+  const rdvLink=rdvLinks.find(l=>l.forDossier===draft.id);
+  let hint='';
+  if(rdvLink&&rdvLink.dateChoisie){
+    const off=gWO(rdvLink.dateChoisie);
+    state.weekOffset=off;render();if(isMobile())renderMobile();
+    hint=` — souhaite le ${dFR(new Date(rdvLink.dateChoisie))}, ${rdvLink.vehiculePret?'🚗 avec véhicule de prêt':'🔧 sans véhicule de prêt'}`;
+  }
+  const txt=`📍 Placement du dossier « ${draft.nom} »${hint} — clique sur une case libre du planning pour le positionner`;
   document.getElementById('placementBannerText').textContent=txt;
   document.getElementById('placementBanner').style.display='flex';
   document.getElementById('mPlacementBannerText').textContent=txt;
@@ -2072,6 +2170,10 @@ function getEadLinkUrl(token){
   const base=location.origin+location.pathname.replace(/[^/]+$/,'');
   return base+'ead.html?t='+token;
 }
+function getRdvLinkUrl(token){
+  const base=location.origin+location.pathname.replace(/[^/]+$/,'');
+  return base+'rdv.html?t='+token;
+}
 async function copyToClipboard(text){
   try{await navigator.clipboard.writeText(text);return true;}catch(e){return false;}
 }
@@ -2107,6 +2209,53 @@ function getTechInfo(techId){if(!techId)return null;return TECHS.find(t=>t.id===
 function chTech(d){if(isRO()){showRO();return;}nbTech=Math.max(1,Math.min(20,nbTech+d));localStorage.setItem('carrosserie_tech',nbTech);upTech();}
 function upTech(){const cap=nbTech*39;document.getElementById('techCount').textContent=nbTech;document.getElementById('totalCapacity').textContent=cap+'h';const days=gWD(),ws=days[0].toDateString();const wa=state.appointments.filter(a=>a&&new Date(a.weekStart).toDateString()===ws);const used=wa.reduce((s,a)=>s+hSeg(a.hours||0,a.totalDays||1,a.span||1),0);const pct=cap>0?Math.round((used/cap)*100):0;const el=document.getElementById('fillRate');if(el){el.textContent=pct+'%';el.style.color=pct>=100?'#e74c3c':pct>=80?'#f5a623':'#2ecc71';}}
 function getOcc(days){const ws=days[0].toDateString();const occ=new Set();state.appointments.filter(a=>{if(!a||!a.weekStart)return false;try{return new Date(a.weekStart).toDateString()===ws;}catch(e){return false;}}).forEach(a=>{for(let d=a.day;d<Math.min(a.day+(a.span||1),5);d++)occ.add(`${a.type}-${a.row}-${d}`);});return occ;}
+
+// ===== Disponibilité publique (pour le lien client RDV) =====
+// Ne contient JAMAIS de nom/tél/adresse : juste "3 jours libres possibles ce jour-là, oui/non"
+// pour les véhicules de prêt et pour les postes sans véhicule, séparément.
+const DISPO_NB_SEMAINES=10;
+const DISPO_JOURS_REQUIS=3;
+function getConsecutiveWeekdays(startDay,count){
+  const result=[];let cur=new Date(startDay);
+  while(result.length<count){
+    const dow=cur.getDay();
+    if(dow!==0&&dow!==6)result.push(new Date(cur));
+    cur.setDate(cur.getDate()+1);
+  }
+  return result;
+}
+function computeDispoPublique(){
+  const occ=new Set();
+  state.appointments.forEach(a=>{
+    if(!a||!a.weekStart)return;
+    try{
+      const ws=new Date(a.weekStart);
+      const d=new Date(ws);d.setDate(d.getDate()+a.day);
+      occ.add(`${a.type}-${a.row}-${dKey(d)}`);
+    }catch(e){}
+  });
+  const today=new Date();today.setHours(0,0,0,0);
+  const monday=gMon(today);
+  const available={};
+  for(let w=0;w<DISPO_NB_SEMAINES;w++){
+    for(let i=0;i<5;i++){
+      const day=new Date(monday);day.setDate(day.getDate()+w*7+i);
+      if(day<today)continue;
+      const consecutiveDays=getConsecutiveWeekdays(day,DISPO_JOURS_REQUIS);
+      const loanFree=state.loanNames.some((_,ri)=>consecutiveDays.every(d2=>!occ.has(`loan-${ri}-${dKey(d2)}`)));
+      const noloanFree=state.noLoanNames.some((_,ri)=>consecutiveDays.every(d2=>!occ.has(`noloan-${ri}-${dKey(d2)}`)));
+      available[dKey(day)]={loan:loanFree,noloan:noloanFree};
+    }
+  }
+  return available;
+}
+async function updateDispoPublique(){
+  if(isRO())return;
+  try{
+    const available=computeDispoPublique();
+    await setDoc(doc(db,'planning','dispoPublique'),{available,updatedAt:Date.now()});
+  }catch(e){console.error(e);}
+}
 
 function render(){
   const days=gWD();document.getElementById('weekLabel').textContent=gWL(days);upStats();
