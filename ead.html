@@ -111,7 +111,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getFirestore,doc,getDoc,setDoc,collection,getDocs}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import{getAuth,signInAnonymously}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getAuth,signInAnonymously,setPersistence,browserSessionPersistence}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const FC={apiKey:"AIzaSyA472wEsqwdcO6rf6fRybUA3Zy2vHR0z3I",authDomain:"planning-carrosserie-48819.firebaseapp.com",projectId:"planning-carrosserie-48819",storageBucket:"planning-carrosserie-48819.firebasestorage.app",messagingSenderId:"72223690252",appId:"1:72223690252:web:1bdb17a61caa960c08a829"};
 const fbApp=initializeApp(FC);
@@ -137,6 +137,7 @@ async function init(){
   token=new URLSearchParams(location.search).get('t');
   if(!token){showState('stateInvalid');return;}
   try{
+    await setPersistence(auth,browserSessionPersistence);
     await signInAnonymously(auth);
     const snap=await getDoc(doc(db,'eadLinks',token));
     if(!snap.exists()){showState('stateInvalid');return;}
