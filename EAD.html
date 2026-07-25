@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Prendre rendez-vous EAD — Carrosserie Brun</title>
+<style>
+:root{--steel:#1e2a38;--steel-mid:#2c3e52;--accent:#e84c1e;--surface:#f0f2f5;--card:#ffffff;--border:#d8dee6;--text:#1e2a38;--muted:#6b7a8d;--ok:#16a085;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px 60px;}
+.wrap{width:100%;max-width:480px;}
+.brand{text-align:center;margin-bottom:20px;}
+.brand .icon{font-size:2rem;}
+.brand .name{font-weight:700;font-size:1.05rem;color:var(--steel);margin-top:4px;}
+.brand .name span{color:var(--accent);}
+.brand .sub{font-size:.78rem;color:var(--muted);margin-top:2px;}
+.card{background:var(--card);border-radius:16px;box-shadow:0 4px 24px rgba(30,42,56,.08);padding:24px 22px;}
+.state{display:none;}
+.state.active{display:block;}
+.loader-icon{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.center-text{text-align:center;color:var(--muted);font-size:.92rem;line-height:1.6;}
+.title-lg{font-size:1.15rem;font-weight:700;color:var(--steel);margin-bottom:8px;text-align:center;}
+.icon-lg{font-size:2.4rem;text-align:center;margin-bottom:10px;}
+.greeting{font-size:.95rem;color:var(--text);margin-bottom:4px;}
+.greeting strong{color:var(--accent);}
+.subtext{font-size:.82rem;color:var(--muted);margin-bottom:18px;line-height:1.5;}
+.week-block{margin-bottom:16px;}
+.week-label{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding-left:2px;}
+.day-block{margin-bottom:10px;}
+.day-label{font-size:.85rem;font-weight:700;color:var(--steel);margin-bottom:6px;}
+.slot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.slot-btn{border:1.5px solid var(--border);background:var(--surface);border-radius:10px;padding:11px 4px;font-size:.85rem;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;transition:all .15s;}
+.slot-btn:hover:not(:disabled){border-color:var(--accent);background:#fff5f0;color:var(--accent);}
+.slot-btn:disabled{background:#eceff2;color:#b8c0c9;border-color:#eceff2;cursor:not-allowed;text-decoration:line-through;}
+.confirm-box{border:1.5px solid var(--accent);background:#fff5f0;border-radius:12px;padding:16px;margin-top:16px;}
+.confirm-box .cb-title{font-size:.85rem;font-weight:700;color:var(--steel);margin-bottom:10px;}
+.confirm-box .cb-date{font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:14px;}
+.btn-row{display:flex;gap:10px;}
+.btn-primary{flex:1;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn-primary:hover{background:#c43f18;}
+.btn-primary:disabled{background:var(--muted);cursor:wait;}
+.btn-secondary{background:#fff;color:var(--muted);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;font-size:.9rem;cursor:pointer;font-family:inherit;}
+.footer-note{text-align:center;font-size:.75rem;color:var(--muted);margin-top:18px;line-height:1.6;}
+.footer-note a{color:var(--accent);text-decoration:none;font-weight:600;}
+.error-icon{color:#e74c3c;}
+.success-icon{color:var(--ok);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="icon">🔧</div>
+    <div class="name"><span>CARROSSERIE BRUN</span> — Valence Motors</div>
+    <div class="sub">Prise de rendez-vous — Expertise à distance (EAD)</div>
+  </div>
+
+  <div class="card">
+
+    <div class="state active" id="stateLoading">
+      <div class="loader-icon"></div>
+      <div class="center-text">Chargement de votre dossier…</div>
+    </div>
+
+    <div class="state" id="stateInvalid">
+      <div class="icon-lg error-icon">✕</div>
+      <div class="title-lg">Lien invalide ou expiré</div>
+      <div class="center-text">Ce lien ne correspond à aucun dossier actif. Merci de contacter directement le garage.</div>
+    </div>
+
+    <div class="state" id="stateAlreadyBooked">
+      <div class="icon-lg success-icon">✓</div>
+      <div class="title-lg">Rendez-vous déjà confirmé</div>
+      <div class="center-text" id="alreadyBookedText"></div>
+    </div>
+
+    <div class="state" id="statePicker">
+      <div class="greeting">Bonjour <strong id="clientNom"></strong>,</div>
+      <div class="subtext" id="clientSub">Merci de choisir un créneau d'1h pour l'expertise à distance de votre véhicule. Un technicien vous accueillera au garage à l'heure choisie.</div>
+      <div id="calendarContainer"></div>
+      <div class="confirm-box" id="confirmBox" style="display:none;">
+        <div class="cb-title">Confirmer ce rendez-vous ?</div>
+        <div class="cb-date" id="confirmDateText"></div>
+        <div class="btn-row">
+          <button class="btn-secondary" id="btnCancelConfirm">Annuler</button>
+          <button class="btn-primary" id="btnConfirmBooking">Confirmer</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="state" id="stateSuccess">
+      <div class="icon-lg success-icon">✓</div>
+      <div class="title-lg">Rendez-vous confirmé !</div>
+      <div class="center-text" id="successText"></div>
+    </div>
+
+    <div class="state" id="stateError">
+      <div class="icon-lg error-icon">⚠️</div>
+      <div class="title-lg">Une erreur est survenue</div>
+      <div class="center-text" id="errorText">Merci de réessayer, ou de contacter directement le garage.</div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">
+    Carrosserie Brun — Valence Motors · 307 avenue de Romans, 26000 Valence<br>
+    📞 <a href="tel:0475556439">04 75 55 64 39</a>
+  </div>
+</div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getFirestore,doc,getDoc,setDoc,collection,getDocs}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{getAuth,signInAnonymously}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const FC={apiKey:"AIzaSyA472wEsqwdcO6rf6fRybUA3Zy2vHR0z3I",authDomain:"planning-carrosserie-48819.firebaseapp.com",projectId:"planning-carrosserie-48819",storageBucket:"planning-carrosserie-48819.firebasestorage.app",messagingSenderId:"72223690252",appId:"1:72223690252:web:1bdb17a61caa960c08a829"};
+const fbApp=initializeApp(FC);
+const db=getFirestore(fbApp);
+const auth=getAuth(fbApp);
+
+const EAD_HOURS=['09:00','10:00','11:00','14:00','15:00','16:00'];
+const JF=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+const MF=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const NB_SEMAINES=4;
+
+let linkData=null,token=null,takenSlots=new Set(),pendingChoice=null;
+
+function showState(id){
+  document.querySelectorAll('.state').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function dKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function fFR(d){return `${JF[d.getDay()]} ${d.getDate()} ${MF[d.getMonth()]}`;}
+function slotId(dateIso,heure){return dateIso+'_'+heure.replace(':','');}
+
+async function init(){
+  token=new URLSearchParams(location.search).get('t');
+  if(!token){showState('stateInvalid');return;}
+  try{
+    await signInAnonymously(auth);
+    const snap=await getDoc(doc(db,'eadLinks',token));
+    if(!snap.exists()){showState('stateInvalid');return;}
+    linkData=snap.data();
+
+    // Le client a-t-il déjà réservé avec ce lien ?
+    const availSnap=await getDocs(collection(db,'eadAvailability'));
+    availSnap.forEach(d=>{if(d.data().taken)takenSlots.add(d.id);});
+    const bookingsSnap=await getDocs(collection(db,'eadBookings'));
+    let already=null;
+    bookingsSnap.forEach(d=>{if(d.data().token===token)already=d.data();});
+    if(already){
+      document.getElementById('alreadyBookedText').textContent=`Votre rendez-vous du ${fFR(new Date(already.date))} à ${already.heure} est bien enregistré. À bientôt !`;
+      showState('stateAlreadyBooked');
+      return;
+    }
+
+    document.getElementById('clientNom').textContent=linkData.nom||'';
+    if(linkData.immat)document.getElementById('clientSub').textContent+=` Véhicule : ${linkData.immat}.`;
+    renderCalendar();
+    showState('statePicker');
+  }catch(e){
+    console.error(e);
+    showState('stateError');
+  }
+}
+
+function renderCalendar(){
+  const container=document.getElementById('calendarContainer');
+  container.innerHTML='';
+  const today=new Date();today.setHours(0,0,0,0);
+  for(let w=0;w<NB_SEMAINES;w++){
+    const weekBlock=document.createElement('div');weekBlock.className='week-block';
+    const monday=new Date(today);
+    const dow=monday.getDay();
+    const diffToMonday=dow===0?1:(dow===1?0:8-dow);
+    monday.setDate(monday.getDate()+diffToMonday+w*7);
+    weekBlock.innerHTML=`<div class="week-label">Semaine du ${monday.getDate()} ${MF[monday.getMonth()]}</div>`;
+    for(let i=0;i<5;i++){
+      const day=new Date(monday);day.setDate(day.getDate()+i);
+      if(day<today)continue;
+      const dateIso=dKey(day);
+      const dayBlock=document.createElement('div');dayBlock.className='day-block';
+      dayBlock.innerHTML=`<div class="day-label">${fFR(day)}</div>`;
+      const grid=document.createElement('div');grid.className='slot-grid';
+      EAD_HOURS.forEach(h=>{
+        const sid=slotId(dateIso,h);
+        const taken=takenSlots.has(sid);
+        const btn=document.createElement('button');
+        btn.className='slot-btn';btn.textContent=h;btn.disabled=taken;
+        if(!taken)btn.addEventListener('click',()=>selectSlot(dateIso,h,day));
+        grid.appendChild(btn);
+      });
+      dayBlock.appendChild(grid);
+      weekBlock.appendChild(dayBlock);
+    }
+    container.appendChild(weekBlock);
+  }
+}
+
+function selectSlot(dateIso,heure,dayObj){
+  pendingChoice={dateIso,heure,dayObj};
+  document.getElementById('confirmDateText').textContent=`${fFR(dayObj)} à ${heure}`;
+  document.getElementById('confirmBox').style.display='block';
+  document.getElementById('confirmBox').scrollIntoView({behavior:'smooth',block:'center'});
+}
+document.getElementById('btnCancelConfirm').addEventListener('click',()=>{
+  pendingChoice=null;
+  document.getElementById('confirmBox').style.display='none';
+});
+document.getElementById('btnConfirmBooking').addEventListener('click',async()=>{
+  if(!pendingChoice)return;
+  const btn=document.getElementById('btnConfirmBooking');
+  btn.disabled=true;btn.textContent='Confirmation…';
+  const sid=slotId(pendingChoice.dateIso,pendingChoice.heure);
+  try{
+    await setDoc(doc(db,'eadAvailability',sid),{taken:true,date:pendingChoice.dateIso,heure:pendingChoice.heure});
+  }catch(e){
+    alert("Ce créneau vient d'être pris par quelqu'un d'autre. Merci d'en choisir un autre.");
+    takenSlots.add(sid);
+    document.getElementById('confirmBox').style.display='none';
+    renderCalendar();
+    btn.disabled=false;btn.textContent='Confirmer';
+    return;
+  }
+  try{
+    await setDoc(doc(db,'eadBookings',sid),{date:pendingChoice.dateIso,heure:pendingChoice.heure,nom:linkData.nom||'',tel:linkData.tel||'',immat:linkData.immat||'',compagnie:linkData.compagnie||'',token,createdAt:Date.now()});
+  }catch(e){console.error(e);}
+  document.getElementById('successText').textContent=`Votre rendez-vous du ${fFR(pendingChoice.dayObj)} à ${pendingChoice.heure} est confirmé. À bientôt à la Carrosserie Brun !`;
+  showState('stateSuccess');
+});
+
+init();
+</script>
+</body>
+</html>
