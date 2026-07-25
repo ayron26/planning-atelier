@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Demande de rendez-vous — Carrosserie Brun</title>
+<style>
+:root{--steel:#1e2a38;--steel-mid:#2c3e52;--accent:#e84c1e;--surface:#f0f2f5;--card:#ffffff;--border:#d8dee6;--text:#1e2a38;--muted:#6b7a8d;--ok:#16a085;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px 60px;}
+.wrap{width:100%;max-width:480px;}
+.brand{text-align:center;margin-bottom:20px;}
+.brand .icon{font-size:2rem;}
+.brand .name{font-weight:700;font-size:1.05rem;color:var(--steel);margin-top:4px;}
+.brand .name span{color:var(--accent);}
+.brand .sub{font-size:.78rem;color:var(--muted);margin-top:2px;}
+.card{background:var(--card);border-radius:16px;box-shadow:0 4px 24px rgba(30,42,56,.08);padding:24px 22px;}
+.state{display:none;}
+.state.active{display:block;}
+.loader-icon{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.center-text{text-align:center;color:var(--muted);font-size:.92rem;line-height:1.6;}
+.title-lg{font-size:1.15rem;font-weight:700;color:var(--steel);margin-bottom:8px;text-align:center;}
+.icon-lg{font-size:2.4rem;text-align:center;margin-bottom:10px;}
+.greeting{font-size:.95rem;color:var(--text);margin-bottom:4px;}
+.greeting strong{color:var(--accent);}
+.subtext{font-size:.82rem;color:var(--muted);margin-bottom:18px;line-height:1.5;}
+.choice-row{display:flex;flex-direction:column;gap:12px;margin-top:16px;}
+.choice-btn{border:2px solid var(--border);background:var(--surface);border-radius:12px;padding:18px 16px;font-size:.95rem;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;text-align:left;display:flex;align-items:center;gap:12px;transition:all .15s;}
+.choice-btn .cbi{font-size:1.6rem;}
+.choice-btn:hover{border-color:var(--accent);background:#fff5f0;}
+.week-block{margin-bottom:16px;}
+.week-label{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding-left:2px;}
+.day-grid{display:flex;flex-direction:column;gap:8px;}
+.day-btn{border:1.5px solid var(--border);background:var(--surface);border-radius:10px;padding:12px 14px;font-size:.88rem;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;text-align:left;transition:all .15s;}
+.day-btn:hover{border-color:var(--accent);background:#fff5f0;color:var(--accent);}
+.no-slots{text-align:center;color:var(--muted);font-size:.85rem;padding:20px;}
+.confirm-box{border:1.5px solid var(--accent);background:#fff5f0;border-radius:12px;padding:16px;margin-top:16px;}
+.confirm-box .cb-title{font-size:.85rem;font-weight:700;color:var(--steel);margin-bottom:10px;}
+.confirm-box .cb-date{font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:14px;}
+.btn-row{display:flex;gap:10px;}
+.btn-primary{flex:1;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn-primary:hover{background:#c43f18;}
+.btn-primary:disabled{background:var(--muted);cursor:wait;}
+.btn-secondary{background:#fff;color:var(--muted);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;font-size:.9rem;cursor:pointer;font-family:inherit;}
+.back-link{font-size:.8rem;color:var(--muted);text-align:center;margin-top:14px;cursor:pointer;text-decoration:underline;}
+.footer-note{text-align:center;font-size:.75rem;color:var(--muted);margin-top:18px;line-height:1.6;}
+.footer-note a{color:var(--accent);text-decoration:none;font-weight:600;}
+.error-icon{color:#e74c3c;}
+.success-icon{color:var(--ok);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="icon">🔧</div>
+    <div class="name"><span>CARROSSERIE BRUN</span> — Valence Motors</div>
+    <div class="sub">Demande de rendez-vous</div>
+  </div>
+
+  <div class="card">
+
+    <div class="state active" id="stateLoading">
+      <div class="loader-icon"></div>
+      <div class="center-text">Chargement de votre dossier…</div>
+    </div>
+
+    <div class="state" id="stateInvalid">
+      <div class="icon-lg error-icon">✕</div>
+      <div class="title-lg">Lien invalide ou expiré</div>
+      <div class="center-text">Ce lien ne correspond à aucun dossier actif. Merci de contacter directement le garage.</div>
+    </div>
+
+    <div class="state" id="stateAlreadyBooked">
+      <div class="icon-lg success-icon">✓</div>
+      <div class="title-lg">Demande déjà envoyée</div>
+      <div class="center-text" id="alreadyBookedText"></div>
+    </div>
+
+    <div class="state" id="stateChoice">
+      <div class="greeting">Bonjour <strong id="clientNom"></strong>,</div>
+      <div class="subtext">Avez-vous besoin d'un véhicule de prêt pendant les réparations ?</div>
+      <div class="choice-row">
+        <button class="choice-btn" id="btnWithLoan"><span class="cbi">🚗</span> Oui, avec un véhicule de prêt</button>
+        <button class="choice-btn" id="btnNoLoan"><span class="cbi">🔧</span> Non, sans véhicule de prêt</button>
+      </div>
+    </div>
+
+    <div class="state" id="statePicker">
+      <div class="subtext" id="pickerSub">Choisissez la date qui vous conviendrait. Nous vous recontacterons pour confirmer le rendez-vous.</div>
+      <div id="calendarContainer"></div>
+      <div class="confirm-box" id="confirmBox" style="display:none;">
+        <div class="cb-title">Confirmer cette demande ?</div>
+        <div class="cb-date" id="confirmDateText"></div>
+        <div class="btn-row">
+          <button class="btn-secondary" id="btnCancelConfirm">Annuler</button>
+          <button class="btn-primary" id="btnConfirmBooking">Envoyer la demande</button>
+        </div>
+      </div>
+      <div class="back-link" id="btnBackChoice">‹ Revenir au choix du véhicule de prêt</div>
+    </div>
+
+    <div class="state" id="stateSuccess">
+      <div class="icon-lg success-icon">✓</div>
+      <div class="title-lg">Demande envoyée !</div>
+      <div class="center-text" id="successText"></div>
+    </div>
+
+    <div class="state" id="stateError">
+      <div class="icon-lg error-icon">⚠️</div>
+      <div class="title-lg">Une erreur est survenue</div>
+      <div class="center-text">Merci de réessayer, ou de contacter directement le garage.</div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">
+    Carrosserie Brun — Valence Motors · 307 avenue de Romans, 26000 Valence<br>
+    📞 <a href="tel:0475556439">04 75 55 64 39</a>
+  </div>
+</div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getFirestore,doc,getDoc,setDoc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{getAuth,signInAnonymously,setPersistence,browserSessionPersistence}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const FC={apiKey:"AIzaSyA472wEsqwdcO6rf6fRybUA3Zy2vHR0z3I",authDomain:"planning-carrosserie-48819.firebaseapp.com",projectId:"planning-carrosserie-48819",storageBucket:"planning-carrosserie-48819.firebasestorage.app",messagingSenderId:"72223690252",appId:"1:72223690252:web:1bdb17a61caa960c08a829"};
+const fbApp=initializeApp(FC);
+const db=getFirestore(fbApp);
+const auth=getAuth(fbApp);
+
+const JF=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+const MF=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+
+let linkData=null,token=null,dispoData={},vehiculePret=null,pendingChoice=null;
+
+function showState(id){
+  document.querySelectorAll('.state').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function dKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function fFR(d){return `${JF[d.getDay()]} ${d.getDate()} ${MF[d.getMonth()]}`;}
+
+async function init(){
+  token=new URLSearchParams(location.search).get('t');
+  if(!token){showState('stateInvalid');return;}
+  try{
+    await setPersistence(auth,browserSessionPersistence);
+    await signInAnonymously(auth);
+    const snap=await getDoc(doc(db,'rdvLinks',token));
+    if(!snap.exists()){showState('stateInvalid');return;}
+    linkData=snap.data();
+
+    if(linkData.dateChoisie){
+      document.getElementById('alreadyBookedText').textContent=`Votre demande pour le ${fFR(new Date(linkData.dateChoisie))} (${linkData.vehiculePret?'avec':'sans'} véhicule de prêt) a bien été transmise au garage.`;
+      showState('stateAlreadyBooked');
+      return;
+    }
+
+    const dispoSnap=await getDoc(doc(db,'planning','dispoPublique'));
+    dispoData=dispoSnap.exists()?(dispoSnap.data().available||{}):{};
+
+    document.getElementById('clientNom').textContent=linkData.nom||'';
+    showState('stateChoice');
+  }catch(e){
+    console.error(e);
+    showState('stateError');
+  }
+}
+
+document.getElementById('btnWithLoan').addEventListener('click',()=>chooseVehicule(true));
+document.getElementById('btnNoLoan').addEventListener('click',()=>chooseVehicule(false));
+document.getElementById('btnBackChoice').addEventListener('click',()=>{
+  document.getElementById('confirmBox').style.display='none';
+  pendingChoice=null;
+  showState('stateChoice');
+});
+
+function chooseVehicule(withLoan){
+  vehiculePret=withLoan;
+  document.getElementById('pickerSub').textContent=`Choisissez la date qui vous conviendrait (${withLoan?'avec':'sans'} véhicule de prêt). Nous vous recontacterons pour confirmer.`;
+  renderCalendar();
+  showState('statePicker');
+}
+
+function renderCalendar(){
+  const container=document.getElementById('calendarContainer');
+  container.innerHTML='';
+  const key=vehiculePret?'loan':'noloan';
+  const dates=Object.keys(dispoData).filter(d=>dispoData[d]&&dispoData[d][key]).sort();
+  if(!dates.length){
+    container.innerHTML='<div class="no-slots">Aucune date disponible pour le moment. Merci de contacter directement le garage.</div>';
+    return;
+  }
+  let currentWeekLabel='';
+  let weekDiv=null;
+  dates.forEach(dateIso=>{
+    const day=new Date(dateIso+'T00:00:00');
+    const monday=new Date(day);
+    const dow=monday.getDay();
+    monday.setDate(monday.getDate()-(dow===0?6:dow-1));
+    const wl=`Semaine du ${monday.getDate()} ${MF[monday.getMonth()]}`;
+    if(wl!==currentWeekLabel){
+      currentWeekLabel=wl;
+      weekDiv=document.createElement('div');weekDiv.className='week-block';
+      weekDiv.innerHTML=`<div class="week-label">${wl}</div>`;
+      const grid=document.createElement('div');grid.className='day-grid';
+      weekDiv.appendChild(grid);
+      container.appendChild(weekDiv);
+    }
+    const grid=weekDiv.querySelector('.day-grid');
+    const btn=document.createElement('button');btn.className='day-btn';
+    btn.textContent=fFR(day);
+    btn.addEventListener('click',()=>selectDate(dateIso,day));
+    grid.appendChild(btn);
+  });
+}
+
+function selectDate(dateIso,dayObj){
+  pendingChoice={dateIso,dayObj};
+  document.getElementById('confirmDateText').textContent=`${fFR(dayObj)} — ${vehiculePret?'avec':'sans'} véhicule de prêt`;
+  document.getElementById('confirmBox').style.display='block';
+  document.getElementById('confirmBox').scrollIntoView({behavior:'smooth',block:'center'});
+}
+document.getElementById('btnCancelConfirm').addEventListener('click',()=>{
+  pendingChoice=null;
+  document.getElementById('confirmBox').style.display='none';
+});
+document.getElementById('btnConfirmBooking').addEventListener('click',async()=>{
+  if(!pendingChoice)return;
+  const btn=document.getElementById('btnConfirmBooking');
+  btn.disabled=true;btn.textContent='Envoi…';
+  try{
+    await setDoc(doc(db,'rdvLinks',token),{dateChoisie:pendingChoice.dateIso,vehiculePret,status:'choisi',choisiAt:Date.now()},{merge:true});
+  }catch(e){
+    console.error(e);
+    showState('stateError');
+    return;
+  }
+  document.getElementById('successText').textContent=`Votre demande pour le ${fFR(pendingChoice.dayObj)} (${vehiculePret?'avec':'sans'} véhicule de prêt) a bien été transmise. Le garage va vous recontacter pour confirmer.`;
+  showState('stateSuccess');
+});
+
+init();
+</script>
+</body>
+</html>
