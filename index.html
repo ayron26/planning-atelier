@@ -428,6 +428,18 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .dpc-meta{font-size:.78rem;color:var(--muted);margin-top:2px;}
 .dpc-actions{display:flex;gap:8px;flex-shrink:0;}
 .btn-placer{background:#2980b9;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.btn-genlink{background:#16a085;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.btn-genlink:hover{background:#128a72;}
+.dpc-link-status{font-size:.76rem;font-weight:600;margin-top:4px;padding:4px 8px;border-radius:6px;display:inline-block;}
+.dpc-link-status.waiting{background:#fef9e7;color:#9a6a00;}
+.dpc-link-status.chosen{background:#eafaf1;color:#1e8449;}
+.ead-day-group{margin-bottom:10px;}
+.ead-day-header{font-size:.78rem;font-weight:700;color:var(--steel);background:var(--surface);padding:5px 10px;border-radius:6px 6px 0 0;}
+.ead-booking-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-top:none;padding:8px 12px;font-size:.82rem;}
+.ead-booking-row:last-child{border-radius:0 0 6px 6px;}
+.ead-booking-heure{font-weight:700;color:#16a085;min-width:50px;}
+.ead-booking-info{flex:1;color:var(--muted);}
+.ead-booking-del{background:none;border:none;color:#e74c3c;cursor:pointer;font-size:.85rem;}
 .btn-placer:hover{background:#1a5276;}
 .placement-banner{background:var(--accent);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.85rem;font-weight:700;flex-wrap:wrap;}
 .placement-banner button{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:6px;padding:5px 12px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;}
@@ -940,6 +952,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <div id="sinReview" style="display:none;"></div>
     <div class="dossiers-pending-title">📋 Dossiers en attente de placement</div>
     <div id="dossiersPendingList"></div>
+    <div class="dossiers-pending-title">📷 Planning EAD (créneaux réservés)</div>
+    <div id="eadCalendarList"></div>
   </div>
   <div class="mobile-sinistre" id="mobileSinistre">
     <div style="font-size:1.1rem;font-weight:700;color:var(--steel);margin-bottom:6px;">🆕 Nouveau dossier</div>
@@ -953,6 +967,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <div id="mSinReview" style="display:none;"></div>
     <div class="dossiers-pending-title">📋 En attente de placement</div>
     <div id="mDossiersPendingList"></div>
+    <div class="dossiers-pending-title">📷 Planning EAD</div>
+    <div id="mEadCalendarList"></div>
   </div>
 </div>
 
@@ -1238,6 +1254,9 @@ const docHeures=doc(db,"planning","heures");
 const docDossiers=doc(db,"planning","dossiersEnAttente");
 const docTechs=doc(db,"planning","techniciens");
 const docReception=doc(db,"planning","reception");
+const EAD_HOURS=['09:00','10:00','11:00','14:00','15:00','16:00'];
+let eadBookings=[];
+let eadLinks=[];
 
 const COLORS=['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
 const DL=['BAYON 01','BAYON 02','BAYON 03','BAYON 04','BAYON 05','BAYON 06','BAYON 07','BAYON 08'];
@@ -1572,6 +1591,14 @@ function setupFirebaseListeners(){
     rebuildPeriodTechSelects();
     if(curPage==='conges'){if(isMobile())renderMobileConges();else renderConges();}
   },err=>{console.error(err);});
+  onSnapshot(collection(db,'eadBookings'),snap=>{
+    eadBookings=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(curPage==='sinistre'){renderEadCalendar();if(isMobile())renderMobileEadCalendar();}
+  },err=>{console.error(err);});
+  onSnapshot(collection(db,'eadLinks'),snap=>{
+    eadLinks=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(curPage==='sinistre'){renderDossiersPending();if(isMobile())renderMobileDossiersPending();}
+  },err=>{console.error(err);});
 }
 
 window.switchPage=function(page){
@@ -1590,7 +1617,7 @@ window.switchPage=function(page){
   if(page==='conges'){if(isMobile())renderMobileConges();else renderConges();}
   if(page==='contrats'){renderContrats();if(isMobile())renderMobileContrats();}
   if(page==='heures'){renderDossiers();if(isMobile())renderMobileDossiers();}
-  if(page==='sinistre'){renderDossiersPending();if(isMobile())renderMobileDossiersPending();}
+  if(page==='sinistre'){renderDossiersPending();if(isMobile())renderMobileDossiersPending();renderEadCalendar();if(isMobile())renderMobileEadCalendar();}
 };
 
 function buildDossierList(searchTerm){
@@ -1855,10 +1882,28 @@ async function handleSinistreFile(file,mobile){
   document.getElementById(mobile?'mSinAnalyzing':'sinAnalyzing').style.display='none';
 }
 
+async function generateEadLink(d){
+  if(isRO()){showRO();return;}
+  let link=eadLinks.find(l=>l.forDossier===d.id);
+  let token=link?link.id:genToken();
+  if(!link){
+    try{
+      await setDoc(doc(db,'eadLinks',token),{nom:d.nom||'',tel:d.tel||'',immat:d.immat||'',compagnie:d.compagnie||'',forDossier:d.id,createdAt:Date.now()});
+    }catch(e){console.error(e);alert("Erreur lors de la création du lien. As-tu bien ajouté les collections eadLinks dans les règles Firebase ?");return;}
+  }
+  const url=getEadLinkUrl(token);
+  const copied=await copyToClipboard(url);
+  alert((copied?'✅ Lien copié dans le presse-papier !\n\n':'📋 Copie-le manuellement :\n\n')+url);
+}
 function dossierPendingCardHTML(d){
+  const link=eadLinks.find(l=>l.forDossier===d.id);
+  const booking=link?eadBookings.find(b=>b.token===link.id):null;
+  let eadStatusHTML='';
+  if(booking)eadStatusHTML=`<div class="dpc-link-status chosen">📷 EAD réservé : ${dFR(booking.date)} à ${booking.heure}</div>`;
+  else if(link)eadStatusHTML=`<div class="dpc-link-status waiting">📷 Lien EAD envoyé, en attente du choix du client</div>`;
   return `<div class="dossier-pending-card" data-did="${d.id}" style="${d.held?'border-left-color:#8e44ad;':''}">
-    <div class="dpc-info"><div class="dpc-nom">${d.held?'⏸️ ':''}${d.nom}</div><div class="dpc-meta">${d.tel?'📞 '+d.tel+' · ':''}${d.immat?'🚗 '+d.immat+' · ':''}${d.compagnie?'🏢 '+d.compagnie+' · ':''}${d.adresse||''}</div>${d.note?`<div class="dpc-meta" style="color:#8e44ad;font-weight:600;margin-top:3px;">📝 ${d.note}</div>`:''}</div>
-    <div class="dpc-actions"><button class="btn-placer dpc-place-btn">📍 Placer sur le planning</button><button class="btn-del-contrat dpc-del-btn">🗑️</button></div>
+    <div class="dpc-info"><div class="dpc-nom">${d.held?'⏸️ ':''}${d.nom}</div><div class="dpc-meta">${d.tel?'📞 '+d.tel+' · ':''}${d.immat?'🚗 '+d.immat+' · ':''}${d.compagnie?'🏢 '+d.compagnie+' · ':''}${d.adresse||''}</div>${d.note?`<div class="dpc-meta" style="color:#8e44ad;font-weight:600;margin-top:3px;">📝 ${d.note}</div>`:''}${eadStatusHTML}</div>
+    <div class="dpc-actions"><button class="btn-placer dpc-place-btn">📍 Placer sur le planning</button><button class="btn-genlink dpc-ead-btn">📷 Lien EAD</button><button class="btn-del-contrat dpc-del-btn">🗑️</button></div>
   </div>`;
 }
 function wireDossierPendingEvents(container){
@@ -1877,6 +1922,13 @@ function wireDossierPendingEvents(container){
       await saveDossiers();renderDossiersPending();if(isMobile())renderMobileDossiersPending();
     });
   });
+  container.querySelectorAll('.dpc-ead-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const did=btn.closest('[data-did]').dataset.did;
+      const d=(dState.items||[]).find(x=>x.id===did);if(!d)return;
+      generateEadLink(d);
+    });
+  });
 }
 function renderDossiersPending(){
   const wrap=document.getElementById('dossiersPendingList');if(!wrap)return;
@@ -1891,6 +1943,41 @@ function renderMobileDossiersPending(){
   if(!items.length){wrap.innerHTML='<div class="dossier-empty">📭 Aucun dossier en attente.</div>';return;}
   wrap.innerHTML=items.map(dossierPendingCardHTML).join('');
   wireDossierPendingEvents(wrap);
+}
+
+// ===== Calendrier EAD (admin) =====
+function buildEadCalendarHTML(){
+  const upcoming=eadBookings.filter(b=>b.date>=todayISO()).sort((a,b)=>a.date.localeCompare(b.date)||a.heure.localeCompare(b.heure));
+  if(!upcoming.length)return '<div class="dossier-empty">📭 Aucun créneau EAD réservé pour le moment.</div>';
+  const byDay={};
+  upcoming.forEach(b=>{(byDay[b.date]=byDay[b.date]||[]).push(b);});
+  return Object.keys(byDay).sort().map(date=>{
+    const rows=byDay[date].map(b=>`<div class="ead-booking-row" data-eid="${b.id}"><span class="ead-booking-heure">${b.heure}</span><span class="ead-booking-info">${b.nom||'—'}${b.tel?' · '+b.tel:''}${b.immat?' · '+b.immat:''}</span><button class="ead-booking-del" data-eid="${b.id}">🗑️</button></div>`).join('');
+    return `<div class="ead-day-group"><div class="ead-day-header">${fFR(new Date(date))}</div>${rows}</div>`;
+  }).join('');
+}
+function wireEadCalendarEvents(container){
+  container.querySelectorAll('.ead-booking-del').forEach(btn=>{
+    btn.addEventListener('click',async()=>{
+      if(isRO()){showRO();return;}
+      const eid=btn.dataset.eid;
+      if(!confirm('Annuler ce créneau EAD ? Il redeviendra disponible pour un autre client.'))return;
+      try{
+        await deleteDoc(doc(db,'eadBookings',eid));
+        await deleteDoc(doc(db,'eadAvailability',eid));
+      }catch(e){console.error(e);}
+    });
+  });
+}
+function renderEadCalendar(){
+  const el=document.getElementById('eadCalendarList');if(!el)return;
+  el.innerHTML=buildEadCalendarHTML();
+  wireEadCalendarEvents(el);
+}
+function renderMobileEadCalendar(){
+  const el=document.getElementById('mEadCalendarList');if(!el)return;
+  el.innerHTML=buildEadCalendarHTML();
+  wireEadCalendarEvents(el);
 }
 
 // ===== Mode placement sur le planning =====
@@ -1976,6 +2063,18 @@ async function saveDossiers(){if(isRO())return;isSavD=true;try{await setDoc(docD
 async function saveTechs(){if(isRO())return;try{await setDoc(docTechs,{list:TECHS,updatedAt:Date.now()});}catch(e){console.error(e);}}
 async function saveReception(){if(isRO())return;try{await setDoc(docReception,{list:RECEPTION,updatedAt:Date.now()});}catch(e){console.error(e);}}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
+function genToken(){
+  if(window.crypto&&crypto.randomUUID)return crypto.randomUUID().replace(/-/g,'');
+  return Array.from({length:32},()=>Math.floor(Math.random()*16).toString(16)).join('');
+}
+function eadSlotId(dateIso,heure){return dateIso+'_'+heure.replace(':','');}
+function getEadLinkUrl(token){
+  const base=location.origin+location.pathname.replace(/[^/]+$/,'');
+  return base+'ead.html?t='+token;
+}
+async function copyToClipboard(text){
+  try{await navigator.clipboard.writeText(text);return true;}catch(e){return false;}
+}
 function todayISO(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function dFR(iso){try{const [y,m,d]=iso.split('-');return `${d}/${m}/${y.slice(2)}`;}catch(e){return iso;}}
 
