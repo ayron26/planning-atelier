@@ -1911,6 +1911,9 @@ async function generateEadLink(d){
   const copied=await copyToClipboard(url);
   alert((copied?'✅ Lien copié dans le presse-papier !\n\n':'📋 Copie-le manuellement :\n\n')+url);
 }
+function openWebmailWithCopiedText(email,subject,body){
+  window.location.href=`mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
 async function emailEadLink(d){
   if(isRO()){showRO();return;}
   let email=d.email;
@@ -1924,7 +1927,7 @@ async function emailEadLink(d){
   const url=getEadLinkUrl(token);
   const subject="Rendez-vous EAD — Carrosserie Brun";
   const body=`Bonjour ${d.nom||''},\n\nMerci de choisir un créneau pour l'expertise à distance (EAD) de votre véhicule en cliquant sur le lien ci-dessous :\n${url}\n\nCordialement,\nCarrosserie Brun — Valence Motors\n04 75 55 64 39`;
-  window.location.href=`mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  openWebmailWithCopiedText(email,subject,body);
 }
 
 async function ensureRdvLink(d){
@@ -1957,7 +1960,7 @@ async function emailRdvLink(d){
   const url=getRdvLinkUrl(token);
   const subject="Prendre rendez-vous — Carrosserie Brun";
   const body=`Bonjour ${d.nom||''},\n\nMerci de choisir la date qui vous conviendrait pour votre rendez-vous en cliquant sur le lien ci-dessous. Nous vous recontacterons pour confirmer :\n${url}\n\nCordialement,\nCarrosserie Brun — Valence Motors\n04 75 55 64 39`;
-  window.location.href=`mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  openWebmailWithCopiedText(email,subject,body);
 }
 function dossierPendingCardHTML(d){
   const link=eadLinks.find(l=>l.forDossier===d.id);
