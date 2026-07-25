@@ -142,17 +142,14 @@ async function init(){
     if(!snap.exists()){showState('stateInvalid');return;}
     linkData=snap.data();
 
-    // Le client a-t-il déjà réservé avec ce lien ?
-    const availSnap=await getDocs(collection(db,'eadAvailability'));
-    availSnap.forEach(d=>{if(d.data().taken)takenSlots.add(d.id);});
-    const bookingsSnap=await getDocs(collection(db,'eadBookings'));
-    let already=null;
-    bookingsSnap.forEach(d=>{if(d.data().token===token)already=d.data();});
-    if(already){
-      document.getElementById('alreadyBookedText').textContent=`Votre rendez-vous du ${fFR(new Date(already.date))} à ${already.heure} est bien enregistré. À bientôt !`;
+    // Le client a-t-il déjà réservé avec ce lien ? (stocké directement sur son propre lien)
+    if(linkData.used){
+      document.getElementById('alreadyBookedText').textContent=`Votre rendez-vous du ${fFR(new Date(linkData.usedDate))} à ${linkData.usedHeure} est bien enregistré. À bientôt !`;
       showState('stateAlreadyBooked');
       return;
     }
+    const availSnap=await getDocs(collection(db,'eadAvailability'));
+    availSnap.forEach(d=>{if(d.data().taken)takenSlots.add(d.id);});
 
     document.getElementById('clientNom').textContent=linkData.nom||'';
     if(linkData.immat)document.getElementById('clientSub').textContent+=` Véhicule : ${linkData.immat}.`;
@@ -224,6 +221,7 @@ document.getElementById('btnConfirmBooking').addEventListener('click',async()=>{
   }
   try{
     await setDoc(doc(db,'eadBookings',sid),{date:pendingChoice.dateIso,heure:pendingChoice.heure,nom:linkData.nom||'',tel:linkData.tel||'',immat:linkData.immat||'',compagnie:linkData.compagnie||'',token,createdAt:Date.now()});
+    await setDoc(doc(db,'eadLinks',token),{used:true,usedDate:pendingChoice.dateIso,usedHeure:pendingChoice.heure},{merge:true});
   }catch(e){console.error(e);}
   document.getElementById('successText').textContent=`Votre rendez-vous du ${fFR(pendingChoice.dayObj)} à ${pendingChoice.heure} est confirmé. À bientôt à la Carrosserie Brun !`;
   showState('stateSuccess');
