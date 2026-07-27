@@ -426,7 +426,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .dpc-info{flex:1;min-width:180px;}
 .dpc-nom{font-weight:700;color:var(--steel);font-size:.92rem;}
 .dpc-meta{font-size:.78rem;color:var(--muted);margin-top:2px;}
-.dpc-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;}
+.dpc-actions{display:flex;flex-direction:column;gap:8px;flex-shrink:0;min-width:200px;}
 .btn-placer{background:#2980b9;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
 .btn-genlink{background:#16a085;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
 .btn-genlink:hover{background:#128a72;}
@@ -437,12 +437,19 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .dpc-flag-chip{border:1.5px solid var(--border);background:var(--surface);color:var(--muted);border-radius:14px;padding:4px 10px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;}
 .dpc-flag-chip:hover{border-color:#2980b9;color:#2980b9;}
 .dpc-flag-chip.active{background:#2980b9;color:#fff;border-color:#2980b9;}
-.dossiers-columns{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:16px;align-items:start;}
+.dossiers-columns{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;align-items:start;}
 .dossiers-column-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;padding:0 2px;}
 .dossiers-column-body{display:flex;flex-direction:column;gap:10px;}
 .dossiers-column .dossier-pending-card{flex-direction:column;align-items:stretch;}
-.dossiers-column .dpc-actions{flex-direction:column;}
-.dossiers-column .dpc-actions button{width:100%;}
+.dpc-fullw{width:100%;}
+.dpc-action-row{display:flex;gap:6px;margin-top:6px;}
+.dpc-action-group{position:relative;flex:1;}
+.dpc-action-group>button{width:100%;}
+.dpc-del-btn{flex-shrink:0;}
+.dpc-subactions{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:20;padding:6px;flex-direction:column;gap:4px;}
+.dpc-subactions.open{display:flex;}
+.dpc-sub-btn{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;text-align:left;color:var(--text);white-space:nowrap;}
+.dpc-sub-btn:hover{background:#e8f4fd;border-color:#2980b9;}
 .ead-grid-nav{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
 .ead-grid-nav-btn{background:var(--steel);border:none;color:#fff;width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:1rem;font-family:inherit;}
 .ead-grid-nav-btn:hover{background:var(--accent);}
@@ -2016,10 +2023,38 @@ function dossierPendingCardHTML(d){
       <button class="dpc-flag-chip dpc-flag-photos${d.photosFaites?' active':''}" data-did="${d.id}">📸 Photos déjà faites</button>
       <button class="dpc-flag-chip dpc-flag-rdv${d.rdvFixeDirect?' active':''}" data-did="${d.id}">📅 RDV déjà fixé (sur place)</button>
     </div></div>
-    <div class="dpc-actions"><button class="btn-placer dpc-place-btn">📍 Placer sur le planning</button><button class="btn-genlink dpc-rdv-btn" style="background:#8e44ad;">📅 Lien RDV</button><button class="btn-genlink dpc-rdvemail-btn" style="background:#6c3483;">✉️ Envoyer (RDV)</button><button class="btn-genlink dpc-ead-btn">📷 Lien EAD</button><button class="btn-genlink dpc-email-btn" style="background:#2980b9;">✉️ Envoyer (EAD)</button><button class="btn-del-contrat dpc-del-btn">🗑️</button></div>
+    <div class="dpc-actions">
+      <button class="btn-placer dpc-place-btn dpc-fullw">📍 Placer sur le planning</button>
+      <div class="dpc-action-row">
+        <div class="dpc-action-group">
+          <button class="btn-genlink dpc-rdv-toggle" style="background:#8e44ad;">📅 RDV ▾</button>
+          <div class="dpc-subactions" data-sub="rdv-${d.id}">
+            <button class="dpc-sub-btn dpc-rdv-btn">🔗 Copier le lien</button>
+            <button class="dpc-sub-btn dpc-rdvemail-btn">✉️ Envoyer par email</button>
+          </div>
+        </div>
+        <div class="dpc-action-group">
+          <button class="btn-genlink dpc-ead-toggle">📷 EAD ▾</button>
+          <div class="dpc-subactions" data-sub="ead-${d.id}">
+            <button class="dpc-sub-btn dpc-ead-btn">🔗 Copier le lien</button>
+            <button class="dpc-sub-btn dpc-email-btn">✉️ Envoyer par email</button>
+          </div>
+        </div>
+        <button class="btn-del-contrat dpc-del-btn">🗑️</button>
+      </div>
+    </div>
   </div>`;
 }
 function wireDossierPendingEvents(container){
+  container.querySelectorAll('.dpc-rdv-toggle,.dpc-ead-toggle').forEach(btn=>{
+    btn.addEventListener('click',e=>{
+      e.stopPropagation();
+      const sub=btn.parentElement.querySelector('.dpc-subactions');
+      const wasOpen=sub.classList.contains('open');
+      document.querySelectorAll('.dpc-subactions.open').forEach(s=>s.classList.remove('open'));
+      if(!wasOpen)sub.classList.add('open');
+    });
+  });
   container.querySelectorAll('.dpc-place-btn').forEach(btn=>{
     btn.addEventListener('click',()=>{
       const did=btn.closest('[data-did]').dataset.did;
@@ -3555,6 +3590,9 @@ document.getElementById('mDossiersSearch').addEventListener('input',e=>{mDossier
 
 // ===== Câblage global des boutons restants =====
 function setupEvents(){
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.dpc-action-group'))document.querySelectorAll('.dpc-subactions.open').forEach(s=>s.classList.remove('open'));
+  });
   document.getElementById('btnPrevWeek').addEventListener('click',()=>changeWeek(-1));
   document.getElementById('btnNextWeek').addEventListener('click',()=>changeWeek(1));
   document.getElementById('btnToday').addEventListener('click',goToday);
