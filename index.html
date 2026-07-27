@@ -433,6 +433,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .dpc-link-status{font-size:.76rem;font-weight:600;margin-top:4px;padding:4px 8px;border-radius:6px;display:inline-block;}
 .dpc-link-status.waiting{background:#fef9e7;color:#9a6a00;}
 .dpc-link-status.chosen{background:#eafaf1;color:#1e8449;}
+.dpc-flags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.dpc-flag-chip{border:1.5px solid var(--border);background:var(--surface);color:var(--muted);border-radius:14px;padding:4px 10px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;}
+.dpc-flag-chip:hover{border-color:#2980b9;color:#2980b9;}
+.dpc-flag-chip.active{background:#2980b9;color:#fff;border-color:#2980b9;}
 .ead-grid-nav{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
 .ead-grid-nav-btn{background:var(--steel);border:none;color:#fff;width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:1rem;font-family:inherit;}
 .ead-grid-nav-btn:hover{background:var(--accent);}
@@ -2001,7 +2005,11 @@ function dossierPendingCardHTML(d){
     rdvStatusHTML=`<div class="dpc-link-status chosen">📅 Date souhaitée : ${dFR(new Date(rdvLink.dateChoisie))} — ${vp}</div>`;
   }else if(rdvLink)rdvStatusHTML=`<div class="dpc-link-status waiting">📅 Lien RDV envoyé, en attente du choix du client</div>`;
   return `<div class="dossier-pending-card" data-did="${d.id}" style="${d.held?'border-left-color:#8e44ad;':''}">
-    <div class="dpc-info"><div class="dpc-nom">${d.held?'⏸️ ':''}${d.nom}</div><div class="dpc-meta">${d.tel?'📞 '+d.tel+' · ':''}${d.immat?'🚗 '+d.immat+' · ':''}${d.compagnie?'🏢 '+d.compagnie+' · ':''}${d.email?'✉️ '+d.email+' · ':''}${d.adresse||''}</div>${d.note?`<div class="dpc-meta" style="color:#8e44ad;font-weight:600;margin-top:3px;">📝 ${d.note}</div>`:''}${eadStatusHTML}${rdvStatusHTML}</div>
+    <div class="dpc-info"><div class="dpc-nom">${d.held?'⏸️ ':''}${d.nom}</div><div class="dpc-meta">${d.tel?'📞 '+d.tel+' · ':''}${d.immat?'🚗 '+d.immat+' · ':''}${d.compagnie?'🏢 '+d.compagnie+' · ':''}${d.email?'✉️ '+d.email+' · ':''}${d.adresse||''}</div>${d.note?`<div class="dpc-meta" style="color:#8e44ad;font-weight:600;margin-top:3px;">📝 ${d.note}</div>`:''}${eadStatusHTML}${rdvStatusHTML}
+    <div class="dpc-flags">
+      <button class="dpc-flag-chip dpc-flag-photos${d.photosFaites?' active':''}" data-did="${d.id}">📸 Photos déjà faites</button>
+      <button class="dpc-flag-chip dpc-flag-rdv${d.rdvFixeDirect?' active':''}" data-did="${d.id}">📅 RDV déjà fixé (sur place)</button>
+    </div></div>
     <div class="dpc-actions"><button class="btn-placer dpc-place-btn">📍 Placer sur le planning</button><button class="btn-genlink dpc-rdv-btn" style="background:#8e44ad;">📅 Lien RDV</button><button class="btn-genlink dpc-rdvemail-btn" style="background:#6c3483;">✉️ Envoyer (RDV)</button><button class="btn-genlink dpc-ead-btn">📷 Lien EAD</button><button class="btn-genlink dpc-email-btn" style="background:#2980b9;">✉️ Envoyer (EAD)</button><button class="btn-del-contrat dpc-del-btn">🗑️</button></div>
   </div>`;
 }
@@ -2049,9 +2057,16 @@ function wireDossierPendingEvents(container){
       emailRdvLink(d);
     });
   });
+  container.querySelectorAll('.dpc-flag-photos').forEach(btn=>{
+    btn.addEventListener('click',()=>toggleDossierFlag(btn.dataset.did,'photosFaites'));
+  });
+  container.querySelectorAll('.dpc-flag-rdv').forEach(btn=>{
+    btn.addEventListener('click',()=>toggleDossierFlag(btn.dataset.did,'rdvFixeDirect'));
+  });
 }
 // Catégorise un dossier selon l'état de ses liens EAD/RDV, pour bien les séparer visuellement
 function getDossierLinkStatus(d){
+  if(d.photosFaites||d.rdvFixeDirect)return'direct';
   const eadLink=eadLinks.find(l=>l.forDossier===d.id);
   const eadBooking=eadLink?eadBookings.find(b=>b.token===eadLink.id):null;
   const rdvLink=rdvLinks.find(l=>l.forDossier===d.id);
@@ -2060,13 +2075,20 @@ function getDossierLinkStatus(d){
   if(eadLink||rdvLink)return'waiting';
   return'none';
 }
+async function toggleDossierFlag(id,flag){
+  if(isRO()){showRO();return;}
+  dState.items=(dState.items||[]).map(x=>x.id===id?{...x,[flag]:!x[flag]}:x);
+  await saveDossiers();
+  renderDossiersPending();if(isMobile())renderMobileDossiersPending();
+}
 function buildDossiersPendingHTML(items){
-  const groups={none:[],waiting:[],responded:[]};
+  const groups={none:[],waiting:[],responded:[],direct:[]};
   items.forEach(d=>groups[getDossierLinkStatus(d)].push(d));
   let html='';
   if(groups.responded.length)html+=`<div class="dossiers-pending-title" style="margin-top:0;color:#1e8449;">✅ Le client a répondu — prêt à placer</div>${groups.responded.map(dossierPendingCardHTML).join('')}`;
   if(groups.waiting.length)html+=`<div class="dossiers-pending-title" style="color:#9a6a00;">⏳ En attente de réponse du client</div>${groups.waiting.map(dossierPendingCardHTML).join('')}`;
-  if(groups.none.length)html+=`<div class="dossiers-pending-title" style="color:var(--muted);">🆕 Nouveaux dossiers (aucun lien envoyé)</div>${groups.none.map(dossierPendingCardHTML).join('')}`;
+  if(groups.direct.length)html+=`<div class="dossiers-pending-title" style="color:#2980b9;">🚶 Traités directement (passage terrain, pas de lien nécessaire)</div>${groups.direct.map(dossierPendingCardHTML).join('')}`;
+  if(groups.none.length)html+=`<div class="dossiers-pending-title" style="color:var(--muted);">🆕 Nouveaux dossiers (aucune action faite)</div>${groups.none.map(dossierPendingCardHTML).join('')}`;
   return html;
 }
 function renderDossiersPending(){
