@@ -1951,8 +1951,8 @@ async function emailEadLink(d){
   try{token=await ensureEadLink(d);}
   catch(e){console.error(e);alert("Erreur lors de la création du lien. As-tu bien ajouté les collections eadLinks dans les règles Firebase ?");return;}
   const url=getEadLinkUrl(token);
-  const subject="Rendez-vous EAD — Carrosserie Brun";
-  const body=`Bonjour ${d.nom||''},\n\nMerci de choisir un créneau pour l'expertise à distance (EAD) de votre véhicule en cliquant sur le lien ci-dessous :\n${url}\n\nCordialement,\nCarrosserie Brun — Valence Motors\n04 75 55 64 39`;
+  const subject="Rendez-vous Expertise à Distance (EAD) — Carrosserie Brun";
+  const body=`Bonjour ${d.nom||''},\n\nDans le cadre de la prise en charge de votre dossier${d.compagnie?' par '+d.compagnie:''}, nous devons réaliser une expertise à distance (EAD) de votre véhicule${d.immat?' ('+d.immat+')':''} : des photos des dommages doivent être transmises à l'expert de votre assurance avant le début des réparations.\n\nMerci de choisir un créneau d'1h en cliquant sur le lien ci-dessous :\n${url}\n\nLe jour du rendez-vous, merci de vous présenter au garage avec :\n- le véhicule concerné\n- la carte grise du véhicule\n- le constat amiable (si disponible)\n\nCordialement,\nCarrosserie Brun — Valence Motors\n04 75 55 64 39`;
   openOutlookCompose(email,subject,body);
 }
 
@@ -1984,8 +1984,8 @@ async function emailRdvLink(d){
   try{token=await ensureRdvLink(d);}
   catch(e){console.error(e);alert("Erreur lors de la création du lien. As-tu bien ajouté les collections rdvLinks dans les règles Firebase ?");return;}
   const url=getRdvLinkUrl(token);
-  const subject="Prendre rendez-vous — Carrosserie Brun";
-  const body=`Bonjour ${d.nom||''},\n\nMerci de choisir la date qui vous conviendrait pour votre rendez-vous en cliquant sur le lien ci-dessous. Nous vous recontacterons pour confirmer :\n${url}\n\nCordialement,\nCarrosserie Brun — Valence Motors\n04 75 55 64 39`;
+  const subject="Demande de rendez-vous pour réparation — Carrosserie Brun";
+  const body=`Bonjour ${d.nom||''},\n\nNous pouvons désormais planifier la réparation de votre véhicule${d.immat?' ('+d.immat+')':''}. Merci de nous indiquer la date qui vous conviendrait en cliquant sur le lien ci-dessous ; vous pourrez aussi préciser si vous avez besoin d'un véhicule de prêt pendant l'immobilisation du vôtre :\n${url}\n\nCette date est une demande : nous vous recontacterons rapidement pour la confirmer et vous communiquer la durée prévue des réparations.\n\nLe jour du dépôt du véhicule, merci de vous munir de :\n- la carte grise du véhicule\n- votre attestation d'assurance\n- le double des clés (si vous en possédez un)\n\nCordialement,\nCarrosserie Brun — Valence Motors\n04 75 55 64 39`;
   openOutlookCompose(email,subject,body);
 }
 function dossierPendingCardHTML(d){
