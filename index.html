@@ -433,13 +433,33 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .dpc-link-status{font-size:.76rem;font-weight:600;margin-top:4px;padding:4px 8px;border-radius:6px;display:inline-block;}
 .dpc-link-status.waiting{background:#fef9e7;color:#9a6a00;}
 .dpc-link-status.chosen{background:#eafaf1;color:#1e8449;}
-.ead-day-group{margin-bottom:10px;}
-.ead-day-header{font-size:.78rem;font-weight:700;color:var(--steel);background:var(--surface);padding:5px 10px;border-radius:6px 6px 0 0;}
-.ead-booking-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-top:none;padding:8px 12px;font-size:.82rem;}
-.ead-booking-row:last-child{border-radius:0 0 6px 6px;}
-.ead-booking-heure{font-weight:700;color:#16a085;min-width:50px;}
-.ead-booking-info{flex:1;color:var(--muted);}
-.ead-booking-del{background:none;border:none;color:#e74c3c;cursor:pointer;font-size:.85rem;}
+.ead-grid-nav{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.ead-grid-nav-btn{background:var(--steel);border:none;color:#fff;width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:1rem;font-family:inherit;}
+.ead-grid-nav-btn:hover{background:var(--accent);}
+.ead-grid-today-btn{width:auto;padding:0 10px;font-size:.78rem;}
+.ead-grid-week-label{font-size:.85rem;font-weight:700;color:var(--steel);flex:1;text-align:center;}
+.ead-grid{background:var(--card);border-radius:10px;border:1px solid var(--border);overflow:hidden;}
+.ead-grid-header{display:grid;grid-template-columns:70px repeat(5,1fr);background:var(--steel);}
+.ead-grid-corner{padding:8px;color:rgba(255,255,255,.5);font-size:.68rem;font-weight:700;text-transform:uppercase;}
+.ead-grid-daycol{padding:8px 4px;color:#fff;font-size:.72rem;font-weight:700;text-align:center;border-left:1px solid rgba(255,255,255,.1);}
+.ead-grid-daycol.today{background:var(--accent);}
+.ead-grid-row{display:grid;grid-template-columns:70px repeat(5,1fr);border-bottom:1px solid var(--border);}
+.ead-grid-row:last-child{border-bottom:none;}
+.ead-grid-hourlabel{padding:10px 8px;font-size:.78rem;font-weight:700;color:var(--steel);background:var(--surface);display:flex;align-items:center;}
+.ead-grid-cell{padding:8px 6px;border-left:1px solid var(--border);min-height:44px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;font-size:.72rem;text-align:center;transition:background .15s;}
+.ead-grid-cell.free{color:#b8c0c9;}
+.ead-grid-cell.free:hover{background:#eafaf1;color:#1e8449;font-weight:700;}
+.ead-grid-cell.blocked{background:repeating-linear-gradient(45deg,#f5f5f5,#f5f5f5 4px,#e8e8e8 4px,#e8e8e8 8px);color:#9a9a9a;font-weight:600;}
+.ead-grid-cell.blocked:hover{background:#fde8e8;color:#c0392b;}
+.ead-grid-cell.booked{background:#eafaf1;color:#1e8449;font-weight:700;}
+.ead-grid-cell.booked:hover{background:#fde8e8;color:#c0392b;}
+.ead-cell-nom{font-weight:700;font-size:.74rem;}
+.ead-cell-meta{font-size:.62rem;opacity:.8;}
+@media(max-width:768px){
+  .ead-grid-header,.ead-grid-row{grid-template-columns:55px repeat(5,1fr);}
+  .ead-grid-cell{font-size:.62rem;padding:6px 2px;min-height:38px;}
+  .ead-cell-meta{display:none;}
+}
 .btn-placer:hover{background:#1a5276;}
 .placement-banner{background:var(--accent);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.85rem;font-weight:700;flex-wrap:wrap;}
 .placement-banner button{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:6px;padding:5px 12px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;}
@@ -1258,6 +1278,8 @@ const EAD_HOURS=['09:00','10:00','11:00','14:00','15:00','16:00'];
 let eadBookings=[];
 let eadLinks=[];
 let rdvLinks=[];
+let eadAvailabilityDocs=[];
+let eadWeekOffset=0;
 
 const COLORS=['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
 const DL=['BAYON 01','BAYON 02','BAYON 03','BAYON 04','BAYON 05','BAYON 06','BAYON 07','BAYON 08'];
@@ -1597,6 +1619,10 @@ function setupFirebaseListeners(){
     eadBookings=snap.docs.map(d=>({id:d.id,...d.data()}));
     if(curPage==='sinistre'){renderEadCalendar();if(isMobile())renderMobileEadCalendar();}
   },err=>{console.error(err);});
+  onSnapshot(collection(db,'eadAvailability'),snap=>{
+    eadAvailabilityDocs=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(curPage==='sinistre'){renderEadCalendar();if(isMobile())renderMobileEadCalendar();}
+  },err=>{console.error(err);});
   onSnapshot(collection(db,'eadLinks'),snap=>{
     eadLinks=snap.docs.map(d=>({id:d.id,...d.data()}));
     if(curPage==='sinistre'){renderDossiersPending();if(isMobile())renderMobileDossiersPending();}
@@ -1911,7 +1937,7 @@ async function generateEadLink(d){
   const copied=await copyToClipboard(url);
   alert((copied?'✅ Lien copié dans le presse-papier !\n\n':'📋 Copie-le manuellement :\n\n')+url);
 }
-function openWebmailWithCopiedText(email,subject,body){
+function openOutlookCompose(email,subject,body){
   window.location.href=`mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 async function emailEadLink(d){
@@ -1927,7 +1953,7 @@ async function emailEadLink(d){
   const url=getEadLinkUrl(token);
   const subject="Rendez-vous EAD — Carrosserie Brun";
   const body=`Bonjour ${d.nom||''},\n\nMerci de choisir un créneau pour l'expertise à distance (EAD) de votre véhicule en cliquant sur le lien ci-dessous :\n${url}\n\nCordialement,\nCarrosserie Brun — Valence Motors\n04 75 55 64 39`;
-  openWebmailWithCopiedText(email,subject,body);
+  openOutlookCompose(email,subject,body);
 }
 
 async function ensureRdvLink(d){
@@ -1960,7 +1986,7 @@ async function emailRdvLink(d){
   const url=getRdvLinkUrl(token);
   const subject="Prendre rendez-vous — Carrosserie Brun";
   const body=`Bonjour ${d.nom||''},\n\nMerci de choisir la date qui vous conviendrait pour votre rendez-vous en cliquant sur le lien ci-dessous. Nous vous recontacterons pour confirmer :\n${url}\n\nCordialement,\nCarrosserie Brun — Valence Motors\n04 75 55 64 39`;
-  openWebmailWithCopiedText(email,subject,body);
+  openOutlookCompose(email,subject,body);
 }
 function dossierPendingCardHTML(d){
   const link=eadLinks.find(l=>l.forDossier===d.id);
@@ -2058,39 +2084,84 @@ function renderMobileDossiersPending(){
   wireDossierPendingEvents(wrap);
 }
 
-// ===== Calendrier EAD (admin) =====
-function buildEadCalendarHTML(){
-  const upcoming=eadBookings.filter(b=>b.date>=todayISO()).sort((a,b)=>a.date.localeCompare(b.date)||a.heure.localeCompare(b.heure));
-  if(!upcoming.length)return '<div class="dossier-empty">📭 Aucun créneau EAD réservé pour le moment.</div>';
-  const byDay={};
-  upcoming.forEach(b=>{(byDay[b.date]=byDay[b.date]||[]).push(b);});
-  return Object.keys(byDay).sort().map(date=>{
-    const rows=byDay[date].map(b=>`<div class="ead-booking-row" data-eid="${b.id}"><span class="ead-booking-heure">${b.heure}</span><span class="ead-booking-info">${b.nom||'—'}${b.tel?' · '+b.tel:''}${b.immat?' · '+b.immat:''}</span><button class="ead-booking-del" data-eid="${b.id}">🗑️</button></div>`).join('');
-    return `<div class="ead-day-group"><div class="ead-day-header">${fFR(new Date(date))}</div>${rows}</div>`;
-  }).join('');
+// ===== Calendrier EAD (admin) — grille semaine × heures =====
+function eadWeekDays(offset){
+  const monday=gMon(new Date());monday.setDate(monday.getDate()+offset*7);
+  return Array.from({length:5},(_,i)=>{const d=new Date(monday);d.setDate(d.getDate()+i);return d;});
 }
-function wireEadCalendarEvents(container){
-  container.querySelectorAll('.ead-booking-del').forEach(btn=>{
-    btn.addEventListener('click',async()=>{
+function eadCellInfo(dateIso,heure){
+  const sid=eadSlotId(dateIso,heure);
+  const booking=eadBookings.find(b=>b.id===sid);
+  if(booking)return{status:'booked',booking};
+  const avail=eadAvailabilityDocs.find(a=>a.id===sid);
+  if(avail)return{status:'blocked'};
+  return{status:'free'};
+}
+function buildEadWeekGridHTML(){
+  const days=eadWeekDays(eadWeekOffset);
+  const label=`Semaine du ${days[0].getDate()} ${MF[days[0].getMonth()]} au ${days[4].getDate()} ${MF[days[4].getMonth()]} ${days[4].getFullYear()}`;
+  let html=`<div class="ead-grid-nav">
+    <button class="ead-grid-nav-btn" id="eadWeekPrevBtn">‹</button>
+    <span class="ead-grid-week-label">${label}</span>
+    <button class="ead-grid-nav-btn" id="eadWeekNextBtn">›</button>
+    <button class="ead-grid-nav-btn ead-grid-today-btn" id="eadWeekTodayBtn">Auj.</button>
+  </div>`;
+  html+=`<div class="ead-grid"><div class="ead-grid-header"><div class="ead-grid-corner">Heure</div>${days.map(d=>`<div class="ead-grid-daycol${d.toDateString()===new Date().toDateString()?' today':''}">${JF[d.getDay()].slice(0,3)}<br>${d.getDate()}/${d.getMonth()+1}</div>`).join('')}</div>`;
+  EAD_HOURS.forEach(h=>{
+    html+=`<div class="ead-grid-row"><div class="ead-grid-hourlabel">${h}</div>`;
+    days.forEach(d=>{
+      const dateIso=dKey(d);
+      const info=eadCellInfo(dateIso,h);
+      const sid=eadSlotId(dateIso,h);
+      if(info.status==='booked'){
+        const b=info.booking;
+        html+=`<div class="ead-grid-cell booked" data-sid="${sid}" title="Cliquer pour annuler"><div class="ead-cell-nom">${b.nom||'—'}</div><div class="ead-cell-meta">${b.tel||''}${b.immat?' · '+b.immat:''}</div></div>`;
+      }else if(info.status==='blocked'){
+        html+=`<div class="ead-grid-cell blocked" data-sid="${sid}" data-date="${dateIso}" data-heure="${h}" title="Cliquer pour rendre disponible">🚫 Indisponible</div>`;
+      }else{
+        html+=`<div class="ead-grid-cell free" data-sid="${sid}" data-date="${dateIso}" data-heure="${h}" title="Cliquer pour rendre indisponible">Libre</div>`;
+      }
+    });
+    html+=`</div>`;
+  });
+  html+=`</div>`;
+  return html;
+}
+function wireEadWeekGridEvents(container){
+  container.querySelector('#eadWeekPrevBtn')?.addEventListener('click',()=>{eadWeekOffset--;renderEadCalendar();renderMobileEadCalendar();});
+  container.querySelector('#eadWeekNextBtn')?.addEventListener('click',()=>{eadWeekOffset++;renderEadCalendar();renderMobileEadCalendar();});
+  container.querySelector('#eadWeekTodayBtn')?.addEventListener('click',()=>{eadWeekOffset=0;renderEadCalendar();renderMobileEadCalendar();});
+  container.querySelectorAll('.ead-grid-cell.booked').forEach(cell=>{
+    cell.addEventListener('click',async()=>{
       if(isRO()){showRO();return;}
-      const eid=btn.dataset.eid;
+      const sid=cell.dataset.sid;
       if(!confirm('Annuler ce créneau EAD ? Il redeviendra disponible pour un autre client.'))return;
-      try{
-        await deleteDoc(doc(db,'eadBookings',eid));
-        await deleteDoc(doc(db,'eadAvailability',eid));
-      }catch(e){console.error(e);}
+      try{await deleteDoc(doc(db,'eadBookings',sid));await deleteDoc(doc(db,'eadAvailability',sid));}catch(e){console.error(e);}
+    });
+  });
+  container.querySelectorAll('.ead-grid-cell.free').forEach(cell=>{
+    cell.addEventListener('click',async()=>{
+      if(isRO()){showRO();return;}
+      const{date,heure}=cell.dataset;
+      try{await setDoc(doc(db,'eadAvailability',cell.dataset.sid),{taken:true,date,heure,blockedByAdmin:true});}catch(e){console.error(e);}
+    });
+  });
+  container.querySelectorAll('.ead-grid-cell.blocked').forEach(cell=>{
+    cell.addEventListener('click',async()=>{
+      if(isRO()){showRO();return;}
+      try{await deleteDoc(doc(db,'eadAvailability',cell.dataset.sid));}catch(e){console.error(e);}
     });
   });
 }
 function renderEadCalendar(){
   const el=document.getElementById('eadCalendarList');if(!el)return;
-  el.innerHTML=buildEadCalendarHTML();
-  wireEadCalendarEvents(el);
+  el.innerHTML=buildEadWeekGridHTML();
+  wireEadWeekGridEvents(el);
 }
 function renderMobileEadCalendar(){
   const el=document.getElementById('mEadCalendarList');if(!el)return;
-  el.innerHTML=buildEadCalendarHTML();
-  wireEadCalendarEvents(el);
+  el.innerHTML=buildEadWeekGridHTML();
+  wireEadWeekGridEvents(el);
 }
 
 // ===== Mode placement sur le planning =====
