@@ -1218,6 +1218,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <label>Kilométrage retour</label><input type="number" id="restitKm">
     <label>Carburant retour</label><select id="restitCarburant"><option value="plein">Plein</option><option value="3/4">3/4</option><option value="1/2">1/2</option><option value="1/4">1/4</option></select>
     <label>Remarques / État</label><textarea id="restitRemarques" placeholder="RAS, rayure sur aile gauche…"></textarea>
+    <div style="font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 8px;">✍️ Signature du client</div>
+    <div class="signature-pad-wrap">
+      <canvas id="restitSignatureCanvas" class="signature-canvas"></canvas>
+      <div class="signature-placeholder" id="restitSignaturePlaceholder">Signez ici avec le doigt ou le stylet</div>
+    </div>
+    <div class="btn-row" style="margin-top:8px;"><button class="btn-secondary" id="btnClearRestitSignature" style="flex:1;">🗑️ Effacer la signature</button></div>
     <div class="btn-row" style="margin-top:20px;"><button class="btn-secondary" id="btnCloseRestitution">Annuler</button><button class="btn-primary" id="btnSaveRestitution">Enregistrer</button></div>
   </div>
 </div>
@@ -3365,58 +3371,56 @@ function openContrat(appt,dd,df,td){
   document.getElementById('cImmatPret').value=state.loanNames[appt.row]||'';
   document.getElementById('cCouleurPret').value='';
   document.getElementById('contratModalOverlay').classList.add('open');
-  setTimeout(()=>{setupSignaturePad();clearSignaturePad();},50);
+  setTimeout(()=>{setupSignaturePad('cSignatureCanvas');clearSignaturePad('cSignatureCanvas');},50);
 }
 function closeContrat(){document.getElementById('contratModalOverlay').classList.remove('open');contratAppt=null;}
 document.getElementById('btnCloseContrat').addEventListener('click',closeContrat);
 document.getElementById('contratModalOverlay').addEventListener('click',function(e){if(e.target===this)closeContrat();});
 
-// ===== Signature tactile (contrat de prêt) =====
-let sigCtx=null,sigDrawing=false,sigHasDrawing=false,sigLastX=0,sigLastY=0,sigSetup=false;
-function setupSignaturePad(){
-  const canvas=document.getElementById('cSignatureCanvas');
+// ===== Signature tactile (contrat de prêt + restitution) =====
+function setupSignaturePad(canvasId){
+  const canvas=document.getElementById(canvasId);
   if(!canvas)return;
   const rect=canvas.getBoundingClientRect();
   if(!rect.width)return;
   const ratio=window.devicePixelRatio||1;
   canvas.width=rect.width*ratio;
   canvas.height=rect.height*ratio;
-  sigCtx=canvas.getContext('2d');
-  sigCtx.scale(ratio,ratio);
-  sigCtx.lineWidth=2.4;
-  sigCtx.lineCap='round';
-  sigCtx.lineJoin='round';
-  sigCtx.strokeStyle='#1e2a38';
-  if(sigSetup)return;
-  sigSetup=true;
+  const ctx=canvas.getContext('2d');
+  ctx.scale(ratio,ratio);
+  ctx.lineWidth=2.4;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#1e2a38';
+  canvas._sigCtx=ctx;
+  if(canvas._sigSetup)return;
+  canvas._sigSetup=true;canvas._hasDrawing=false;
+  let drawing=false,lastX=0,lastY=0;
   const getPos=e=>{const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};};
   canvas.addEventListener('pointerdown',e=>{
-    sigDrawing=true;
-    const p=getPos(e);sigLastX=p.x;sigLastY=p.y;
+    drawing=true;const p=getPos(e);lastX=p.x;lastY=p.y;
     canvas.setPointerCapture(e.pointerId);
-    document.getElementById('cSignaturePlaceholder')?.classList.add('hidden');
+    canvas.parentElement.querySelector('.signature-placeholder')?.classList.add('hidden');
   });
   canvas.addEventListener('pointermove',e=>{
-    if(!sigDrawing)return;
+    if(!drawing)return;
     const p=getPos(e);
-    sigCtx.beginPath();sigCtx.moveTo(sigLastX,sigLastY);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();
-    sigLastX=p.x;sigLastY=p.y;sigHasDrawing=true;
+    canvas._sigCtx.beginPath();canvas._sigCtx.moveTo(lastX,lastY);canvas._sigCtx.lineTo(p.x,p.y);canvas._sigCtx.stroke();
+    lastX=p.x;lastY=p.y;canvas._hasDrawing=true;
   });
-  ['pointerup','pointerleave','pointercancel'].forEach(evt=>canvas.addEventListener(evt,()=>{sigDrawing=false;}));
+  ['pointerup','pointerleave','pointercancel'].forEach(evt=>canvas.addEventListener(evt,()=>{drawing=false;}));
 }
-function clearSignaturePad(){
-  const canvas=document.getElementById('cSignatureCanvas');
-  if(!canvas||!sigCtx)return;
-  sigCtx.clearRect(0,0,canvas.width,canvas.height);
-  sigHasDrawing=false;
-  document.getElementById('cSignaturePlaceholder')?.classList.remove('hidden');
+function clearSignaturePad(canvasId){
+  const canvas=document.getElementById(canvasId);
+  if(!canvas||!canvas._sigCtx)return;
+  canvas._sigCtx.clearRect(0,0,canvas.width,canvas.height);
+  canvas._hasDrawing=false;
+  canvas.parentElement.querySelector('.signature-placeholder')?.classList.remove('hidden');
 }
-document.getElementById('btnClearSignature').addEventListener('click',clearSignaturePad);
-function getSignatureDataURL(){
-  const canvas=document.getElementById('cSignatureCanvas');
-  if(!canvas||!sigHasDrawing)return'';
+function getSignatureDataURL(canvasId){
+  const canvas=document.getElementById(canvasId);
+  if(!canvas||!canvas._hasDrawing)return'';
   return canvas.toDataURL('image/png');
 }
+document.getElementById('btnClearSignature').addEventListener('click',()=>clearSignaturePad('cSignatureCanvas'));
+document.getElementById('btnClearRestitSignature').addEventListener('click',()=>clearSignaturePad('restitSignatureCanvas'));
 
 function buildContratHTML(c){
   return `<div class="contrat-print">
@@ -3444,7 +3448,7 @@ function buildContratHTML(c){
 async function imprimerContrat(){
   if(!contratAppt)return;
   const {appt,dd,df,td}=contratAppt;
-  const c={id:genId(),numero:Date.now().toString().slice(-6),nom:document.getElementById('cNom').value.trim(),tel:document.getElementById('cTel').value.trim(),adresse:document.getElementById('cAdresse').value.trim(),km:document.getElementById('cKm').value,carburant:document.getElementById('cCarburant').value,immatPret:document.getElementById('cImmatPret').value.trim(),couleurPret:document.getElementById('cCouleurPret').value.trim(),signatureClient:getSignatureDataURL(),dateDebut:dd.toISOString(),dateFin:df.toISOString(),groupId:appt.groupId,createdAt:Date.now()};
+  const c={id:genId(),numero:Date.now().toString().slice(-6),nom:document.getElementById('cNom').value.trim(),tel:document.getElementById('cTel').value.trim(),adresse:document.getElementById('cAdresse').value.trim(),km:document.getElementById('cKm').value,carburant:document.getElementById('cCarburant').value,immatPret:document.getElementById('cImmatPret').value.trim(),couleurPret:document.getElementById('cCouleurPret').value.trim(),signatureClient:getSignatureDataURL('cSignatureCanvas'),dateDebut:dd.toISOString(),dateFin:df.toISOString(),groupId:appt.groupId,createdAt:Date.now()};
   ctState.contrats=[...(ctState.contrats||[]),c];
   await saveCT();
   document.getElementById('contrat-print-zone').innerHTML=buildContratHTML(c);
@@ -3467,7 +3471,7 @@ function buildRestitutionHTML(c){
       <div class="restit-box"><div class="restit-box-title">Départ</div><div class="cp-row"><span class="cp-label">Date :</span><span class="cp-val">${fSh(new Date(c.dateDebut))}</span></div><div class="cp-row"><span class="cp-label">KM :</span><span class="cp-val">${c.km||'—'}</span></div><div class="cp-row"><span class="cp-label">Carburant :</span><span class="cp-val">${c.carburant||'—'}</span></div></div>
     </div>
     <div class="restit-box" style="margin-bottom:14px;"><div class="restit-box-title">Retour</div><div class="cp-row"><span class="cp-label">Date :</span><span class="cp-val">${fSh(new Date(c.dateRestitution))}</span></div><div class="cp-row"><span class="cp-label">KM :</span><span class="cp-val">${c.kmRetour||'—'}</span></div><div class="cp-row"><span class="cp-label">Carburant :</span><span class="cp-val">${c.carburantRetour||'—'}</span></div>${c.remarques?`<div class="cp-row"><span class="cp-label">Remarques :</span><span class="cp-val">${c.remarques}</span></div>`:''}</div>
-    <div class="restit-signatures"><div><div class="restit-sig-label">Signature du garage</div><div class="restit-sig-line">Carrosserie Brun</div></div><div><div class="restit-sig-label">Signature de l'emprunteur</div><div class="restit-sig-line">${c.nom}</div></div></div>
+    <div class="restit-signatures"><div><div class="restit-sig-label">Signature du garage</div><div class="restit-sig-line">Carrosserie Brun</div></div><div><div class="restit-sig-label"${c.signatureRestitution?' style="margin-bottom:4px;"':''}>Signature de l'emprunteur</div>${c.signatureRestitution?`<img src="${c.signatureRestitution}" style="max-width:100%;max-height:70px;display:block;margin-bottom:4px;">`:''}<div class="restit-sig-line">${c.nom}</div></div></div>
     <div class="restit-footer">Carrosserie Brun — Valence Motors · 307 avenue de Romans, 26000 Valence · Tél : 04 75 55 64 39</div>
   </div>`;
 }
@@ -3481,13 +3485,14 @@ function openRestitution(cid){
   document.getElementById('restitCarburant').value='plein';
   document.getElementById('restitRemarques').value='';
   document.getElementById('restitutionModalOverlay').classList.add('open');
+  setTimeout(()=>{setupSignaturePad('restitSignatureCanvas');clearSignaturePad('restitSignatureCanvas');},50);
 }
 document.getElementById('btnCloseRestitution').addEventListener('click',()=>document.getElementById('restitutionModalOverlay').classList.remove('open'));
 document.getElementById('restitutionModalOverlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 document.getElementById('btnSaveRestitution').addEventListener('click',async()=>{
   if(isRO()){showRO();return;}
   if(!restitId)return;
-  ctState.contrats=(ctState.contrats||[]).map(c=>c.id!==restitId?c:{...c,dateRestitution:document.getElementById('restitDate').value?new Date(document.getElementById('restitDate').value).toISOString():new Date().toISOString(),kmRetour:document.getElementById('restitKm').value,carburantRetour:document.getElementById('restitCarburant').value,remarques:document.getElementById('restitRemarques').value.trim()});
+  ctState.contrats=(ctState.contrats||[]).map(c=>c.id!==restitId?c:{...c,dateRestitution:document.getElementById('restitDate').value?new Date(document.getElementById('restitDate').value).toISOString():new Date().toISOString(),kmRetour:document.getElementById('restitKm').value,carburantRetour:document.getElementById('restitCarburant').value,remarques:document.getElementById('restitRemarques').value.trim(),signatureRestitution:getSignatureDataURL('restitSignatureCanvas')||c.signatureRestitution||''});
   document.getElementById('restitutionModalOverlay').classList.remove('open');
   await saveCT();renderContrats();if(isMobile())renderMobileContrats();
 });
