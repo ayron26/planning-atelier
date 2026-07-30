@@ -439,7 +439,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .dpc-flag-chip.active{background:#2980b9;color:#fff;border-color:#2980b9;}
 .dossiers-columns{display:grid;grid-template-columns:1fr;gap:16px;align-items:start;}
 @media(min-width:769px){
-  .dossiers-columns{grid-template-columns:repeat(3,1fr);}
+  .dossiers-columns{grid-template-columns:repeat(4,1fr);}
 }
 .dossiers-column-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;padding:0 2px;}
 .dossiers-column-body{display:flex;flex-direction:column;gap:10px;max-height:min(600px,65vh);overflow-y:auto;padding-right:6px;}
@@ -2132,12 +2132,13 @@ function wireDossierPendingEvents(container){
 }
 // Catégorise un dossier selon l'état de ses liens EAD/RDV, pour bien les séparer visuellement
 function getDossierLinkStatus(d){
-  if(d.photosFaites||d.rdvFixeDirect)return'direct';
   const eadLink=eadLinks.find(l=>l.forDossier===d.id);
   const eadBooking=eadLink?eadBookings.find(b=>b.token===eadLink.id):null;
   const rdvLink=rdvLinks.find(l=>l.forDossier===d.id);
   const rdvResponded=rdvLink&&rdvLink.dateChoisie;
   if(eadBooking||rdvResponded)return'responded';
+  if(d.rdvFixeDirect||(rdvLink&&!rdvResponded))return'rdv_wait';
+  if(d.photosFaites||eadLink)return'ead_terrain';
   return'none';
 }
 async function toggleDossierFlag(id,flag){
@@ -2147,12 +2148,13 @@ async function toggleDossierFlag(id,flag){
   renderDossiersPending();if(isMobile())renderMobileDossiersPending();
 }
 function buildDossiersPendingHTML(items){
-  const groups={none:[],responded:[],direct:[]};
+  const groups={none:[],ead_terrain:[],rdv_wait:[],responded:[]};
   items.forEach(d=>groups[getDossierLinkStatus(d)].push(d));
   const cols=[
-    {key:'responded',label:'✅ Le client a répondu — prêt à placer',color:'#1e8449'},
-    {key:'direct',label:'🚶 Traités directement',color:'#2980b9'},
-    {key:'none',label:'🆕 Nouveaux dossiers',color:'var(--muted)'}
+    {key:'none',label:'🆕 Nouveau dossier',color:'var(--muted)'},
+    {key:'ead_terrain',label:'📷 Att. EAD / Terrain',color:'#16a085'},
+    {key:'rdv_wait',label:'📅 Att. RDV',color:'#9a6a00'},
+    {key:'responded',label:'✅ RDV à prendre',color:'#1e8449'}
   ];
   let html='<div class="dossiers-columns">';
   cols.forEach(c=>{
