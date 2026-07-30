@@ -2673,12 +2673,12 @@ function doSearch(term,resEl,mobile){
   term=term.trim().toLowerCase();
   resEl.innerHTML='';
   if(!term){resEl.classList.remove('open');return;}
-  const matches=state.appointments.filter(a=>a&&a.segmentIndex===0&&((a.name||'').toLowerCase().includes(term)||(a.tel||'').toLowerCase().includes(term)));
+  const matches=state.appointments.filter(a=>a&&a.segmentIndex===0&&((a.name||'').toLowerCase().includes(term)||(a.tel||'').toLowerCase().includes(term)||(a.immat||'').toLowerCase().includes(term)));
   if(!matches.length){resEl.innerHTML='<div class="search-no-result">Aucun résultat.</div>';resEl.classList.add('open');return;}
   matches.slice(0,15).forEach(a=>{
     const item=document.createElement('div');item.className='search-result-item';
     const off=gWO(a.weekStart);
-    item.innerHTML=`<span class="sri-name">${a.name}</span><span class="sri-meta">${fFR(gWD(off)[a.day]||new Date(a.weekStart))}${a.tel?' · '+a.tel:''}</span>`;
+    item.innerHTML=`<span class="sri-name">${a.name}</span><span class="sri-meta">${fFR(gWD(off)[a.day]||new Date(a.weekStart))}${a.immat?' · 🚗 '+a.immat:''}${a.tel?' · '+a.tel:''}</span>`;
     item.addEventListener('click',()=>{
       state.weekOffset=off;render();if(isMobile())renderMobile();
       resEl.classList.remove('open');
@@ -3679,7 +3679,7 @@ function setupEvents(){
     const term=mobileSearchInput.value.trim().toLowerCase();
     document.querySelectorAll('.mg-appt').forEach(el=>el.classList.remove('highlight'));
     if(!term||term.length<2)return;
-    const match=state.appointments.find(a=>a&&a.segmentIndex===0&&((a.name||'').toLowerCase().includes(term)||(a.tel||'').toLowerCase().includes(term)));
+    const match=state.appointments.find(a=>a&&a.segmentIndex===0&&((a.name||'').toLowerCase().includes(term)||(a.tel||'').toLowerCase().includes(term)||(a.immat||'').toLowerCase().includes(term)));
     if(!match)return;
     const off=gWO(match.weekStart);
     if(off!==state.weekOffset){state.weekOffset=off;renderMobile();}
