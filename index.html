@@ -2046,6 +2046,7 @@ function dossierPendingCardHTML(d){
     <div class="dpc-info"><div class="dpc-nom">${d.held?'⏸️ ':''}${d.nom}</div><div class="dpc-meta">${d.tel?'📞 '+d.tel+' · ':''}${d.immat?'🚗 '+d.immat+' · ':''}${d.compagnie?'🏢 '+d.compagnie+' · ':''}${d.email?'✉️ '+d.email+' · ':''}${d.adresse||''}</div>${d.note?`<div class="dpc-meta" style="color:#8e44ad;font-weight:600;margin-top:3px;">📝 ${d.note}</div>`:''}${eadStatusHTML}${rdvStatusHTML}
     <div class="dpc-flags">
       <button class="dpc-flag-chip dpc-flag-photos${d.photosFaites?' active':''}" data-did="${d.id}">📸 Photos déjà faites</button>
+      <button class="dpc-flag-chip dpc-flag-pv${d.pvRecu?' active':''}" data-did="${d.id}">📋 PV reçu</button>
       <button class="dpc-flag-chip dpc-flag-rdv${d.rdvFixeDirect?' active':''}" data-did="${d.id}">📅 RDV déjà fixé (sur place)</button>
     </div></div>
     <div class="dpc-actions">
@@ -2126,6 +2127,9 @@ function wireDossierPendingEvents(container){
   container.querySelectorAll('.dpc-flag-photos').forEach(btn=>{
     btn.addEventListener('click',()=>toggleDossierFlag(btn.dataset.did,'photosFaites'));
   });
+  container.querySelectorAll('.dpc-flag-pv').forEach(btn=>{
+    btn.addEventListener('click',()=>toggleDossierFlag(btn.dataset.did,'pvRecu'));
+  });
   container.querySelectorAll('.dpc-flag-rdv').forEach(btn=>{
     btn.addEventListener('click',()=>toggleDossierFlag(btn.dataset.did,'rdvFixeDirect'));
   });
@@ -2136,9 +2140,9 @@ function getDossierLinkStatus(d){
   const eadBooking=eadLink?eadBookings.find(b=>b.token===eadLink.id):null;
   const rdvLink=rdvLinks.find(l=>l.forDossier===d.id);
   const rdvResponded=rdvLink&&rdvLink.dateChoisie;
-  if(eadBooking||rdvResponded)return'responded';
-  if(d.rdvFixeDirect||(rdvLink&&!rdvResponded))return'rdv_wait';
-  if(d.photosFaites||eadLink)return'ead_terrain';
+  if(rdvResponded||d.rdvFixeDirect||d.pvRecu)return'responded';
+  if(eadBooking||d.photosFaites)return'att_pv';
+  if(eadLink)return'ead_terrain';
   return'none';
 }
 async function toggleDossierFlag(id,flag){
@@ -2148,12 +2152,12 @@ async function toggleDossierFlag(id,flag){
   renderDossiersPending();if(isMobile())renderMobileDossiersPending();
 }
 function buildDossiersPendingHTML(items){
-  const groups={none:[],ead_terrain:[],rdv_wait:[],responded:[]};
+  const groups={none:[],ead_terrain:[],att_pv:[],responded:[]};
   items.forEach(d=>groups[getDossierLinkStatus(d)].push(d));
   const cols=[
     {key:'none',label:'🆕 Nouveau dossier',color:'var(--muted)'},
     {key:'ead_terrain',label:'📷 Att. EAD / Terrain',color:'#16a085'},
-    {key:'rdv_wait',label:'📅 Att. RDV',color:'#9a6a00'},
+    {key:'att_pv',label:'📋 Att. PV',color:'#9a6a00'},
     {key:'responded',label:'✅ RDV à prendre',color:'#1e8449'}
   ];
   let html='<div class="dossiers-columns">';
