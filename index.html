@@ -998,6 +998,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <div id="sinAnalyzing" class="sinistre-analyzing" style="display:none;">⏳ Lecture du PDF en cours…</div>
     <div id="sinReview" style="display:none;"></div>
     <div class="dossiers-pending-title">📋 Dossiers en attente de placement</div>
+    <div class="contrats-search" style="margin-bottom:14px;"><span class="search-icon">🔍</span><input type="text" id="pendingDossierSearch" placeholder="Nom, immatriculation, téléphone…"></div>
     <div id="dossiersPendingList"></div>
     <div class="dossiers-pending-title">📷 Planning EAD (créneaux réservés)</div>
     <div id="eadCalendarList"></div>
@@ -1013,6 +1014,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <div id="mSinAnalyzing" class="sinistre-analyzing" style="display:none;">⏳ Lecture du PDF en cours…</div>
     <div id="mSinReview" style="display:none;"></div>
     <div class="dossiers-pending-title">📋 En attente de placement</div>
+    <div class="mobile-search-contrats"><span class="ms-icon">🔍</span><input type="text" id="mPendingDossierSearch" placeholder="Nom, immatriculation, téléphone…"></div>
     <div id="mDossiersPendingList"></div>
     <div class="dossiers-pending-title">📷 Planning EAD</div>
     <div id="mEadCalendarList"></div>
@@ -1343,6 +1345,7 @@ let dossierSearch='',mDossierSearch='';
 let dState={items:[]};
 let isSavD=false;
 let pendingPlacement=null;
+let pendingDossierSearch='',mPendingDossierSearch='';
 let currentDraftForm=null;
 let nbTech=parseInt(localStorage.getItem('carrosserie_tech')||'3');
 let isSav=false,isSavC=false,isSavCt=false;
@@ -2161,17 +2164,22 @@ function buildDossiersPendingHTML(items){
   html+='</div>';
   return html;
 }
+function filterDossierItems(items,term){
+  const t=(term||'').trim().toLowerCase();
+  if(!t)return items;
+  return items.filter(d=>(d.nom||'').toLowerCase().includes(t)||(d.immat||'').toLowerCase().includes(t)||(d.tel||'').toLowerCase().includes(t));
+}
 function renderDossiersPending(){
   const wrap=document.getElementById('dossiersPendingList');if(!wrap)return;
-  const items=dState.items||[];
-  if(!items.length){wrap.innerHTML='<div class="dossier-empty">📭 Aucun dossier en attente. Dépose un PDF ci-dessus pour en créer un.</div>';return;}
+  const items=filterDossierItems(dState.items||[],pendingDossierSearch);
+  if(!items.length){wrap.innerHTML=`<div class="dossier-empty">📭 ${pendingDossierSearch?'Aucun dossier ne correspond à cette recherche.':'Aucun dossier en attente. Dépose un PDF ci-dessus pour en créer un.'}</div>`;return;}
   wrap.innerHTML=buildDossiersPendingHTML(items);
   wireDossierPendingEvents(wrap);
 }
 function renderMobileDossiersPending(){
   const wrap=document.getElementById('mDossiersPendingList');if(!wrap)return;
-  const items=dState.items||[];
-  if(!items.length){wrap.innerHTML='<div class="dossier-empty">📭 Aucun dossier en attente.</div>';return;}
+  const items=filterDossierItems(dState.items||[],mPendingDossierSearch);
+  if(!items.length){wrap.innerHTML=`<div class="dossier-empty">📭 ${mPendingDossierSearch?'Aucun dossier ne correspond à cette recherche.':'Aucun dossier en attente.'}</div>`;return;}
   wrap.innerHTML=buildDossiersPendingHTML(items);
   wireDossierPendingEvents(wrap);
 }
@@ -3655,6 +3663,8 @@ function renderHistory(){
 
 // ===== Dossiers (recherche) =====
 document.getElementById('dossiersSearchInput').addEventListener('input',e=>{dossierSearch=e.target.value;renderDossiers();});
+document.getElementById('pendingDossierSearch').addEventListener('input',e=>{pendingDossierSearch=e.target.value;renderDossiersPending();});
+document.getElementById('mPendingDossierSearch').addEventListener('input',e=>{mPendingDossierSearch=e.target.value;renderMobileDossiersPending();});
 document.getElementById('mDossiersSearch').addEventListener('input',e=>{mDossierSearch=e.target.value;renderMobileDossiers();});
 
 // ===== Câblage global des boutons restants =====
