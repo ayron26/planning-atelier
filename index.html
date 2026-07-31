@@ -2505,8 +2505,8 @@ function renderAppts(days){
     const prio=appt.priority||'moyenne';const isLF=appt.type==='loan'&&appt.segmentIndex===0;
     const fs=state.appointments.find(a=>a&&a.groupId===appt.groupId&&a.segmentIndex===0)||appt;
     const dF=gWD(gWO(fs.weekStart));const dd=dF[fs.day]||dF[0];const td=appt.totalDays||1;const df=calcFin(dd,td);const hS=hSeg(appt.hours||0,td,span);
-    const el=document.createElement('div');const now48=new Date();const limit48=new Date(now48.getTime()+48*3600*1000);
-    let is48h=false;try{const dd48=gWD(gWO(fs.weekStart))[fs.day]||gWD(gWO(fs.weekStart))[0];const ddC=new Date(dd48);ddC.setHours(0,0,0,0);const pieceOk=appt.pieceStatus==='ordered'||appt.pieceStatus==='delivered'||appt.pieceStatus==='sans';is48h=ddC>=now48&&ddC<=limit48&&!pieceOk;}catch(e){}
+    const el=document.createElement('div');const dateKeys48=get48hBusinessDateKeys();
+    let is48h=false;try{const dd48=gWD(gWO(fs.weekStart))[fs.day]||gWD(gWO(fs.weekStart))[0];const pieceOk=appt.pieceStatus==='ordered'||appt.pieceStatus==='delivered'||appt.pieceStatus==='sans';is48h=dateKeys48.includes(dKey(dd48))&&!pieceOk;}catch(e){}
     el.className=`appt prio-${prio}${appt.arrived?' arrived':''}${is48h?' alerte-48h':''}`;el.style.background=appt.color||'#2980b9';
     if(span>1){el.style.right=`calc(-${(span-1)*100}% - ${span-1}px)`;el.style.zIndex=15;}
     let pb='';if(appt.pieceStatus==='delivered')pb='<span class="badge badge-blue">✅</span>';else if(appt.pieceStatus==='ordered')pb='<span class="badge badge-orange">📦</span>';else if(appt.pieceStatus==='sans')pb='<span class="badge badge-green">✔️</span>';
@@ -3255,14 +3255,27 @@ document.getElementById('mBtnSaveConges').addEventListener('click',async()=>{
 });
 
 // ===== Alerte 48h (pièces) =====
+function get48hBusinessDateKeys(){
+  // Aujourd'hui + les 2 prochains jours OUVRÉS (saute samedi/dimanche) — ainsi le vendredi
+  // couvre bien le lundi suivant, dernier moment utile pour commander avant le week-end.
+  const today=new Date();today.setHours(0,0,0,0);
+  const keys=[dKey(today)];
+  let cur=new Date(today),count=0;
+  while(count<2){
+    cur=new Date(cur);cur.setDate(cur.getDate()+1);
+    if(cur.getDay()===0||cur.getDay()===6)continue;
+    keys.push(dKey(cur));count++;
+  }
+  return keys;
+}
 function renderAlertes48h(){
   const bar=document.getElementById('alerte48hBar'),items=document.getElementById('alerte48hItems');
-  const now=new Date();const limit=new Date(now.getTime()+48*3600*1000);
+  const dateKeys=get48hBusinessDateKeys();
   const alertes=state.appointments.filter(a=>{
     if(!a||a.segmentIndex!==0)return false;
     const pieceOk=a.pieceStatus==='ordered'||a.pieceStatus==='delivered'||a.pieceStatus==='sans';
     if(pieceOk)return false;
-    try{const d=gWD(gWO(a.weekStart))[a.day];const dd=new Date(d);dd.setHours(0,0,0,0);return dd>=now&&dd<=limit;}catch(e){return false;}
+    try{const d=gWD(gWO(a.weekStart))[a.day];return dateKeys.includes(dKey(d));}catch(e){return false;}
   });
   if(!alertes.length){bar.style.display='none';return;}
   bar.style.display='flex';
