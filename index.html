@@ -259,10 +259,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .modal input:focus,.modal textarea:focus,.modal select:focus{border-color:var(--accent);}
 .preview-note{font-size:.82rem;color:#1a5276;background:#e8f4fd;border-radius:6px;padding:8px 12px;margin-top:6px;border-left:3px solid #2980b9;font-weight:600;}
 .color-picker{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
-.vstat-legend{margin-top:14px;}
-.vstat-legend-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;}
-.vstat-legend-item{display:flex;align-items:center;gap:5px;font-size:.76rem;color:var(--muted);font-weight:600;}
-.vstat-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
 .color-swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:transform .15s,border-color .15s;}
 .color-swatch:hover{transform:scale(1.15);}
 .color-swatch.selected{border-color:#1e2a38;}
@@ -1095,16 +1091,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
       <button class="status-btn active-moyenne" id="newPrioMoyenne">🟡 Moyenne</button>
       <button class="status-btn" id="newPrioHaute">🔴 Haute</button>
     </div>
-    <div id="colorPickerWrap"><label>Couleur</label><div class="color-picker" id="colorPicker"></div></div>
-    <div id="vstatLegend" class="vstat-legend" style="display:none;">
-      <label>Couleur (automatique — véhicule de prêt)</label>
-      <div class="vstat-legend-row">
-        <span class="vstat-legend-item"><span class="vstat-dot" style="background:#2980b9;"></span>Pas encore rentré</span>
-        <span class="vstat-legend-item"><span class="vstat-dot" style="background:#27ae60;"></span>En cours</span>
-        <span class="vstat-legend-item"><span class="vstat-dot" style="background:#e67e22;"></span>Terminé, non restitué</span>
-        <span class="vstat-legend-item"><span class="vstat-dot" style="background:#7f8c8d;"></span>Restitué</span>
-      </div>
-    </div>
+    <label>Couleur</label><div class="color-picker" id="colorPicker"></div>
     <div class="btn-row"><button class="btn-secondary" id="btnCloseModal">Annuler</button><button class="btn-primary" id="btnSaveAppt">Enregistrer</button></div>
   </div>
 </div>
@@ -1150,16 +1137,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     </div>
     
     <div style="font-size:.78rem;color:#1a5276;background:#e8f4fd;border-radius:6px;padding:8px 12px;margin-top:14px;">ℹ️ Les heures travaillées et les photos saisies par le technicien sont visibles dans l'onglet <strong>🗂️ Suivi Technicien</strong>.</div>
-    <div id="editColorPickerWrap"><label>Couleur</label><div class="color-picker" id="editColorPicker"></div></div>
-    <div id="editVstatLegend" class="vstat-legend" style="display:none;">
-      <label>Couleur (automatique — véhicule de prêt)</label>
-      <div class="vstat-legend-row">
-        <span class="vstat-legend-item"><span class="vstat-dot" style="background:#2980b9;"></span>Pas encore rentré</span>
-        <span class="vstat-legend-item"><span class="vstat-dot" style="background:#27ae60;"></span>En cours</span>
-        <span class="vstat-legend-item"><span class="vstat-dot" style="background:#e67e22;"></span>Terminé, non restitué</span>
-        <span class="vstat-legend-item"><span class="vstat-dot" style="background:#7f8c8d;"></span>Restitué</span>
-      </div>
-    </div>
+    <label>Couleur</label><div class="color-picker" id="editColorPicker"></div>
     <div class="btn-row"><button class="btn-secondary" id="btnCloseEditModal">Annuler</button><button class="btn-primary" id="btnSaveEditAppt">Enregistrer</button></div>
   </div>
 </div>
@@ -1285,16 +1263,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
       <button class="mprio-btn active-moyenne" id="mPrioMoyenne">🟡 Moyenne</button>
       <button class="mprio-btn" id="mPrioHaute">🔴 Haute</button>
     </div>
-    <div id="mColorPickerWrap"><label>Couleur</label><div class="mobile-color-picker" id="mColorPicker"></div></div>
-    <div id="mVstatLegend" class="vstat-legend" style="display:none;">
-      <label>Couleur (automatique — véhicule de prêt)</label>
-      <div class="vstat-legend-row">
-        <span class="vstat-legend-item"><span class="vstat-dot" style="background:#2980b9;"></span>Pas encore rentré</span>
-        <span class="vstat-legend-item"><span class="vstat-dot" style="background:#27ae60;"></span>En cours</span>
-        <span class="vstat-legend-item"><span class="vstat-dot" style="background:#e67e22;"></span>Terminé, non restitué</span>
-        <span class="vstat-legend-item"><span class="vstat-dot" style="background:#7f8c8d;"></span>Restitué</span>
-      </div>
-    </div>
+    <label>Couleur</label><div class="mobile-color-picker" id="mColorPicker"></div>
     <div class="mbtn-row"><button class="mbtn-secondary" id="mBtnCloseModal">Annuler</button><button class="mbtn-primary" id="mBtnSaveAppt">Enregistrer</button></div>
   </div>
 </div>
@@ -1355,26 +1324,9 @@ let eadAvailabilityDocs=[];
 let eadWeekOffset=0;
 
 const COLORS=['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50'];
-// Statut automatique des véhicules de prêt : bleu = pas encore rentré, vert = en cours,
-// orange = terminé mais pas restitué, gris = restitué. Remplace le choix de couleur libre
-// pour les lignes "véhicule de prêt" uniquement.
-const VSTAT_BLUE='#2980b9',VSTAT_GREEN='#27ae60',VSTAT_ORANGE='#e67e22',VSTAT_GRAY='#7f8c8d';
-function getVehiculeStatusColor(appt){
-  if(!appt)return VSTAT_BLUE;
-  const contract=(ctState.contrats||[]).find(c=>c.groupId===appt.groupId);
-  if(contract&&contract.dateRestitution)return VSTAT_GRAY;
-  if(!appt.arrived)return VSTAT_BLUE;
-  try{
-    const days=gWD(gWO(appt.weekStart));
-    const startDay=days[appt.day]||days[0];
-    const finDate=calcFin(new Date(startDay),appt.totalDays||1);
-    finDate.setHours(23,59,59,999);
-    if(new Date()>finDate)return VSTAT_ORANGE;
-  }catch(e){}
-  return VSTAT_GREEN;
-}
+// Compteur de véhicules de prêt "en cours" : basé sur la couleur verte choisie manuellement par l'utilisateur.
 function countVehiculesEnCours(){
-  return state.appointments.filter(a=>a&&a.type==='loan'&&a.segmentIndex===0&&getVehiculeStatusColor(a)===VSTAT_GREEN).length;
+  return state.appointments.filter(a=>a&&a.type==='loan'&&a.segmentIndex===0&&(a.color||'').toLowerCase()==='#27ae60').length;
 }
 const DL=['BAYON 01','BAYON 02','BAYON 03','BAYON 04','BAYON 05','BAYON 06','BAYON 07','BAYON 08'];
 const DNL=['Poste 1','Poste 2','Poste 3','Poste 4','Poste 5','Poste 6','Poste 7','Poste 8'];
@@ -2560,7 +2512,7 @@ function renderAppts(days){
     const dF=gWD(gWO(fs.weekStart));const dd=dF[fs.day]||dF[0];const td=appt.totalDays||1;const df=calcFin(dd,td);const hS=hSeg(appt.hours||0,td,span);
     const el=document.createElement('div');const dateKeys48=get48hBusinessDateKeys();
     let is48h=false;try{const dd48=gWD(gWO(fs.weekStart))[fs.day]||gWD(gWO(fs.weekStart))[0];const pieceOk=appt.pieceStatus==='ordered'||appt.pieceStatus==='delivered'||appt.pieceStatus==='sans';is48h=dateKeys48.includes(dKey(dd48))&&!pieceOk;}catch(e){}
-    el.className=`appt prio-${prio}${appt.arrived?' arrived':''}${is48h?' alerte-48h':''}`;el.style.background=appt.type==='loan'?getVehiculeStatusColor(appt):(appt.color||'#2980b9');
+    el.className=`appt prio-${prio}${appt.arrived?' arrived':''}${is48h?' alerte-48h':''}`;el.style.background=appt.color||'#2980b9';
     if(span>1){el.style.right=`calc(-${(span-1)*100}% - ${span-1}px)`;el.style.zIndex=15;}
     let pb='';if(appt.pieceStatus==='delivered')pb='<span class="badge badge-blue">✅</span>';else if(appt.pieceStatus==='ordered')pb='<span class="badge badge-orange">📦</span>';else if(appt.pieceStatus==='sans')pb='<span class="badge badge-green">✔️</span>';
     const cb=isLF?`<button class="btn-contrat-inline">📄 Contrat</button>`:'';
@@ -2634,7 +2586,7 @@ function renderMobileRow(type,ri,name,days,occ,gc,tW){
     appts.forEach(appt=>{
       const span=appt.span||1;const td=appt.totalDays||1;const hS=hSeg(appt.hours||0,td,span);
       const techInfo=getTechInfo(appt.technicien);
-      const ea=document.createElement('div');ea.className='mg-appt';ea.dataset.gid=appt.groupId;ea.style.background=appt.type==='loan'?getVehiculeStatusColor(appt):(appt.color||'#2980b9');
+      const ea=document.createElement('div');ea.className='mg-appt';ea.dataset.gid=appt.groupId;ea.style.background=appt.color||'#2980b9';
       if(span>1){ea.style.width=`calc(${span*100}% + ${span-1}px)`;ea.style.zIndex=10;}
       ea.innerHTML=`<div class="mg-appt-name">${appt.hasPrev?'◀ ':''}<b>${appt.name}</b>${appt.hasNext?' ▶':''}${techInfo?` <span style="font-size:.5rem;opacity:.85;">${techInfo.nom.slice(0,3).toUpperCase()}</span>`:''}</div><div class="mg-appt-info">${hS}h${appt.immat?' · 🚗'+appt.immat:''}${appt.tel?' · '+appt.tel:''}</div>`;
       ea.addEventListener('click',e=>{e.stopPropagation();openMobileEditModal(appt.groupId);});
@@ -2777,8 +2729,6 @@ function openModal(type,row,day){
   document.querySelectorAll('#modalOverlay .status-row .status-btn').forEach(b=>b.classList.remove('active-basse','active-moyenne','active-haute'));
   document.getElementById('newPrio'+newPrio.charAt(0).toUpperCase()+newPrio.slice(1)).classList.add('active-'+newPrio);
   selColor=he&&he.color?Math.max(0,COLORS.indexOf(he.color)):0;buildCP('colorPicker',i=>selColor=i,selColor);
-  document.getElementById('colorPickerWrap').style.display=type==='loan'?'none':'block';
-  document.getElementById('vstatLegend').style.display=type==='loan'?'block':'none';
   upPrev('apptPreview',day,state.weekOffset,he?(he.totalDays||1):1);
   document.getElementById('modalOverlay').classList.add('open');
   setTimeout(()=>document.getElementById(pendingPlacement?'apptHours':'apptName').focus(),50);
@@ -2846,8 +2796,6 @@ function openEditModal(gid){
   editStat=root.arrived?'arrived':'pending';updateArrivedButtons();
   editSelColor=Math.max(0,COLORS.indexOf(root.color));
   buildCP('editColorPicker',i=>editSelColor=i,editSelColor);
-  document.getElementById('editColorPickerWrap').style.display=root.type==='loan'?'none':'block';
-  document.getElementById('editVstatLegend').style.display=root.type==='loan'?'block':'none';
   upPrev('editApptPreview',root.day,gWO(root.weekStart),root.totalDays);
   document.getElementById('editModalOverlay').classList.add('open');
 }
@@ -3624,8 +3572,6 @@ function openMobileModal(type,row,day){
   document.getElementById('mApptDays').value=he?(he.totalDays||1):1;document.getElementById('mApptHours').value=he?(he.hours||4):4;document.getElementById('mApptMemo').value=he?(he.memo||''):(pendingPlacement&&pendingPlacement.compagnie?`🏢 Assurance : ${pendingPlacement.compagnie}`:'');
   mNewPrio=he?(he.priority||'moyenne'):'moyenne';['mPrioBasse','mPrioMoyenne','mPrioHaute'].forEach(id=>document.getElementById(id).className='mprio-btn');document.getElementById('mPrio'+mNewPrio.charAt(0).toUpperCase()+mNewPrio.slice(1)).classList.add('active-'+mNewPrio);
   mSelColor=he&&he.color?Math.max(0,COLORS.indexOf(he.color)):0;buildMCP(i=>mSelColor=i,mSelColor);
-  document.getElementById('mColorPickerWrap').style.display=type==='loan'?'none':'block';
-  document.getElementById('mVstatLegend').style.display=type==='loan'?'block':'none';
   upPrevM(day,state.weekOffset,he?(he.totalDays||1):1);
   document.getElementById('mobileModalOverlay').classList.add('open');
 }
@@ -3641,8 +3587,6 @@ function openMobileEditModal(gid){
   document.getElementById('mApptDays').value=root.totalDays||1;document.getElementById('mApptHours').value=root.hours||'';document.getElementById('mApptMemo').value=root.memo||'';
   mNewPrio=root.priority||'moyenne';['mPrioBasse','mPrioMoyenne','mPrioHaute'].forEach(id=>document.getElementById(id).className='mprio-btn');document.getElementById('mPrio'+mNewPrio.charAt(0).toUpperCase()+mNewPrio.slice(1)).classList.add('active-'+mNewPrio);
   mSelColor=Math.max(0,COLORS.indexOf(root.color));buildMCP(i=>mSelColor=i,mSelColor);
-  document.getElementById('mColorPickerWrap').style.display=root.type==='loan'?'none':'block';
-  document.getElementById('mVstatLegend').style.display=root.type==='loan'?'block':'none';
   mPendingAppt={type:root.type,row:root.row,day:root.day,weekOffset:gWO(root.weekStart)};
   upPrevM(root.day,mPendingAppt.weekOffset,root.totalDays);
   document.getElementById('mobileModalOverlay').classList.add('open');
