@@ -1920,7 +1920,7 @@ function extractHeuresExpertise(text){
 // Liste des pièces (fournitures avec un vrai prix) — jamais les lignes de main d'œuvre.
 // Filtre les valeurs répétées 3 fois ou plus : c'est très probablement une colonne de
 // vétusté (%) qui s'est mélangée au texte, pas un vrai prix qui se répéterait autant.
-function extractExpertisePieces(text){
+function extractExpertisePiecesEspaces(text){
   const section=getSection(text,/LISTE DES FOURNITURES/i,['TOTAL DES FOURNITURES','\\-OBSERVATIONS\\-','ESTIMATION DES DOMMAGES']);
   const candidates=[];
   const lineRe=/(\d{1,3})\s+([A-ZÀ-Ü][A-ZÀ-Ÿ0-9'\-\.\/ ]{3,60}?)\s+(\d{1,4}[,.]\d{2})\b/g;
@@ -1934,6 +1934,34 @@ function extractExpertisePieces(text){
   const freq={};
   candidates.forEach(c=>{freq[c.prixStr]=(freq[c.prixStr]||0)+1;});
   return candidates.filter(c=>freq[c.prixStr]<3).map(c=>({libelle:c.libelle,prix:c.prix}));
+}
+// Certains cabinets détaillent les pièces sur une page séparée, en tableau à colonnes
+// séparées par des "!" : "! Qté!Libellé !Réf. !Opé. !Mnt HT !%Vét.!%Rem.! TVA !"
+function extractExpertisePiecesPipes(text){
+  const section=getSection(text,/LISTE DES PIECES/i,['TOTAL\\s','Document\\(s\\)','PERSONNES PRESENTES']);
+  if(!section)return[];
+  const pieces=[];
+  const lineRe=/!\s*(\d{1,3})\s*!\s*([^!]*)\s*!\s*([^!]*)\s*!\s*([^!]*)\s*!\s*([^!]*)\s*!/g;
+  let m;
+  while((m=lineRe.exec(section))!==null){
+    const libelle=m[2].trim().replace(/\s{2,}/g,' ');
+    const prix=parseFloat((m[5]||'').replace(',','.').trim());
+    if(prix>0&&libelle.length>2)pieces.push({libelle,prix});
+  }
+  return pieces;
+}
+// Essaie les deux formats connus (liste espacée classique, et tableau à pipes sur une page
+// séparée) et combine les résultats — chaque rapport d'expertise n'utilise en général que l'un des deux.
+function extractExpertisePieces(text){
+  const a=extractExpertisePiecesEspaces(text);
+  const b=extractExpertisePiecesPipes(text);
+  const combined=[...a,...b];
+  const seen=new Set();
+  return combined.filter(p=>{
+    const key=p.libelle.toLowerCase()+'|'+p.prix;
+    if(seen.has(key))return false;
+    seen.add(key);return true;
+  });
 }
 
 // Détection de mots-clés : géométrie/parallélisme et contrôle technique à prévoir.
