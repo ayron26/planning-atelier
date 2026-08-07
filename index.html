@@ -1931,7 +1931,7 @@ function cleanPieceLibelle(libelle){
 function extractExpertisePiecesEspaces(text){
   const section=getSection(text,/LISTE DES FOURNITURES|Liste des pi[èe]ces/i,['TOTAL DES FOURNITURES','\\-OBSERVATIONS\\-','ESTIMATION DES DOMMAGES','\\bTOTAL\\b','D[ée]tail des op[ée]rations']);
   const candidates=[];
-  const lineRe=/(\d{1,3})\s+([A-ZÀ-Ü][A-ZÀ-Ÿ0-9'\-\.\/ ]{3,60}?)\s+(\d{1,4}[,.]\d{2})\b/g;
+  const lineRe=/(\d{1,3})\s+([A-ZÀ-Ü][A-ZÀ-Ÿ0-9',\-\.\/ ]{3,60}?)\s+(\d{1,4}[,.]\d{2})\b/g;
   let m;
   while((m=lineRe.exec(section))!==null){
     const libelle=cleanPieceLibelle(m[2].trim().replace(/\s{2,}/g,' '));
@@ -1975,7 +1975,7 @@ function extractExpertisePieces(text){
 // Détection de mots-clés : géométrie/parallélisme et contrôle technique à prévoir.
 function detectExpertiseFlags(text){
   return {
-    geometrie:/G[ÉE]OM[ÉE]TRIE|PARALL[ÉE]LISME/i.test(text),
+    geometrie:/G[ÉE]OM[ÉE]TRIE|PARALL[ÉE]LISME|CONTR[ÔO]LE\s+(DES\s+)?TRAINS?\b/i.test(text),
     controleTechnique:/CONTR[ÔO]LE\s+TECHNIQUE/i.test(text)
   };
 }
