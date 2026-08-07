@@ -399,6 +399,13 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .cabinet-row-del{background:none;border:none;color:#e74c3c;cursor:pointer;font-size:.85rem;flex-shrink:0;}
 .dpc-cabinet-link{display:inline-flex;align-items:center;gap:4px;background:#e8f4fd;color:#1a5276;border:1px solid #aed6f1;border-radius:14px;padding:3px 10px;font-size:.72rem;font-weight:700;text-decoration:none;margin-top:4px;}
 .dpc-cabinet-link:hover{background:#aed6f1;}
+.pieces-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:.85rem;}
+.pieces-row:last-child{border-bottom:none;}
+.pieces-row .pr-libelle{flex:1;color:var(--text);}
+.pieces-row .pr-prix{font-weight:700;color:#1a5276;white-space:nowrap;}
+.pieces-row .pr-del{background:none;border:none;color:#e74c3c;cursor:pointer;font-size:.85rem;}
+.pieces-total{display:flex;justify-content:space-between;font-weight:700;padding-top:10px;margin-top:4px;border-top:2px solid var(--border);font-size:.9rem;}
+.dpc-flag-note{display:block;font-size:.72rem;font-weight:700;color:#c0392b;background:#fde8e8;border-radius:6px;padding:4px 10px;margin-top:4px;}
 .period-add-panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:18px;}
 .period-add-title{font-size:.85rem;font-weight:700;color:var(--steel);margin-bottom:10px;}
 .period-add-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:end;}
@@ -1181,6 +1188,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
+<div class="modal-overlay" id="piecesModalOverlay">
+  <div class="modal" style="width:440px;">
+    <h2 style="gap:8px;">📦 Liste des pièces</h2>
+    <div id="piecesModalList"></div>
+    <div class="btn-row" style="margin-top:18px;"><button class="btn-secondary" id="btnClosePiecesModal" style="flex:1;">Fermer</button></div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="confirmModalOverlay">
   <div class="confirm-modal">
     <h3>Que faire de ce rendez-vous ?</h3>
@@ -1901,6 +1916,33 @@ function extractHeuresExpertise(text){
   res.total=Math.round((res.t1+res.t2+res.t3+res.peinture)*100)/100;
   return res;
 }
+
+// Liste des pièces (fournitures avec un vrai prix) — jamais les lignes de main d'œuvre.
+// Filtre les valeurs répétées 3 fois ou plus : c'est très probablement une colonne de
+// vétusté (%) qui s'est mélangée au texte, pas un vrai prix qui se répéterait autant.
+function extractExpertisePieces(text){
+  const section=getSection(text,/LISTE DES FOURNITURES/i,['TOTAL DES FOURNITURES','\\-OBSERVATIONS\\-','ESTIMATION DES DOMMAGES']);
+  const candidates=[];
+  const lineRe=/(\d{1,3})\s+([A-ZÀ-Ü][A-ZÀ-Ÿ0-9'\-\.\/ ]{3,60}?)\s+(\d{1,4}[,.]\d{2})\b/g;
+  let m;
+  while((m=lineRe.exec(section))!==null){
+    const libelle=m[2].trim().replace(/\s{2,}/g,' ');
+    const prixStr=m[3];
+    const prix=parseFloat(prixStr.replace(',','.'));
+    if(prix>0&&libelle.length>2)candidates.push({libelle,prix,prixStr});
+  }
+  const freq={};
+  candidates.forEach(c=>{freq[c.prixStr]=(freq[c.prixStr]||0)+1;});
+  return candidates.filter(c=>freq[c.prixStr]<3).map(c=>({libelle:c.libelle,prix:c.prix}));
+}
+
+// Détection de mots-clés : géométrie/parallélisme et contrôle technique à prévoir.
+function detectExpertiseFlags(text){
+  return {
+    geometrie:/G[ÉE]OM[ÉE]TRIE|PARALL[ÉE]LISME/i.test(text),
+    controleTechnique:/CONTR[ÔO]LE\s+TECHNIQUE/i.test(text)
+  };
+}
 function extractSinistreFields(text){
   const assureSection=getSection(text,/\bASSURE\b(?!UR)/i,['\\bVEHICULE\\b','\\bGARANTIE\\b','INFORMATIONS COMPLEMENTAIRES']);
   const assuranceSection=getSection(text,/\bASSURANCE\b/i,['\\bASSURE\\b(?!UR)']);
@@ -2126,6 +2168,8 @@ function dossierPendingCardHTML(d){
     const detail=[eh.t1?`T1:${eh.t1}h`:'',eh.t2?`T2:${eh.t2}h`:'',eh.t3?`T3:${eh.t3}h`:'',eh.peinture?`Peint.:${eh.peinture}h`:''].filter(Boolean).join(' · ');
     expertiseHTML=`<div class="dpc-link-status chosen" style="background:#f0f7ff;color:#1a5276;">🛠️ Expertise : ${eh.total}h (${detail})</div>`;
   }
+  if(d.expertiseGeometrie)expertiseHTML+=`<span class="dpc-flag-note">📐 Géométrie à prévoir</span>`;
+  if(d.expertiseControleTechnique)expertiseHTML+=`<span class="dpc-flag-note">🔍 Contrôle technique à prévoir</span>`;
   return `<div class="dossier-pending-card" data-did="${d.id}" style="${d.held?'border-left-color:#8e44ad;':''}">
     <div class="dpc-info"><div class="dpc-nom">${d.held?'⏸️ ':''}${d.nom}</div><div class="dpc-meta">${d.tel?'📞 '+d.tel+' · ':''}${d.immat?'🚗 '+d.immat+' · ':''}${d.compagnie?'🏢 '+d.compagnie+' · ':''}${d.email?'✉️ '+d.email+' · ':''}${d.adresse||''}</div>${d.note?`<div class="dpc-meta" style="color:#8e44ad;font-weight:600;margin-top:3px;">📝 ${d.note}</div>`:''}${eadStatusHTML}${rdvStatusHTML}${cabinetHTML}${expertiseHTML}
     <div class="dpc-flags">
@@ -2136,6 +2180,7 @@ function dossierPendingCardHTML(d){
     <div class="dpc-actions">
       <button class="btn-placer dpc-place-btn dpc-fullw">📍 Placer sur le planning</button>
       <button class="btn-genlink dpc-pv-import-btn dpc-fullw" data-did="${d.id}" style="background:#1a5276;">🛠️ ${d.expertiseHeures?'Remplacer':'Importer'} le PV d'expertise</button>
+      ${d.expertisePieces&&d.expertisePieces.length?`<button class="btn-genlink dpc-pieces-btn dpc-fullw" data-did="${d.id}" style="background:#2c3e50;">📦 Voir les pièces (${d.expertisePieces.length})</button>`:''}
       <div class="dpc-action-row">
         <div class="dpc-action-group">
           <button class="btn-genlink dpc-rdv-toggle" style="background:#8e44ad;">📅 RDV ▾</button>
@@ -2233,6 +2278,18 @@ function wireDossierPendingEvents(container){
       document.getElementById('pvFileInput').click();
     });
   });
+  container.querySelectorAll('.dpc-pieces-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const d=(dState.items||[]).find(x=>x.id===btn.dataset.did);if(!d)return;
+      openPiecesModal(d.expertisePieces,isRO()?null:async(idx)=>{
+        const newPieces=d.expertisePieces.filter((_,i)=>i!==idx);
+        dState.items=(dState.items||[]).map(x=>x.id===d.id?{...x,expertisePieces:newPieces}:x);
+        await saveDossiers();
+        renderDossiersPending();if(isMobile())renderMobileDossiersPending();
+        document.getElementById('piecesModalOverlay').classList.remove('open');
+      });
+    });
+  });
 }
 let pvTargetDossierId=null;
 document.getElementById('pvFileInput').addEventListener('change',async e=>{
@@ -2243,17 +2300,23 @@ document.getElementById('pvFileInput').addEventListener('change',async e=>{
   try{
     const text=await extractPdfText(file);
     const heures=extractHeuresExpertise(text);
-    if(heures.total<=0){
-      alert("Je n'ai pas réussi à retrouver de temps T1/T2/T3/Peinture dans ce PDF. Vérifie qu'il s'agit bien d'un Procès-Verbal d'Expertise, ou renseigne les heures manuellement.");
+    const pieces=extractExpertisePieces(text);
+    const flags=detectExpertiseFlags(text);
+    if(heures.total<=0&&!pieces.length){
+      alert("Je n'ai pas réussi à retrouver de temps T1/T2/T3/Peinture ni de pièces dans ce PDF. Vérifie qu'il s'agit bien d'un Procès-Verbal d'Expertise, ou renseigne les infos manuellement.");
       return;
     }
-    dState.items=(dState.items||[]).map(x=>x.id===did?{...x,expertiseHeures:heures,pvRecu:true}:x);
+    dState.items=(dState.items||[]).map(x=>x.id===did?{...x,expertiseHeures:heures,expertisePieces:pieces,expertiseGeometrie:flags.geometrie,expertiseControleTechnique:flags.controleTechnique,pvRecu:true}:x);
     await saveDossiers();
     renderDossiersPending();if(isMobile())renderMobileDossiersPending();
-    alert(`✅ Heures extraites du rapport d'expertise :\n\nT1 : ${heures.t1}h\nT2 : ${heures.t2}h\nT3 : ${heures.t3}h\nPeinture : ${heures.peinture}h\nTotal : ${heures.total}h\n\n"PV reçu" a été coché automatiquement.`);
+    let msg=`✅ Extrait du rapport d'expertise :\n\nHeures — T1 : ${heures.t1}h · T2 : ${heures.t2}h · T3 : ${heures.t3}h · Peinture : ${heures.peinture}h (Total : ${heures.total}h)\n\nPièces trouvées : ${pieces.length}`;
+    if(flags.geometrie)msg+='\n⚠️ Géométrie à prévoir';
+    if(flags.controleTechnique)msg+='\n⚠️ Contrôle technique à prévoir';
+    msg+='\n\n"PV reçu" a été coché automatiquement. Vérifie la liste des pièces avant de commander (l\'extraction automatique peut se tromper).';
+    alert(msg);
   }catch(err){
     console.error(err);
-    alert("Impossible de lire ce PDF. Vérifie qu'il ne s'agit pas d'un scan/image, ou renseigne les heures manuellement.");
+    alert("Impossible de lire ce PDF. Vérifie qu'il ne s'agit pas d'un scan/image, ou renseigne les infos manuellement.");
   }
 });
 // Catégorise un dossier selon l'état de ses liens EAD/RDV, pour bien les séparer visuellement
@@ -2512,6 +2575,9 @@ function na(a){
   if(!a.immat)a.immat='';
   if(!a.cabinet)a.cabinet='';
   if(!a.expertiseHeures)a.expertiseHeures=null;
+  if(!Array.isArray(a.expertisePieces))a.expertisePieces=[];
+  if(a.expertiseGeometrie===undefined)a.expertiseGeometrie=false;
+  if(a.expertiseControleTechnique===undefined)a.expertiseControleTechnique=false;
   return a;
 }
 function hSeg(h,td,sp){if(!td||td===0)return h;return Math.round((h*sp/td)*10)/10;}
@@ -2875,7 +2941,7 @@ async function saveAppt(){
   const weekDays=gWD(pendingAppt.weekOffset);
   const segs=split(pendingAppt.day,days,weekDays[0]);
   const he=pendingPlacement&&pendingPlacement.heldExtra;
-  const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:pendingAppt.type,row:pendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,cabinet:pendingPlacement?(pendingPlacement.cabinet||''):'',expertiseHeures:pendingPlacement?(pendingPlacement.expertiseHeures||null):null,technicien:tech,technicien2:tech2,hours,memo,priority:newPrio,color:COLORS[selColor],pieceStatus:he?(he.pieceStatus||'none'):'none',pieceFournisseur:he?(he.pieceFournisseur||''):'',pieceNote:he?(he.pieceNote||''):'',arrived:false,heuresT1:he?(he.heuresT1||0):0,heuresT2:he?(he.heuresT2||0):0,heuresP:he?(he.heuresP||0):0,heuresDate:he?(he.heuresDate||''):'',photos:he?(he.photos||[]):[]}));
+  const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:pendingAppt.type,row:pendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,cabinet:pendingPlacement?(pendingPlacement.cabinet||''):'',expertiseHeures:pendingPlacement?(pendingPlacement.expertiseHeures||null):null,expertisePieces:pendingPlacement?(pendingPlacement.expertisePieces||[]):[],expertiseGeometrie:pendingPlacement?!!pendingPlacement.expertiseGeometrie:false,expertiseControleTechnique:pendingPlacement?!!pendingPlacement.expertiseControleTechnique:false,technicien:tech,technicien2:tech2,hours,memo,priority:newPrio,color:COLORS[selColor],pieceStatus:he?(he.pieceStatus||'none'):'none',pieceFournisseur:he?(he.pieceFournisseur||''):'',pieceNote:he?(he.pieceNote||''):'',arrived:false,heuresT1:he?(he.heuresT1||0):0,heuresT2:he?(he.heuresT2||0):0,heuresP:he?(he.heuresP||0):0,heuresDate:he?(he.heuresDate||''):'',photos:he?(he.photos||[]):[]}));
   state.appointments=[...state.appointments,...newAppts];
   document.getElementById('modalOverlay').classList.remove('open');
   await saveFB();render();upStats();if(isMobile())renderMobile();
@@ -2926,10 +2992,16 @@ function openEditModal(gid){
   if(root.expertiseHeures&&root.expertiseHeures.total>0){
     const eh=root.expertiseHeures;
     const detail=[eh.t1?`T1:${eh.t1}h`:'',eh.t2?`T2:${eh.t2}h`:'',eh.t3?`T3:${eh.t3}h`:'',eh.peinture?`Peint.:${eh.peinture}h`:''].filter(Boolean).join(' · ');
-    cabWrapHTML+=`<span class="dpc-cabinet-link" style="background:#f0f7ff;color:#1a5276;border-color:#aed6f1;">🛠️ Expertise : ${eh.total}h (${detail})</span>`;
+    cabWrapHTML+=`<span class="dpc-cabinet-link" style="background:#f0f7ff;color:#1a5276;border-color:#aed6f1;">🛠️ Expertise : ${eh.total}h (${detail})</span> `;
   }
+  if(root.expertisePieces&&root.expertisePieces.length){
+    cabWrapHTML+=`<button class="dpc-cabinet-link edit-pieces-btn" style="background:#2c3e50;color:#fff;cursor:pointer;font-family:inherit;">📦 Voir les pièces (${root.expertisePieces.length})</button> `;
+  }
+  if(root.expertiseGeometrie)cabWrapHTML+=`<span class="dpc-flag-note">📐 Géométrie à prévoir</span> `;
+  if(root.expertiseControleTechnique)cabWrapHTML+=`<span class="dpc-flag-note">🔍 Contrôle technique à prévoir</span> `;
   cabWrap.style.display=cabWrapHTML?'block':'none';
   cabWrap.innerHTML=cabWrapHTML;
+  cabWrap.querySelector('.edit-pieces-btn')?.addEventListener('click',()=>openPiecesModal(root.expertisePieces,null));
   upPrev('editApptPreview',root.day,gWO(root.weekStart),root.totalDays);
   document.getElementById('editModalOverlay').classList.add('open');
 }
@@ -2967,7 +3039,7 @@ async function saveEditAppt(){
   const others=state.appointments.filter(a=>a&&a.groupId!==editId);
   const weekDays=gWD(gWO(editRef.weekStart));
   const segs=split(editRef.day,days,weekDays[0]);
-  const newSegs=segs.map(s=>na({id:s.segmentIndex===0?editRef.id:genId(),groupId:editId,type:editRef.type,row:editRef.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,cabinet:editRef.cabinet||'',expertiseHeures:editRef.expertiseHeures||null,technicien:tech,technicien2:tech2,hours,memo,priority:editPrio,color:COLORS[editSelColor],pieceStatus:editPieceStat,pieceFournisseur,pieceNote,arrived:editStat==='arrived',heuresT1,heuresT2,heuresP,heuresDate:editRef.heuresDate||'',photos:[...(editRef.photos||[])]}));
+  const newSegs=segs.map(s=>na({id:s.segmentIndex===0?editRef.id:genId(),groupId:editId,type:editRef.type,row:editRef.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,cabinet:editRef.cabinet||'',expertiseHeures:editRef.expertiseHeures||null,expertisePieces:editRef.expertisePieces||[],expertiseGeometrie:!!editRef.expertiseGeometrie,expertiseControleTechnique:!!editRef.expertiseControleTechnique,technicien:tech,technicien2:tech2,hours,memo,priority:editPrio,color:COLORS[editSelColor],pieceStatus:editPieceStat,pieceFournisseur,pieceNote,arrived:editStat==='arrived',heuresT1,heuresT2,heuresP,heuresDate:editRef.heuresDate||'',photos:[...(editRef.photos||[])]}));
   state.appointments=[...others,...newSegs];
   document.getElementById('editModalOverlay').classList.remove('open');
   await saveFB();render();upStats();if(isMobile())renderMobile();
@@ -3006,6 +3078,9 @@ async function holdAppointment(gid){
     immat:root.immat||'',
     cabinet:root.cabinet||'',
     expertiseHeures:root.expertiseHeures||null,
+    expertisePieces:root.expertisePieces||[],
+    expertiseGeometrie:!!root.expertiseGeometrie,
+    expertiseControleTechnique:!!root.expertiseControleTechnique,
     compagnie:'',
     note,
     held:true,
@@ -3581,6 +3656,24 @@ function openContrat(appt,dd,df,td){
   setTimeout(()=>{setupSignaturePad('cSignatureCanvas');clearSignaturePad('cSignatureCanvas');},50);
 }
 function closeContrat(){document.getElementById('contratModalOverlay').classList.remove('open');contratAppt=null;}
+
+// ===== Modale de consultation des pièces d'expertise =====
+function openPiecesModal(pieces,onDelete){
+  const list=document.getElementById('piecesModalList');
+  if(!pieces||!pieces.length){
+    list.innerHTML='<div class="dossier-empty" style="padding:20px 0;">📭 Aucune pièce enregistrée.</div>';
+  }else{
+    const total=pieces.reduce((s,p)=>s+(p.prix||0),0);
+    list.innerHTML=pieces.map((p,i)=>`<div class="pieces-row" data-idx="${i}"><span class="pr-libelle">${p.libelle}</span><span class="pr-prix">${p.prix.toFixed(2).replace('.',',')} €</span>${onDelete?`<button class="pr-del" data-idx="${i}">🗑️</button>`:''}</div>`).join('')
+      +`<div class="pieces-total"><span>Total</span><span>${total.toFixed(2).replace('.',',')} €</span></div>`;
+    if(onDelete)list.querySelectorAll('.pr-del').forEach(btn=>{
+      btn.addEventListener('click',()=>onDelete(parseInt(btn.dataset.idx)));
+    });
+  }
+  document.getElementById('piecesModalOverlay').classList.add('open');
+}
+document.getElementById('btnClosePiecesModal').addEventListener('click',()=>document.getElementById('piecesModalOverlay').classList.remove('open'));
+document.getElementById('piecesModalOverlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 document.getElementById('btnCloseContrat').addEventListener('click',closeContrat);
 document.getElementById('contratModalOverlay').addEventListener('click',function(e){if(e.target===this)closeContrat();});
 
@@ -3790,13 +3883,13 @@ document.getElementById('mBtnSaveAppt').addEventListener('click',async()=>{
     const others=state.appointments.filter(a=>a&&a.groupId!==mEditGid);
     const orig=state.appointments.find(a=>a&&a.groupId===mEditGid&&a.segmentIndex===0);
     const segs=split(mPendingAppt.day,days,weekDays[0]);
-    const newSegs=segs.map(s=>na({id:s.segmentIndex===0?orig.id:genId(),groupId:mEditGid,type:mPendingAppt.type,row:mPendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,cabinet:orig.cabinet||'',expertiseHeures:orig.expertiseHeures||null,technicien:tech,technicien2:tech2,hours,memo,priority:mNewPrio,color:COLORS[mSelColor],pieceStatus:orig.pieceStatus,pieceFournisseur:orig.pieceFournisseur,pieceNote:orig.pieceNote,arrived:orig.arrived,heuresT1:orig.heuresT1,heuresT2:orig.heuresT2,heuresP:orig.heuresP,heuresDate:orig.heuresDate,photos:orig.photos}));
+    const newSegs=segs.map(s=>na({id:s.segmentIndex===0?orig.id:genId(),groupId:mEditGid,type:mPendingAppt.type,row:mPendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,cabinet:orig.cabinet||'',expertiseHeures:orig.expertiseHeures||null,expertisePieces:orig.expertisePieces||[],expertiseGeometrie:!!orig.expertiseGeometrie,expertiseControleTechnique:!!orig.expertiseControleTechnique,technicien:tech,technicien2:tech2,hours,memo,priority:mNewPrio,color:COLORS[mSelColor],pieceStatus:orig.pieceStatus,pieceFournisseur:orig.pieceFournisseur,pieceNote:orig.pieceNote,arrived:orig.arrived,heuresT1:orig.heuresT1,heuresT2:orig.heuresT2,heuresP:orig.heuresP,heuresDate:orig.heuresDate,photos:orig.photos}));
     state.appointments=[...others,...newSegs];
   }else{
     const gid=genId();
     const segs=split(mPendingAppt.day,days,weekDays[0]);
     const he=pendingPlacement&&pendingPlacement.heldExtra;
-    const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:mPendingAppt.type,row:mPendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,cabinet:pendingPlacement?(pendingPlacement.cabinet||''):'',expertiseHeures:pendingPlacement?(pendingPlacement.expertiseHeures||null):null,technicien:tech,technicien2:tech2,hours,memo,priority:mNewPrio,color:COLORS[mSelColor],pieceStatus:he?(he.pieceStatus||'none'):'none',pieceFournisseur:he?(he.pieceFournisseur||''):'',pieceNote:he?(he.pieceNote||''):'',arrived:false,heuresT1:he?(he.heuresT1||0):0,heuresT2:he?(he.heuresT2||0):0,heuresP:he?(he.heuresP||0):0,heuresDate:he?(he.heuresDate||''):'',photos:he?(he.photos||[]):[]}));
+    const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:mPendingAppt.type,row:mPendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,cabinet:pendingPlacement?(pendingPlacement.cabinet||''):'',expertiseHeures:pendingPlacement?(pendingPlacement.expertiseHeures||null):null,expertisePieces:pendingPlacement?(pendingPlacement.expertisePieces||[]):[],expertiseGeometrie:pendingPlacement?!!pendingPlacement.expertiseGeometrie:false,expertiseControleTechnique:pendingPlacement?!!pendingPlacement.expertiseControleTechnique:false,technicien:tech,technicien2:tech2,hours,memo,priority:mNewPrio,color:COLORS[mSelColor],pieceStatus:he?(he.pieceStatus||'none'):'none',pieceFournisseur:he?(he.pieceFournisseur||''):'',pieceNote:he?(he.pieceNote||''):'',arrived:false,heuresT1:he?(he.heuresT1||0):0,heuresT2:he?(he.heuresT2||0):0,heuresP:he?(he.heuresP||0):0,heuresDate:he?(he.heuresDate||''):'',photos:he?(he.photos||[]):[]}));
     state.appointments=[...state.appointments,...newAppts];
   }
   document.getElementById('mobileModalOverlay').classList.remove('open');
