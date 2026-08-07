@@ -1922,16 +1922,20 @@ function extractHeuresExpertise(text){
 // vétusté (%) qui s'est mélangée au texte, pas un vrai prix qui se répéterait autant.
 // Retire les codes référence constructeur et codes d'opération parfois collés en fin de libellé
 // (ex: "PARE-CHOCS AV 6F0807221D GRU EPP" → "PARE-CHOCS AV 6F0807221D GRU")
+// Retire seulement les codes référence constructeur (mélange lettres ET chiffres) en fin de libellé.
+// Ne retire JAMAIS une lettre seule (D/G/AV/AR font souvent partie du vrai nom de la pièce :
+// Droite/Gauche/Avant/Arrière — les retirer risquerait de faire commander le mauvais côté).
 function cleanPieceLibelle(libelle){
   let cleaned=libelle;
-  cleaned=cleaned.replace(/\s+(EPP|EP|PP|RP|[EDCPGLNR])$/,'');
-  cleaned=cleaned.replace(/\s+([A-Z0-9]{5,15})$/,(match,token)=>(/[A-Z]/.test(token)&&/[0-9]/.test(token))?'':match);
+  for(let i=0;i<2;i++){
+    cleaned=cleaned.replace(/\s+([A-Z0-9]{5,15})$/,(match,token)=>(/[A-Z]/.test(token)&&/[0-9]/.test(token))?'':match);
+  }
   return cleaned.trim();
 }
 function extractExpertisePiecesEspaces(text){
   const section=getSection(text,/LISTE DES FOURNITURES|Liste des pi[èe]ces/i,['TOTAL DES FOURNITURES','\\-OBSERVATIONS\\-','ESTIMATION DES DOMMAGES','\\bTOTAL\\b','D[ée]tail des op[ée]rations']);
   const candidates=[];
-  const lineRe=/(\d{1,3})\s+([A-ZÀ-Ü][A-ZÀ-Ÿ0-9',\-\.\/ ]{3,60}?)\s+(\d{1,4}[,.]\d{2})\b/g;
+  const lineRe=/(?:(\d{1,3})\s+)?([A-ZÀ-Ü][A-ZÀ-Ÿ0-9',\-\.\/ ]{3,60}?)\s+(\d{1,4}[,.]\d{2})\b/g;
   let m;
   while((m=lineRe.exec(section))!==null){
     const libelle=cleanPieceLibelle(m[2].trim().replace(/\s{2,}/g,' '));
