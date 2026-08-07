@@ -2274,7 +2274,7 @@ function wireDossierPendingEvents(container){
   container.querySelectorAll('.dpc-pv-import-btn').forEach(btn=>{
     btn.addEventListener('click',()=>{
       if(isRO()){showRO();return;}
-      pvTargetDossierId=btn.dataset.did;
+      pvTarget={type:'dossier',id:btn.dataset.did};
       document.getElementById('pvFileInput').click();
     });
   });
@@ -2291,12 +2291,12 @@ function wireDossierPendingEvents(container){
     });
   });
 }
-let pvTargetDossierId=null;
+let pvTarget=null;
 document.getElementById('pvFileInput').addEventListener('change',async e=>{
   const file=e.target.files[0];e.target.value='';
-  if(!file||!pvTargetDossierId)return;
+  if(!file||!pvTarget)return;
   if(isRO()){showRO();return;}
-  const did=pvTargetDossierId;pvTargetDossierId=null;
+  const target=pvTarget;pvTarget=null;
   try{
     const text=await extractPdfText(file);
     const heures=extractHeuresExpertise(text);
@@ -2306,13 +2306,22 @@ document.getElementById('pvFileInput').addEventListener('change',async e=>{
       alert("Je n'ai pas réussi à retrouver de temps T1/T2/T3/Peinture ni de pièces dans ce PDF. Vérifie qu'il s'agit bien d'un Procès-Verbal d'Expertise, ou renseigne les infos manuellement.");
       return;
     }
-    dState.items=(dState.items||[]).map(x=>x.id===did?{...x,expertiseHeures:heures,expertisePieces:pieces,expertiseGeometrie:flags.geometrie,expertiseControleTechnique:flags.controleTechnique,pvRecu:true}:x);
-    await saveDossiers();
-    renderDossiersPending();if(isMobile())renderMobileDossiersPending();
     let msg=`✅ Extrait du rapport d'expertise :\n\nHeures — T1 : ${heures.t1}h · T2 : ${heures.t2}h · T3 : ${heures.t3}h · Peinture : ${heures.peinture}h (Total : ${heures.total}h)\n\nPièces trouvées : ${pieces.length}`;
     if(flags.geometrie)msg+='\n⚠️ Géométrie à prévoir';
     if(flags.controleTechnique)msg+='\n⚠️ Contrôle technique à prévoir';
-    msg+='\n\n"PV reçu" a été coché automatiquement. Vérifie la liste des pièces avant de commander (l\'extraction automatique peut se tromper).';
+
+    if(target.type==='dossier'){
+      dState.items=(dState.items||[]).map(x=>x.id===target.id?{...x,expertiseHeures:heures,expertisePieces:pieces,expertiseGeometrie:flags.geometrie,expertiseControleTechnique:flags.controleTechnique,pvRecu:true}:x);
+      await saveDossiers();
+      renderDossiersPending();if(isMobile())renderMobileDossiersPending();
+      msg+='\n\n"PV reçu" a été coché automatiquement. Vérifie la liste des pièces avant de commander (l\'extraction automatique peut se tromper).';
+    }else if(target.type==='appt'){
+      state.appointments=state.appointments.map(a=>(!a||a.groupId!==target.groupId)?a:{...a,expertiseHeures:heures,expertisePieces:pieces,expertiseGeometrie:flags.geometrie,expertiseControleTechnique:flags.controleTechnique});
+      await saveFB();render();if(isMobile())renderMobile();
+      msg+='\n\nCe rendez-vous est mis à jour. Vérifie la liste des pièces, et ajuste si besoin le champ "Heures de travail" ci-dessous.';
+      const root=state.appointments.find(a=>a&&a.groupId===target.groupId&&a.segmentIndex===0);
+      if(root)openEditModal(target.groupId);
+    }
     alert(msg);
   }catch(err){
     console.error(err);
@@ -2999,9 +3008,15 @@ function openEditModal(gid){
   }
   if(root.expertiseGeometrie)cabWrapHTML+=`<span class="dpc-flag-note">📐 Géométrie à prévoir</span> `;
   if(root.expertiseControleTechnique)cabWrapHTML+=`<span class="dpc-flag-note">🔍 Contrôle technique à prévoir</span> `;
+  cabWrapHTML+=`<button class="dpc-cabinet-link edit-pv-import-btn" style="background:#1a5276;color:#fff;cursor:pointer;font-family:inherit;border:none;">🛠️ ${root.expertiseHeures?'Remplacer':'Importer'} le PV d'expertise</button>`;
   cabWrap.style.display=cabWrapHTML?'block':'none';
   cabWrap.innerHTML=cabWrapHTML;
   cabWrap.querySelector('.edit-pieces-btn')?.addEventListener('click',()=>openPiecesModal(root.expertisePieces,null));
+  cabWrap.querySelector('.edit-pv-import-btn').addEventListener('click',()=>{
+    if(isRO()){showRO();return;}
+    pvTarget={type:'appt',groupId:editId};
+    document.getElementById('pvFileInput').click();
+  });
   upPrev('editApptPreview',root.day,gWO(root.weekStart),root.totalDays);
   document.getElementById('editModalOverlay').classList.add('open');
 }
