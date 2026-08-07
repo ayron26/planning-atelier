@@ -1123,27 +1123,43 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 </div>
 
 <div class="modal-overlay" id="editModalOverlay">
-  <div class="modal">
+  <div class="modal" style="width:660px;">
     <h2 style="gap:8px;">✏️ Modifier le rendez-vous</h2>
-    <label>Client / Véhicule</label><input type="text" id="editApptName">
-    <label>Téléphone</label><input type="text" id="editApptTel">
-    <label>Adresse</label><input type="text" id="editApptAdresse">
-    <label>Immatriculation (véhicule client)</label><input type="text" id="editApptImmat" placeholder="AA-123-AA" style="text-transform:uppercase;">
-    <label>Technicien assigné</label>
-    <select id="editApptTech"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
-    <label>Technicien 2 (optionnel)</label>
-    <select id="editApptTech2"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
-    <label>Heures de travail (total)</label><input type="number" id="editApptHours" min="0.5" max="999" step="0.5">
-    <label>Nombre de jours</label><input type="number" id="editApptDays" min="1" max="20">
-    <div class="preview-note" id="editApptPreview" style="margin-top:6px;">📅 —</div>
-    <label>Mémo</label><textarea id="editApptMemo"></textarea>
-    <label>Priorité</label>
-    <div class="status-row">
-      <button class="status-btn" id="editPrioBasse">🟢 Basse</button>
-      <button class="status-btn active-moyenne" id="editPrioMoyenne">🟡 Moyenne</button>
-      <button class="status-btn" id="editPrioHaute">🔴 Haute</button>
+    <div class="contrat-form-grid">
+      <div class="full"><label>Client / Véhicule</label><input type="text" id="editApptName"></div>
+      <div><label>Téléphone</label><input type="text" id="editApptTel"></div>
+      <div><label>Immatriculation (véhicule client)</label><input type="text" id="editApptImmat" placeholder="AA-123-AA" style="text-transform:uppercase;"></div>
+      <div class="full"><label>Adresse</label><input type="text" id="editApptAdresse"></div>
+      <div><label>Technicien assigné</label>
+        <select id="editApptTech"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
+      </div>
+      <div><label>Technicien 2 (optionnel)</label>
+        <select id="editApptTech2"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
+      </div>
+      <div><label>Heures de travail (total)</label><input type="number" id="editApptHours" min="0.5" max="999" step="0.5"></div>
+      <div><label>Nombre de jours</label><input type="number" id="editApptDays" min="1" max="20"></div>
     </div>
-    <div class="piece-section">
+    <div class="preview-note" id="editApptPreview" style="margin-top:10px;">📅 —</div>
+    <div id="editCabinetWrap" style="display:none;margin-top:8px;"></div>
+    <label>Mémo</label><textarea id="editApptMemo" style="min-height:44px;"></textarea>
+    <div class="contrat-form-grid" style="margin-top:10px;">
+      <div>
+        <label style="margin-top:0;">Priorité</label>
+        <div class="status-row">
+          <button class="status-btn" id="editPrioBasse">🟢</button>
+          <button class="status-btn active-moyenne" id="editPrioMoyenne">🟡</button>
+          <button class="status-btn" id="editPrioHaute">🔴</button>
+        </div>
+      </div>
+      <div>
+        <label style="margin-top:0;">Statut client</label>
+        <div class="status-row">
+          <button class="status-btn active-pending" id="btnPending">⏳ Attente</button>
+          <button class="status-btn" id="btnArrived">✅ Arrivé</button>
+        </div>
+      </div>
+    </div>
+    <div class="piece-section" style="margin-top:10px;">
       <div class="piece-section-title">📦 Pièce</div>
       <div class="status-row">
         <button class="status-btn active-pending" id="btnPieceNon">❌ Non commandée</button>
@@ -1152,17 +1168,13 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
         <button class="status-btn" id="btnPieceSans">✔️ Pas de pièce</button>
       </div>
       <div class="piece-fournisseur" style="display:none;">
-        <label style="margin-top:8px;">Commandée chez</label><input type="text" id="editPieceFournisseur">
-        <label style="margin-top:8px;">Notes</label><textarea id="editPieceNote"></textarea>
+        <div class="contrat-form-grid">
+          <div><label style="margin-top:8px;">Commandée chez</label><input type="text" id="editPieceFournisseur"></div>
+          <div><label style="margin-top:8px;">Notes</label><input type="text" id="editPieceNote"></div>
+        </div>
       </div>
     </div>
-    <label>Statut client</label>
-    <div class="status-row">
-      <button class="status-btn active-pending" id="btnPending">⏳ En attente</button>
-      <button class="status-btn" id="btnArrived">✅ Client arrivé</button>
-    </div>
-    
-    <div style="font-size:.78rem;color:#1a5276;background:#e8f4fd;border-radius:6px;padding:8px 12px;margin-top:14px;">ℹ️ Les heures travaillées et les photos saisies par le technicien sont visibles dans l'onglet <strong>🗂️ Suivi Technicien</strong>.</div>
+    <div style="font-size:.75rem;color:#1a5276;background:#e8f4fd;border-radius:6px;padding:7px 12px;margin-top:10px;">ℹ️ Heures et photos technicien visibles dans <strong>🗂️ Suivi Technicien</strong>.</div>
     <label>Couleur</label><div class="color-picker" id="editColorPicker"></div>
     <div class="btn-row"><button class="btn-secondary" id="btnCloseEditModal">Annuler</button><button class="btn-primary" id="btnSaveEditAppt">Enregistrer</button></div>
   </div>
@@ -2449,6 +2461,7 @@ function na(a){
   if(!Array.isArray(a.photos))a.photos=[];
   if(!a.heuresDate)a.heuresDate='';
   if(!a.immat)a.immat='';
+  if(!a.cabinet)a.cabinet='';
   return a;
 }
 function hSeg(h,td,sp){if(!td||td===0)return h;return Math.round((h*sp/td)*10)/10;}
@@ -2812,7 +2825,7 @@ async function saveAppt(){
   const weekDays=gWD(pendingAppt.weekOffset);
   const segs=split(pendingAppt.day,days,weekDays[0]);
   const he=pendingPlacement&&pendingPlacement.heldExtra;
-  const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:pendingAppt.type,row:pendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,technicien:tech,technicien2:tech2,hours,memo,priority:newPrio,color:COLORS[selColor],pieceStatus:he?(he.pieceStatus||'none'):'none',pieceFournisseur:he?(he.pieceFournisseur||''):'',pieceNote:he?(he.pieceNote||''):'',arrived:false,heuresT1:he?(he.heuresT1||0):0,heuresT2:he?(he.heuresT2||0):0,heuresP:he?(he.heuresP||0):0,heuresDate:he?(he.heuresDate||''):'',photos:he?(he.photos||[]):[]}));
+  const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:pendingAppt.type,row:pendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,cabinet:pendingPlacement?(pendingPlacement.cabinet||''):'',technicien:tech,technicien2:tech2,hours,memo,priority:newPrio,color:COLORS[selColor],pieceStatus:he?(he.pieceStatus||'none'):'none',pieceFournisseur:he?(he.pieceFournisseur||''):'',pieceNote:he?(he.pieceNote||''):'',arrived:false,heuresT1:he?(he.heuresT1||0):0,heuresT2:he?(he.heuresT2||0):0,heuresP:he?(he.heuresP||0):0,heuresDate:he?(he.heuresDate||''):'',photos:he?(he.photos||[]):[]}));
   state.appointments=[...state.appointments,...newAppts];
   document.getElementById('modalOverlay').classList.remove('open');
   await saveFB();render();upStats();if(isMobile())renderMobile();
@@ -2852,6 +2865,14 @@ function openEditModal(gid){
   editStat=root.arrived?'arrived':'pending';updateArrivedButtons();
   editSelColor=Math.max(0,COLORS.indexOf(root.color));
   buildCP('editColorPicker',i=>editSelColor=i,editSelColor);
+  const cabWrap=document.getElementById('editCabinetWrap');
+  if(root.cabinet){
+    const url=findCabinetUrl(root.cabinet);
+    cabWrap.style.display='block';
+    cabWrap.innerHTML=url
+      ?`<a href="${url}" target="_blank" rel="noopener" class="dpc-cabinet-link">🔗 ${root.cabinet}</a>`
+      :`<span class="dpc-cabinet-link" style="border:1px dashed #aed6f1;background:#fff;">🏢 ${root.cabinet} <em style="font-weight:400;">(lien non enregistré — onglet Paramètres)</em></span>`;
+  }else{cabWrap.style.display='none';cabWrap.innerHTML='';}
   upPrev('editApptPreview',root.day,gWO(root.weekStart),root.totalDays);
   document.getElementById('editModalOverlay').classList.add('open');
 }
@@ -2889,7 +2910,7 @@ async function saveEditAppt(){
   const others=state.appointments.filter(a=>a&&a.groupId!==editId);
   const weekDays=gWD(gWO(editRef.weekStart));
   const segs=split(editRef.day,days,weekDays[0]);
-  const newSegs=segs.map(s=>na({id:s.segmentIndex===0?editRef.id:genId(),groupId:editId,type:editRef.type,row:editRef.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,technicien:tech,technicien2:tech2,hours,memo,priority:editPrio,color:COLORS[editSelColor],pieceStatus:editPieceStat,pieceFournisseur,pieceNote,arrived:editStat==='arrived',heuresT1,heuresT2,heuresP,heuresDate:editRef.heuresDate||'',photos:[...(editRef.photos||[])]}));
+  const newSegs=segs.map(s=>na({id:s.segmentIndex===0?editRef.id:genId(),groupId:editId,type:editRef.type,row:editRef.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,cabinet:editRef.cabinet||'',technicien:tech,technicien2:tech2,hours,memo,priority:editPrio,color:COLORS[editSelColor],pieceStatus:editPieceStat,pieceFournisseur,pieceNote,arrived:editStat==='arrived',heuresT1,heuresT2,heuresP,heuresDate:editRef.heuresDate||'',photos:[...(editRef.photos||[])]}));
   state.appointments=[...others,...newSegs];
   document.getElementById('editModalOverlay').classList.remove('open');
   await saveFB();render();upStats();if(isMobile())renderMobile();
@@ -2926,6 +2947,7 @@ async function holdAppointment(gid){
     tel:root.tel||'',
     adresse:root.adresse||'',
     immat:root.immat||'',
+    cabinet:root.cabinet||'',
     compagnie:'',
     note,
     held:true,
@@ -3710,13 +3732,13 @@ document.getElementById('mBtnSaveAppt').addEventListener('click',async()=>{
     const others=state.appointments.filter(a=>a&&a.groupId!==mEditGid);
     const orig=state.appointments.find(a=>a&&a.groupId===mEditGid&&a.segmentIndex===0);
     const segs=split(mPendingAppt.day,days,weekDays[0]);
-    const newSegs=segs.map(s=>na({id:s.segmentIndex===0?orig.id:genId(),groupId:mEditGid,type:mPendingAppt.type,row:mPendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,technicien:tech,technicien2:tech2,hours,memo,priority:mNewPrio,color:COLORS[mSelColor],pieceStatus:orig.pieceStatus,pieceFournisseur:orig.pieceFournisseur,pieceNote:orig.pieceNote,arrived:orig.arrived,heuresT1:orig.heuresT1,heuresT2:orig.heuresT2,heuresP:orig.heuresP,heuresDate:orig.heuresDate,photos:orig.photos}));
+    const newSegs=segs.map(s=>na({id:s.segmentIndex===0?orig.id:genId(),groupId:mEditGid,type:mPendingAppt.type,row:mPendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,cabinet:orig.cabinet||'',technicien:tech,technicien2:tech2,hours,memo,priority:mNewPrio,color:COLORS[mSelColor],pieceStatus:orig.pieceStatus,pieceFournisseur:orig.pieceFournisseur,pieceNote:orig.pieceNote,arrived:orig.arrived,heuresT1:orig.heuresT1,heuresT2:orig.heuresT2,heuresP:orig.heuresP,heuresDate:orig.heuresDate,photos:orig.photos}));
     state.appointments=[...others,...newSegs];
   }else{
     const gid=genId();
     const segs=split(mPendingAppt.day,days,weekDays[0]);
     const he=pendingPlacement&&pendingPlacement.heldExtra;
-    const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:mPendingAppt.type,row:mPendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,technicien:tech,technicien2:tech2,hours,memo,priority:mNewPrio,color:COLORS[mSelColor],pieceStatus:he?(he.pieceStatus||'none'):'none',pieceFournisseur:he?(he.pieceFournisseur||''):'',pieceNote:he?(he.pieceNote||''):'',arrived:false,heuresT1:he?(he.heuresT1||0):0,heuresT2:he?(he.heuresT2||0):0,heuresP:he?(he.heuresP||0):0,heuresDate:he?(he.heuresDate||''):'',photos:he?(he.photos||[]):[]}));
+    const newAppts=segs.map(s=>na({id:genId(),groupId:gid,type:mPendingAppt.type,row:mPendingAppt.row,day:s.day,weekStart:s.weekStart.toISOString(),totalDays:days,segmentIndex:s.segmentIndex,span:s.span,hasPrev:s.hasPrev,hasNext:s.hasNext,name,tel,adresse,immat,cabinet:pendingPlacement?(pendingPlacement.cabinet||''):'',technicien:tech,technicien2:tech2,hours,memo,priority:mNewPrio,color:COLORS[mSelColor],pieceStatus:he?(he.pieceStatus||'none'):'none',pieceFournisseur:he?(he.pieceFournisseur||''):'',pieceNote:he?(he.pieceNote||''):'',arrived:false,heuresT1:he?(he.heuresT1||0):0,heuresT2:he?(he.heuresT2||0):0,heuresP:he?(he.heuresP||0):0,heuresDate:he?(he.heuresDate||''):'',photos:he?(he.photos||[]):[]}));
     state.appointments=[...state.appointments,...newAppts];
   }
   document.getElementById('mobileModalOverlay').classList.remove('open');
