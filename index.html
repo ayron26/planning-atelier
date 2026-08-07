@@ -1920,13 +1920,21 @@ function extractHeuresExpertise(text){
 // Liste des pièces (fournitures avec un vrai prix) — jamais les lignes de main d'œuvre.
 // Filtre les valeurs répétées 3 fois ou plus : c'est très probablement une colonne de
 // vétusté (%) qui s'est mélangée au texte, pas un vrai prix qui se répéterait autant.
+// Retire les codes référence constructeur et codes d'opération parfois collés en fin de libellé
+// (ex: "PARE-CHOCS AV 6F0807221D GRU EPP" → "PARE-CHOCS AV 6F0807221D GRU")
+function cleanPieceLibelle(libelle){
+  let cleaned=libelle;
+  cleaned=cleaned.replace(/\s+(EPP|EP|PP|RP|[EDCPGLNR])$/,'');
+  cleaned=cleaned.replace(/\s+([A-Z0-9]{5,15})$/,(match,token)=>(/[A-Z]/.test(token)&&/[0-9]/.test(token))?'':match);
+  return cleaned.trim();
+}
 function extractExpertisePiecesEspaces(text){
-  const section=getSection(text,/LISTE DES FOURNITURES/i,['TOTAL DES FOURNITURES','\\-OBSERVATIONS\\-','ESTIMATION DES DOMMAGES']);
+  const section=getSection(text,/LISTE DES FOURNITURES|Liste des pi[èe]ces/i,['TOTAL DES FOURNITURES','\\-OBSERVATIONS\\-','ESTIMATION DES DOMMAGES','\\bTOTAL\\b','D[ée]tail des op[ée]rations']);
   const candidates=[];
   const lineRe=/(\d{1,3})\s+([A-ZÀ-Ü][A-ZÀ-Ÿ0-9'\-\.\/ ]{3,60}?)\s+(\d{1,4}[,.]\d{2})\b/g;
   let m;
   while((m=lineRe.exec(section))!==null){
-    const libelle=m[2].trim().replace(/\s{2,}/g,' ');
+    const libelle=cleanPieceLibelle(m[2].trim().replace(/\s{2,}/g,' '));
     const prixStr=m[3];
     const prix=parseFloat(prixStr.replace(',','.'));
     if(prix>0&&libelle.length>2)candidates.push({libelle,prix,prixStr});
@@ -1938,7 +1946,7 @@ function extractExpertisePiecesEspaces(text){
 // Certains cabinets détaillent les pièces sur une page séparée, en tableau à colonnes
 // séparées par des "!" : "! Qté!Libellé !Réf. !Opé. !Mnt HT !%Vét.!%Rem.! TVA !"
 function extractExpertisePiecesPipes(text){
-  const section=getSection(text,/LISTE DES PIECES/i,['TOTAL\\s','Document\\(s\\)','PERSONNES PRESENTES']);
+  const section=getSection(text,/LISTE DES PIECES/i,['TOTAL\\s','Document\\(s\\)','PERSONNES PRESENTES','D[ée]tail des op[ée]rations']);
   if(!section)return[];
   const pieces=[];
   const lineRe=/!\s*(\d{1,3})\s*!\s*([^!]*)\s*!\s*([^!]*)\s*!\s*([^!]*)\s*!\s*([^!]*)\s*!/g;
