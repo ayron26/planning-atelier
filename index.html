@@ -391,6 +391,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .tech-manage-add input:focus{border-color:var(--accent);}
 .tech-manage-add button{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
 .tech-manage-add button:hover{background:#c43f18;}
+.cabinet-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:6px;}
+.cabinet-row-info{display:flex;flex-direction:column;gap:2px;overflow:hidden;}
+.cabinet-row-info strong{font-size:.85rem;color:var(--text);}
+.cabinet-row-info a{font-size:.75rem;color:#2980b9;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:340px;}
+.cabinet-row-info a:hover{text-decoration:underline;}
+.cabinet-row-del{background:none;border:none;color:#e74c3c;cursor:pointer;font-size:.85rem;flex-shrink:0;}
+.dpc-cabinet-link{display:inline-flex;align-items:center;gap:4px;background:#e8f4fd;color:#1a5276;border:1px solid #aed6f1;border-radius:14px;padding:3px 10px;font-size:.72rem;font-weight:700;text-decoration:none;margin-top:4px;}
+.dpc-cabinet-link:hover{background:#aed6f1;}
 .period-add-panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:18px;}
 .period-add-title{font-size:.85rem;font-weight:700;color:var(--steel);margin-bottom:10px;}
 .period-add-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:end;}
@@ -755,6 +763,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <button class="sb-btn" id="navContrats" onclick="switchPage('contrats')">📄 Contrats</button>
     <button class="sb-btn" id="navHeures" onclick="switchPage('heures')">🗂️ Suivi Tech.</button>
     <button class="sb-btn" id="navSinistre" onclick="switchPage('sinistre')">🆕 Nv. dossier</button>
+    <button class="sb-btn" id="navParametres" onclick="switchPage('parametres')">⚙️ Paramètres</button>
   </nav>
   <div class="sb-footer">
     <div class="sb-user"><span id="userEmail"></span><span id="userRole"></span></div>
@@ -1019,6 +1028,23 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <div id="mDossiersPendingList"></div>
     <div class="dossiers-pending-title">📷 Planning EAD</div>
     <div id="mEadCalendarList"></div>
+  </div>
+</div>
+
+<div class="page" id="pageParametres">
+  <div style="padding:24px;max-width:700px;margin:0 auto;">
+    <div style="font-size:1.3rem;font-weight:700;color:var(--steel);margin-bottom:6px;">⚙️ Paramètres</div>
+    <div style="font-size:.82rem;color:var(--muted);margin-bottom:20px;">Accessible depuis un ordinateur ou une tablette (menu latéral).</div>
+    <div class="tech-manage-panel">
+      <div class="tech-manage-title">🏢 Cabinets d'expertise</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:12px;">Enregistre le lien du site de chaque cabinet une seule fois : il sera ensuite proposé automatiquement dans chaque dossier où ce cabinet est reconnu.</div>
+      <div id="cabinetsManageList" style="margin-bottom:14px;"></div>
+      <div class="tech-manage-add" style="flex-wrap:wrap;">
+        <input type="text" id="newCabinetNom" placeholder="Nom du cabinet (ex : ROADIA 26)" style="flex:1;min-width:160px;">
+        <input type="text" id="newCabinetUrl" placeholder="https://…" style="flex:2;min-width:220px;">
+        <button id="btnAddCabinet">➕ Ajouter</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1315,6 +1341,7 @@ const docContrats=doc(db,"planning","contrats");
 const docHeures=doc(db,"planning","heures");
 const docDossiers=doc(db,"planning","dossiersEnAttente");
 const docTechs=doc(db,"planning","techniciens");
+const docCabinets=doc(db,"planning","cabinetsExpertise");
 const docReception=doc(db,"planning","reception");
 const EAD_HOURS=['09:00','10:00','11:00','14:00','15:00','16:00'];
 let eadBookings=[];
@@ -1336,6 +1363,7 @@ const DEFAULT_TECHS=[{id:'fabien',nom:'Fabien',color:'#2980b9'},{id:'eric',nom:'
 let TECHS=[...DEFAULT_TECHS];
 const DEFAULT_RECEPTION=[];
 let RECEPTION=[...DEFAULT_RECEPTION];
+let CABINETS=[];
 const TECH_COLOR_PALETTE=['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50','#e67e22','#f39c12'];
 const RECEPTION_COLOR_PALETTE=['#e67e22','#16a085','#8e44ad','#2980b9','#c0392b','#27ae60','#d35400','#2c3e50'];
 const TABS=[{id:'conge',label:'Congés payés',color:'#2ecc71',icon:'🏖️'},{id:'maladie',label:'Arrêt maladie',color:'#e74c3c',icon:'🤒'},{id:'accident',label:'Accident travail',color:'#e67e22',icon:'🚑'},{id:'formation',label:'Formation',color:'#2980b9',icon:'📚'},{id:'ecole',label:'École (apprenti)',color:'#16a085',icon:'🎓'},{id:'rtt',label:'RTT',color:'#8e44ad',icon:'📅'},{id:'sans-solde',label:'Sans solde',color:'#7f8c8d',icon:'📋'},{id:'ferie',label:'Jour férié',color:'#f39c12',icon:'🎉'}];
@@ -1623,7 +1651,7 @@ document.getElementById('btnAddUser').addEventListener('click',async()=>{
 
 function initApp(){
   buildCP('colorPicker',i=>selColor=i);buildMCP(i=>mSelColor=i);upTech();
-  rebuildTechSelects();renderTechManageList();renderMobileTechManageList();rebuildPeriodTypeSelects();rebuildPeriodTechSelects();renderReceptionManageList();renderMobileReceptionManageList();
+  rebuildTechSelects();renderTechManageList();renderMobileTechManageList();rebuildPeriodTypeSelects();rebuildPeriodTechSelects();renderReceptionManageList();renderMobileReceptionManageList();renderCabinetsManageList();
   setupFirebaseListeners();setupEvents();
   if(isMobile())renderMobile();
 }
@@ -1662,6 +1690,11 @@ function setupFirebaseListeners(){
     rebuildPeriodTechSelects();
     if(curPage==='conges'){if(isMobile())renderMobileConges();else renderConges();}
   },err=>{console.error(err);});
+  onSnapshot(docCabinets,snap=>{
+    CABINETS=(snap.exists()&&Array.isArray(snap.data().list))?snap.data().list:[];
+    if(curPage==='parametres')renderCabinetsManageList();
+    if(curPage==='sinistre'){renderDossiersPending();if(isMobile())renderMobileDossiersPending();}
+  },err=>{console.error(err);});
   onSnapshot(collection(db,'eadBookings'),snap=>{
     eadBookings=snap.docs.map(d=>({id:d.id,...d.data()}));
     if(curPage==='sinistre'){renderEadCalendar();if(isMobile())renderMobileEadCalendar();}
@@ -1682,21 +1715,22 @@ function setupFirebaseListeners(){
 
 window.switchPage=function(page){
   curPage=page;
-  ['atelier','conges','contrats','heures','sinistre'].forEach(p=>{document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active',p===page);});
-  ['navAtelier','navConges','navContrats','navHeures','navSinistre'].forEach(b=>document.getElementById(b)?.classList.remove('active'));
-  const nm={atelier:'navAtelier',conges:'navConges',contrats:'navContrats',heures:'navHeures',sinistre:'navSinistre'};document.getElementById(nm[page])?.classList.add('active');
+  ['atelier','conges','contrats','heures','sinistre','parametres'].forEach(p=>{document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active',p===page);});
+  ['navAtelier','navConges','navContrats','navHeures','navSinistre','navParametres'].forEach(b=>document.getElementById(b)?.classList.remove('active'));
+  const nm={atelier:'navAtelier',conges:'navConges',contrats:'navContrats',heures:'navHeures',sinistre:'navSinistre',parametres:'navParametres'};document.getElementById(nm[page])?.classList.add('active');
   ['mbnAtelier','mbnConges','mbnContrats','mbnHeures','mbnSinistre'].forEach(b=>document.getElementById(b)?.classList.remove('active'));
   const mb={atelier:'mbnAtelier',conges:'mbnConges',contrats:'mbnContrats',heures:'mbnHeures',sinistre:'mbnSinistre'};document.getElementById(mb[page])?.classList.add('active');
   document.getElementById('atelierTopRight').style.display=page==='atelier'?'flex':'none';
   document.getElementById('congesTopRight').style.display=page==='conges'?'flex':'none';
   document.getElementById('contratsTopRight').style.display=page==='contrats'?'flex':'none';
   document.getElementById('mobileWeekNav').style.display=page==='atelier'?'flex':'none';
-  const titles={atelier:'🔧 Planning Atelier',conges:'🏖️ Congés Techniciens',contrats:'📄 Contrats de prêt',heures:'🗂️ Suivi Technicien',sinistre:'🆕 Nouveau dossier'};
+  const titles={atelier:'🔧 Planning Atelier',conges:'🏖️ Congés Techniciens',contrats:'📄 Contrats de prêt',heures:'🗂️ Suivi Technicien',sinistre:'🆕 Nouveau dossier',parametres:'⚙️ Paramètres'};
   const tt=document.getElementById('topbarTitle');if(tt)tt.textContent=titles[page]||'';
   if(page==='conges'){if(isMobile())renderMobileConges();else renderConges();}
   if(page==='contrats'){renderContrats();if(isMobile())renderMobileContrats();}
   if(page==='heures'){renderDossiers();if(isMobile())renderMobileDossiers();}
   if(page==='sinistre'){renderDossiersPending();if(isMobile())renderMobileDossiersPending();renderEadCalendar();if(isMobile())renderMobileEadCalendar();}
+  if(page==='parametres'){renderCabinetsManageList();}
 };
 
 function buildDossierList(searchTerm){
@@ -1907,7 +1941,12 @@ function extractSinistreFields(text){
   let email=tryPatterns(searchZone,[/([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/]);
   if(!email)email=tryPatterns(text,[/([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/]);
 
-  return {nom:(nom||'').trim(),tel,adresse:adresse.trim(),immat:(immat||'').replace(/\s+/g,'').toUpperCase(),compagnie:(compagnie||'').trim(),email:(email||'').trim().toLowerCase()};
+  // Cabinet d'expertise : champ "Cabinet" dans le bloc "INFORMATIONS COMPLEMENTAIRES" (convention IRSA/GTA)
+  const cabinet=tryPatterns(text,[
+    /Cabinet\s*:?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ0-9&'\-\s]{1,40}?)(?=\n|Ev[ée]nement|Date\s*sinistre|$)/i
+  ]);
+
+  return {nom:(nom||'').trim(),tel,adresse:adresse.trim(),immat:(immat||'').replace(/\s+/g,'').toUpperCase(),compagnie:(compagnie||'').trim(),email:(email||'').trim().toLowerCase(),cabinet:(cabinet||'').trim()};
 }
 
 function renderSinReview(fields,rawText,mobile){
@@ -1923,6 +1962,7 @@ function renderSinReview(fields,rawText,mobile){
       <div class="full"><label>Adresse</label><input type="text" id="${mobile?'m':''}sinAdresse" value="${fields.adresse||''}"></div>
       <div><label>Immatriculation</label><input type="text" id="${mobile?'m':''}sinImmat" value="${fields.immat||''}"></div>
       <div><label>Compagnie d'assurance</label><input type="text" id="${mobile?'m':''}sinCompagnie" value="${fields.compagnie||''}"></div>
+      <div><label>Cabinet d'expertise</label><input type="text" id="${mobile?'m':''}sinCabinet" value="${fields.cabinet||''}"></div>
       <div class="full"><label>Email</label><input type="email" id="${mobile?'m':''}sinEmail" value="${fields.email||''}"></div>
     </div>
     <span class="sinistre-raw-toggle" id="${mobile?'m':''}sinRawToggle">Voir le texte extrait du PDF</span>
@@ -1940,6 +1980,7 @@ function renderSinReview(fields,rawText,mobile){
       adresse:document.getElementById((mobile?'m':'')+'sinAdresse').value.trim(),
       immat:document.getElementById((mobile?'m':'')+'sinImmat').value.trim(),
       compagnie:document.getElementById((mobile?'m':'')+'sinCompagnie').value.trim(),
+      cabinet:document.getElementById((mobile?'m':'')+'sinCabinet').value.trim(),
       email:document.getElementById((mobile?'m':'')+'sinEmail').value.trim(),
       createdAt:Date.now()
     };
@@ -2047,8 +2088,15 @@ function dossierPendingCardHTML(d){
     const vp=rdvLink.vehiculePret?'🚗 avec véhicule de prêt':'🔧 sans véhicule de prêt';
     rdvStatusHTML=`<div class="dpc-link-status chosen">📅 Date souhaitée : ${dFR(new Date(rdvLink.dateChoisie))} — ${vp}</div>`;
   }else if(rdvLink)rdvStatusHTML=`<div class="dpc-link-status waiting">📅 Lien RDV envoyé, en attente du choix du client</div>`;
+  let cabinetHTML='';
+  if(d.cabinet){
+    const url=findCabinetUrl(d.cabinet);
+    cabinetHTML=url
+      ?`<a href="${url}" target="_blank" rel="noopener" class="dpc-cabinet-link">🔗 ${d.cabinet}</a>`
+      :`<button class="dpc-cabinet-link dpc-cabinet-addlink" data-did="${d.id}" data-cabinet="${d.cabinet}" style="border:1px dashed #aed6f1;cursor:pointer;font-family:inherit;">➕ Lien pour "${d.cabinet}"</button>`;
+  }
   return `<div class="dossier-pending-card" data-did="${d.id}" style="${d.held?'border-left-color:#8e44ad;':''}">
-    <div class="dpc-info"><div class="dpc-nom">${d.held?'⏸️ ':''}${d.nom}</div><div class="dpc-meta">${d.tel?'📞 '+d.tel+' · ':''}${d.immat?'🚗 '+d.immat+' · ':''}${d.compagnie?'🏢 '+d.compagnie+' · ':''}${d.email?'✉️ '+d.email+' · ':''}${d.adresse||''}</div>${d.note?`<div class="dpc-meta" style="color:#8e44ad;font-weight:600;margin-top:3px;">📝 ${d.note}</div>`:''}${eadStatusHTML}${rdvStatusHTML}
+    <div class="dpc-info"><div class="dpc-nom">${d.held?'⏸️ ':''}${d.nom}</div><div class="dpc-meta">${d.tel?'📞 '+d.tel+' · ':''}${d.immat?'🚗 '+d.immat+' · ':''}${d.compagnie?'🏢 '+d.compagnie+' · ':''}${d.email?'✉️ '+d.email+' · ':''}${d.adresse||''}</div>${d.note?`<div class="dpc-meta" style="color:#8e44ad;font-weight:600;margin-top:3px;">📝 ${d.note}</div>`:''}${eadStatusHTML}${rdvStatusHTML}${cabinetHTML}
     <div class="dpc-flags">
       <button class="dpc-flag-chip dpc-flag-photos${d.photosFaites?' active':''}" data-did="${d.id}">📸 Photos déjà faites</button>
       <button class="dpc-flag-chip dpc-flag-pv${d.pvRecu?' active':''}" data-did="${d.id}">📋 PV reçu</button>
@@ -2137,6 +2185,14 @@ function wireDossierPendingEvents(container){
   });
   container.querySelectorAll('.dpc-flag-rdv').forEach(btn=>{
     btn.addEventListener('click',()=>toggleDossierFlag(btn.dataset.did,'rdvFixeDirect'));
+  });
+  container.querySelectorAll('.dpc-cabinet-addlink').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(isRO()){showRO();return;}
+      const cabinet=btn.dataset.cabinet;
+      const url=prompt(`Lien du site pour "${cabinet}" :`,'https://');
+      if(url&&url.trim())addCabinet(cabinet,url.trim());
+    });
   });
 }
 // Catégorise un dossier selon l'état de ses liens EAD/RDV, pour bien les séparer visuellement
@@ -3141,6 +3197,46 @@ async function removeReceptionStaff(id){
   rebuildPeriodTechSelects();renderReceptionManageList();renderMobileReceptionManageList();
   if(curPage==='conges'){if(isMobile())renderMobileConges();else renderConges();}
 }
+
+// ===== Cabinets d'expertise (liens vers leur site) =====
+async function saveCabinets(){
+  if(isRO())return;
+  try{await setDoc(docCabinets,{list:CABINETS,updatedAt:Date.now()});}catch(e){console.error(e);}
+}
+function findCabinetUrl(nom){
+  if(!nom)return'';
+  const n=nom.trim().toLowerCase();
+  const found=CABINETS.find(c=>c.nom.trim().toLowerCase()===n);
+  return found?found.url:'';
+}
+function renderCabinetsManageList(){
+  const el=document.getElementById('cabinetsManageList');if(!el)return;
+  if(!CABINETS.length){el.innerHTML='<div style="color:var(--muted);font-size:.82rem;">Aucun cabinet enregistré pour le moment.</div>';return;}
+  el.innerHTML=CABINETS.map(c=>`<div class="cabinet-row" data-cid="${c.id}"><div class="cabinet-row-info"><strong>${c.nom}</strong><a href="${c.url}" target="_blank" rel="noopener">${c.url}</a></div><button class="cabinet-row-del" data-cid="${c.id}">🗑️</button></div>`).join('');
+  el.querySelectorAll('.cabinet-row-del').forEach(btn=>{
+    btn.addEventListener('click',async()=>{
+      if(isRO()){showRO();return;}
+      const c=CABINETS.find(x=>x.id===btn.dataset.cid);if(!c)return;
+      if(!confirm(`Retirer le lien pour "${c.nom}" ?`))return;
+      CABINETS=CABINETS.filter(x=>x.id!==btn.dataset.cid);
+      await saveCabinets();renderCabinetsManageList();
+      if(curPage==='sinistre'){renderDossiersPending();if(isMobile())renderMobileDossiersPending();}
+    });
+  });
+}
+async function addCabinet(nomPreset,urlPreset){
+  if(isRO()){showRO();return;}
+  const nomInput=document.getElementById('newCabinetNom'),urlInput=document.getElementById('newCabinetUrl');
+  const nom=(nomPreset||nomInput.value).trim();
+  let url=(urlPreset||urlInput.value).trim();
+  if(!nom||!url){alert('Merci de renseigner le nom du cabinet et son lien.');return;}
+  if(!/^https?:\/\//i.test(url))url='https://'+url;
+  CABINETS=[...CABINETS.filter(c=>c.nom.trim().toLowerCase()!==nom.toLowerCase()),{id:genId(),nom,url}];
+  nomInput.value='';urlInput.value='';
+  await saveCabinets();renderCabinetsManageList();
+  if(curPage==='sinistre'){renderDossiersPending();if(isMobile())renderMobileDossiersPending();}
+}
+document.getElementById('btnAddCabinet').addEventListener('click',()=>addCabinet());
 
 // Sélecteurs du formulaire "Ajouter une période" : techniciens ET réception, regroupés
 function rebuildPeriodTechSelects(){
