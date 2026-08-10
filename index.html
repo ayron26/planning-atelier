@@ -1364,6 +1364,11 @@ const fbApp=initializeApp(FC);
 const db=getFirestore(fbApp);
 const auth=getAuth(fbApp);
 const docRef=doc(db,"planning","main");
+const colApptPhotos=collection(db,"apptPhotos");
+let photosMap={};
+function rehydratePhotos(){
+  state.appointments=state.appointments.map(a=>a?{...a,photos:photosMap[a.groupId]||a.photos||[]}:a);
+}
 const docConges=doc(db,"planning","conges");
 const docContrats=doc(db,"planning","contrats");
 const docHeures=doc(db,"planning","heures");
@@ -1489,7 +1494,14 @@ function showTechView(){
       state.appointments=Array.isArray(d.appointments)?d.appointments.map(na):[];
       state.loanNames=Array.isArray(d.loanNames)?d.loanNames:[...DL];
       state.noLoanNames=Array.isArray(d.noLoanNames)?d.noLoanNames:[...DNL];
+      rehydratePhotos();
     }
+    renderTechView();
+  });
+  onSnapshot(colApptPhotos,snap=>{
+    photosMap={};
+    snap.forEach(d=>{photosMap[d.id]=(d.data().photos)||[];});
+    rehydratePhotos();
     renderTechView();
   });
   onSnapshot(docHeures,snap=>{
@@ -1694,6 +1706,7 @@ function setupFirebaseListeners(){
       state.noLoanNames=Array.isArray(d.noLoanNames)?d.noLoanNames:[...DNL];
       state.absences=Array.isArray(d.absences)?d.absences:[];
       state.appointments=Array.isArray(d.appointments)?d.appointments.map(na):[];
+      rehydratePhotos();
       while(state.loanNames.length<8)state.loanNames.push('BAYON 0'+state.loanNames.length);
       while(state.noLoanNames.length<8)state.noLoanNames.push('Poste '+state.noLoanNames.length);
       state.weekOffset=off;
@@ -1702,6 +1715,12 @@ function setupFirebaseListeners(){
     }else ss('ok');
     render();if(isMobile())renderMobile();
   },err=>{console.error(err);ss('err');render();});
+  onSnapshot(colApptPhotos,snap=>{
+    photosMap={};
+    snap.forEach(d=>{photosMap[d.id]=(d.data().photos)||[];});
+    rehydratePhotos();
+    render();if(isMobile())renderMobile();
+  },err=>{console.error(err);});
   onSnapshot(docConges,snap=>{if(isSavC)return;if(snap.exists()){cState={...snap.data()};if(!Array.isArray(cState.absences))cState.absences=[];}else cState={absences:[]};ssc('ok');if(curPage==='conges'){if(isMobile())renderMobileConges();else renderConges();}},err=>{console.error(err);ssc('err');});
   onSnapshot(docContrats,snap=>{if(isSavCt)return;if(snap.exists()){ctState={...snap.data()};if(!Array.isArray(ctState.contrats))ctState.contrats=[];}else ctState={contrats:[]};if(curPage==='contrats'){renderContrats();if(isMobile())renderMobileContrats();}},err=>{console.error(err);});
   onSnapshot(docHeures,snap=>{if(isSavH)return;if(snap.exists()){hState={...snap.data()};if(!Array.isArray(hState.entries))hState.entries=[];}else hState={entries:[]};if(curPage==='heures'){renderDossiers();if(isMobile())renderMobileDossiers();}},err=>{console.error(err);});
@@ -2553,15 +2572,29 @@ wireSinDropzone('mSinDropzone','mSinFileInput',true);
 
 function ss(s){['syncStatus','syncStatusMobile'].forEach(id=>{const el=document.getElementById(id);if(!el)return;const m={ok:['✅','sync-ok'],wait:['⏳','sync-wait'],save:['💾','sync-wait'],err:['❌','sync-err']};el.textContent=m[s][0];el.className='sync-indicator '+(id==='syncStatusMobile'?'mtb-sync ':'')+m[s][1];});}
 
+// Les photos sont stockées à part (collection apptPhotos, une petite fiche par rendez-vous)
+// pour que le document principal (planning/main) reste toujours sous la limite de 1 Mo de Firestore.
+async function migratePhotosBeforeSave(){
+  const seen=new Set();
+  for(const a of state.appointments){
+    if(!a||!a.groupId||seen.has(a.groupId))continue;
+    if(a.photos&&a.photos.length){
+      seen.add(a.groupId);
+      try{await setDoc(doc(db,'apptPhotos',a.groupId),{photos:a.photos,updatedAt:Date.now()});}catch(e){console.error(e);}
+    }
+  }
+  return state.appointments.map(a=>a?{...a,photos:[]}:a);
+}
 async function saveFB(){
   if(isRO()){showRO();return;}
   isSav=true;ss('save');
   try{
+    const strippedAppts=await migratePhotosBeforeSave();
     await setDoc(docRef,{
       loanNames:state.loanNames,
       noLoanNames:state.noLoanNames,
       absences:state.absences,
-      appointments:state.appointments,
+      appointments:strippedAppts,
       updatedAt:Date.now()
     });
     ss('ok');
@@ -2573,11 +2606,12 @@ async function saveFB(){
 async function saveFBTech(){
   isSav=true;
   try{
+    const strippedAppts=await migratePhotosBeforeSave();
     await setDoc(docRef,{
       loanNames:state.loanNames,
       noLoanNames:state.noLoanNames,
       absences:state.absences,
-      appointments:state.appointments,
+      appointments:strippedAppts,
       updatedAt:Date.now()
     });
   }catch(e){console.error(e);}
