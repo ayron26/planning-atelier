@@ -329,7 +329,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .tech-rdv-deadline.green{background:#eafaf1;color:#1e8449;}
 .tech-rdv-memo{background:var(--surface);border-radius:6px;padding:8px 10px;font-size:.8rem;color:var(--muted);margin-top:6px;border-left:3px solid var(--border);}
 .mobile-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--bottom-nav-h);background:var(--steel);z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.2);border-top:1px solid var(--steel-mid);}
-.mobile-bottom-nav .mbn-inner{display:grid;grid-template-columns:repeat(5,1fr);height:100%;}
+.mobile-bottom-nav .mbn-inner{display:grid;grid-template-columns:repeat(4,1fr);height:100%;}
 .heures-wrap{padding:20px;max-width:900px;margin:0 auto;}
 .heures-filter-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
 .heures-day-group{margin-bottom:16px;}
@@ -768,7 +768,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <button class="sb-btn active" id="navAtelier" onclick="switchPage('atelier')">🔧 Planning</button>
     <button class="sb-btn" id="navConges" onclick="switchPage('conges')">🏖️ Congés</button>
     <button class="sb-btn" id="navContrats" onclick="switchPage('contrats')">📄 Contrats</button>
-    <button class="sb-btn" id="navHeures" onclick="switchPage('heures')">🗂️ Suivi Tech.</button>
     <button class="sb-btn" id="navSinistre" onclick="switchPage('sinistre')">🆕 Nv. dossier</button>
     <button class="sb-btn" id="navParametres" onclick="switchPage('parametres')">⚙️ Paramètres</button>
   </nav>
@@ -830,26 +829,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <button id="mBtnNext">›</button>
   </div>
   <button class="toolbar-btn" id="mBtnLogout" style="background:#e74c3c;height:28px;font-size:.7rem;">🚪</button>
-</div>
-
-<div class="tech-view" id="techView">
-  <div class="tech-view-header">
-    <div class="tech-view-name" id="techViewName">Mes RDV</div>
-    <div class="tech-view-sub" id="techViewSub">Carrosserie Brun — Valence Motors</div>
-    <div class="tech-view-quota" id="techViewQuota" style="display:none;"></div>
-    <div class="tech-week-nav">
-      <button id="tvBtnPrev">‹</button>
-      <div class="twl" id="tvWeekLabel"></div>
-      <button id="tvBtnNext">›</button>
-      <button id="tvBtnToday" style="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:6px;padding:0 10px;height:32px;font-size:.75rem;cursor:pointer;font-family:inherit;">Auj.</button>
-    </div>
-  </div>
-  <div class="tech-rdv-list" id="techRdvList"></div>
-  <div class="mobile-bottom-nav" style="display:block;">
-    <div class="mbn-inner" style="grid-template-columns:1fr;">
-      <button class="mbn-tab active" style="color:#fff;" onclick="logout()"><div class="mbn-icon-wrap" style="background:var(--accent);"><div class="mbn-icon">🚪</div></div><span>Déconnexion</span></button>
-    </div>
-  </div>
 </div>
 
 <div class="page active" id="pageAtelier">
@@ -990,18 +969,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
   </div>
 </div>
 
-<div class="page" id="pageHeures">
-  <div class="heures-wrap">
-    <div style="font-size:1.3rem;font-weight:700;color:var(--steel);margin-bottom:16px;">🗂️ Suivi Technicien — Heures & Photos</div>
-    <div class="contrats-search" style="margin-bottom:16px;"><span class="search-icon">🔍</span><input type="text" id="dossiersSearchInput" placeholder="Nom client, véhicule…"></div>
-    <div id="dossiersListWrap"></div>
-  </div>
-  <div class="mobile-heures" id="mobileHeures">
-    <div class="mobile-search-contrats"><span class="ms-icon">🔍</span><input type="text" id="mDossiersSearch" placeholder="Nom client, véhicule…"></div>
-    <div id="mobileDossiersList"></div>
-  </div>
-</div>
-
 <div class="page" id="pageSinistre">
   <div class="sinistre-wrap">
     <div style="font-size:1.3rem;font-weight:700;color:var(--steel);margin-bottom:6px;">🆕 Nouveau dossier — avis de sinistre</div>
@@ -1061,7 +1028,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <button class="mbn-tab active" id="mbnAtelier" onclick="switchPage('atelier')"><div class="mbn-icon-wrap"><div class="mbn-icon">🔧</div></div><span>Planning</span></button>
     <button class="mbn-tab" id="mbnConges" onclick="switchPage('conges')"><div class="mbn-icon-wrap"><div class="mbn-icon">🏖️</div></div><span>Congés</span></button>
     <button class="mbn-tab" id="mbnContrats" onclick="switchPage('contrats')"><div class="mbn-icon-wrap"><div class="mbn-icon">📄</div></div><span>Contrats</span></button>
-    <button class="mbn-tab" id="mbnHeures" onclick="switchPage('heures')"><div class="mbn-icon-wrap"><div class="mbn-icon">🗂️</div></div><span>Suivi</span></button>
     <button class="mbn-tab" id="mbnSinistre" onclick="switchPage('sinistre')"><div class="mbn-icon-wrap"><div class="mbn-icon">🆕</div></div><span>Dossier</span></button>
   </div>
 </div>
@@ -1082,17 +1048,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
           </select>
         </div>
       </div>
-      <div style="margin-top:8px;">
-        <label>Technicien associé (optionnel)</label>
-        <select id="newUserTech">
-          <option value="">— Aucun —</option>
-          <option value="fabien">Fabien</option>
-          <option value="eric">Éric</option>
-          <option value="david">David</option>
-          <option value="alois">Aloïs</option>
-          <option value="anthony">Anthony</option>
-        </select>
-      </div>
       <div id="addUserError" style="color:#e74c3c;font-size:.82rem;margin-top:8px;display:none;"></div>
       <button class="btn-primary" id="btnAddUser" style="margin-top:12px;">➕ Créer l'utilisateur</button>
     </div>
@@ -1111,10 +1066,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <label>Téléphone</label><input type="text" id="apptTel" placeholder="06 XX XX XX XX">
     <label>Adresse</label><input type="text" id="apptAdresse" placeholder="12 rue des Lilas, 26000 Valence">
     <label>Immatriculation (véhicule client)</label><input type="text" id="apptImmat" placeholder="AA-123-AA" style="text-transform:uppercase;">
-    <label>Technicien assigné</label>
-    <select id="apptTech"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
-    <label>Technicien 2 (optionnel)</label>
-    <select id="apptTech2"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
     <label>Nombre de jours</label><input type="number" id="apptDays" value="1" min="1" max="20">
     <div class="preview-note" id="apptPreview">📅 1 jour</div>
     <label>Heures de travail (total)</label><input type="number" id="apptHours" value="4" min="0.5" max="999" step="0.5">
@@ -1138,12 +1089,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
       <div><label>Téléphone</label><input type="text" id="editApptTel"></div>
       <div><label>Immatriculation (véhicule client)</label><input type="text" id="editApptImmat" placeholder="AA-123-AA" style="text-transform:uppercase;"></div>
       <div class="full"><label>Adresse</label><input type="text" id="editApptAdresse"></div>
-      <div><label>Technicien assigné</label>
-        <select id="editApptTech"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
-      </div>
-      <div><label>Technicien 2 (optionnel)</label>
-        <select id="editApptTech2"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
-      </div>
       <div><label>Heures de travail (total)</label><input type="number" id="editApptHours" min="0.5" max="999" step="0.5"></div>
       <div><label>Nombre de jours</label><input type="number" id="editApptDays" min="1" max="20"></div>
     </div>
@@ -1182,7 +1127,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
         </div>
       </div>
     </div>
-    <div style="font-size:.75rem;color:#1a5276;background:#e8f4fd;border-radius:6px;padding:7px 12px;margin-top:10px;">ℹ️ Heures et photos technicien visibles dans <strong>🗂️ Suivi Technicien</strong>.</div>
     <label>Couleur</label><div class="color-picker" id="editColorPicker"></div>
     <div class="btn-row"><button class="btn-secondary" id="btnCloseEditModal">Annuler</button><button class="btn-primary" id="btnSaveEditAppt">Enregistrer</button></div>
   </div>
@@ -1303,10 +1247,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <label>Téléphone</label><input type="text" id="mApptTel" placeholder="06 XX XX XX XX">
     <label>Adresse</label><input type="text" id="mApptAdresse" placeholder="12 rue des Lilas">
     <label>Immatriculation (véhicule client)</label><input type="text" id="mApptImmat" placeholder="AA-123-AA" style="text-transform:uppercase;">
-    <label>Technicien assigné</label>
-    <select id="mApptTech"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
-    <label>Technicien 2 (optionnel)</label>
-    <select id="mApptTech2"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
     <label>Nombre de jours</label><input type="number" id="mApptDays" value="1" min="1" max="20">
     <div class="mobile-preview-note" id="mApptPreview">📅 1 jour</div>
     <label>Heures total</label><input type="number" id="mApptHours" value="4" min="0.5" max="999" step="0.5">
@@ -1400,14 +1340,12 @@ let CABINETS=[];
 const TECH_COLOR_PALETTE=['#2980b9','#27ae60','#8e44ad','#c0392b','#d35400','#16a085','#7f8c8d','#2c3e50','#e67e22','#f39c12'];
 const RECEPTION_COLOR_PALETTE=['#e67e22','#16a085','#8e44ad','#2980b9','#c0392b','#27ae60','#d35400','#2c3e50'];
 const TABS=[{id:'conge',label:'Congés payés',color:'#2ecc71',icon:'🏖️'},{id:'maladie',label:'Arrêt maladie',color:'#e74c3c',icon:'🤒'},{id:'accident',label:'Accident travail',color:'#e67e22',icon:'🚑'},{id:'formation',label:'Formation',color:'#2980b9',icon:'📚'},{id:'ecole',label:'École (apprenti)',color:'#16a085',icon:'🎓'},{id:'rtt',label:'RTT',color:'#8e44ad',icon:'📅'},{id:'sans-solde',label:'Sans solde',color:'#7f8c8d',icon:'📋'},{id:'ferie',label:'Jour férié',color:'#f39c12',icon:'🎉'}];
-const MAX_PHOTOS=10;
 
 let state={loanNames:[...DL],noLoanNames:[...DNL],appointments:[],absences:[],weekOffset:0};
 let cState={absences:[]};
 let ctState={contrats:[]};
 let hState={entries:[]};
 let isSavH=false;
-let dossierSearch='',mDossierSearch='';
 let dState={items:[]};
 let isSavD=false;
 let pendingPlacement=null;
@@ -1415,7 +1353,7 @@ let pendingDossierSearch='',mPendingDossierSearch='';
 let currentDraftForm=null;
 let nbTech=parseInt(localStorage.getItem('carrosserie_tech')||'3');
 let isSav=false,isSavC=false,isSavCt=false;
-let currentUser=null,currentRole=null,currentTech=null;
+let currentUser=null,currentRole=null;
 let contratAppt=null,pendingConges=null,selCongesType='conge';
 let curPage='atelier',pendingAppt=null,selColor=0,newPrio='moyenne';
 let editId=null,editSelColor=0,editStat='pending',editPieceStat='none',editPrio='moyenne',editRef=null;
@@ -1457,17 +1395,16 @@ onAuthStateChanged(auth,async user=>{
     currentUser=user;
     try{
       const snap=await getDoc(doc(db,'users',user.uid));
-      if(snap.exists()){currentRole=snap.data().role||'lecteur';currentTech=snap.data().tech||null;}
-      else{currentRole='lecteur';currentTech=null;}
-    }catch(e){currentRole='lecteur';currentTech=null;}
+      currentRole=snap.exists()?(snap.data().role||'lecteur'):'lecteur';
+    }catch(e){currentRole='lecteur';}
     document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('appRoot').style.display='block';
     document.getElementById('userEmail').textContent=user.email;
-    document.getElementById('userRole').textContent=currentRole==='admin'?'👑 Admin':currentTech?'🔧 '+currentTech.charAt(0).toUpperCase()+currentTech.slice(1):'👁️ Lecteur';
+    document.getElementById('userRole').textContent=currentRole==='admin'?'👑 Admin':'👁️ Lecteur';
     document.getElementById('btnAdminPanel').style.display=currentRole==='admin'?'flex':'none';
-    if(isMobile()&&currentTech){showTechView();}else{document.getElementById('sidebar').style.display=isMobile()?'none':'flex';initApp();}
+    document.getElementById('sidebar').style.display=isMobile()?'none':'flex';initApp();
   }else{
-    currentUser=null;currentRole=null;currentTech=null;
+    currentUser=null;currentRole=null;
     document.getElementById('loginPage').classList.remove('hidden');
     document.getElementById('appRoot').style.display='none';
     document.getElementById('sidebar').style.display='none';
@@ -1478,175 +1415,6 @@ function logout(){signOut(auth);}
 window.logout=logout;
 document.getElementById('btnLogout').addEventListener('click',logout);
 document.getElementById('mBtnLogout').addEventListener('click',logout);
-
-function showTechView(){
-  document.getElementById('sidebar').style.display='none';
-  document.getElementById('mobileTopbar').style.display='none';
-  document.getElementById('mainBottomNav').style.display='none';
-  document.getElementById('pageAtelier').style.display='none';
-  document.getElementById('techView').style.display='block';
-  const tech=TECHS.find(t=>t.id===currentTech);
-  document.getElementById('techViewName').textContent=tech?'👋 Bonjour '+tech.nom:'Mes RDV';
-  document.getElementById('techViewSub').textContent='Carrosserie Brun — Valence Motors';
-  onSnapshot(docRef,snap=>{
-    if(snap.exists()){
-      const d=snap.data();
-      state.appointments=Array.isArray(d.appointments)?d.appointments.map(na):[];
-      state.loanNames=Array.isArray(d.loanNames)?d.loanNames:[...DL];
-      state.noLoanNames=Array.isArray(d.noLoanNames)?d.noLoanNames:[...DNL];
-      rehydratePhotos();
-    }
-    renderTechView();
-  });
-  onSnapshot(colApptPhotos,snap=>{
-    photosMap={};
-    snap.forEach(d=>{photosMap[d.id]=(d.data().photos)||[];});
-    rehydratePhotos();
-    renderTechView();
-  });
-  onSnapshot(docHeures,snap=>{
-    if(isSavH)return;
-    if(snap.exists()){hState={...snap.data()};if(!Array.isArray(hState.entries))hState.entries=[];}else hState={entries:[]};
-    renderTechView();
-  });
-  onSnapshot(docTechs,snap=>{
-    if(snap.exists()&&Array.isArray(snap.data().list)&&snap.data().list.length){TECHS=snap.data().list;}else{TECHS=[...DEFAULT_TECHS];}
-    renderTechView();
-  });
-  document.getElementById('tvBtnPrev').addEventListener('click',()=>{tvWeekOffset--;renderTechView();});
-  document.getElementById('tvBtnNext').addEventListener('click',()=>{tvWeekOffset++;renderTechView();});
-  document.getElementById('tvBtnToday').addEventListener('click',()=>{tvWeekOffset=0;renderTechView();});
-}
-
-function renderTechView(){
-  const days=gWD(tvWeekOffset);
-  const ws=days[0];const we=days[4];
-  document.getElementById('tvWeekLabel').textContent=`${ws.getDate()} ${MF[ws.getMonth()].slice(0,3)} → ${we.getDate()} ${MF[we.getMonth()].slice(0,3)} ${we.getFullYear()}`;
-  const today=new Date();today.setHours(0,0,0,0);
-  const todayIso=todayISO();
-  const quotaEl=document.getElementById('techViewQuota');
-  const todayTotal=Math.round(hState.entries.filter(e=>e&&e.techId===currentTech&&e.date===todayIso).reduce((s,e)=>s+(parseFloat(e.hours)||0),0)*10)/10;
-  if(todayTotal>0){quotaEl.style.display='inline-block';quotaEl.innerHTML=`⏱ Aujourd'hui : <span>${todayTotal}h</span> ajoutées`;}
-  else{quotaEl.style.display='none';}
-  const myAppts=state.appointments.filter(a=>{
-    if(!a||!a.technicien||a.technicien!==currentTech)return false;
-    if(a.segmentIndex!==0)return false;
-    try{
-      const aStart=new Date(a.weekStart);aStart.setHours(0,0,0,0);
-      const aEnd=calcFin(new Date(aStart),a.totalDays||1);aEnd.setHours(23,59,59,0);
-      return aStart<=we&&aEnd>=ws;
-    }catch(e){return false;}
-  });
-  myAppts.sort((a,b)=>{try{return calcFin(new Date(a.weekStart),a.totalDays||1)-calcFin(new Date(b.weekStart),b.totalDays||1);}catch(e){return 0;}});
-  const list=document.getElementById('techRdvList');
-  if(!myAppts.length){list.innerHTML=`<div class="tech-rdv-empty">✅ Aucun RDV assigné cette semaine</div>`;return;}
-  list.innerHTML='';
-  myAppts.forEach(appt=>{
-    try{
-      const startDay=gWD(gWO(appt.weekStart))[appt.day]||new Date(appt.weekStart);
-      const endDate=calcFin(new Date(startDay),appt.totalDays||1);endDate.setHours(0,0,0,0);
-      const diff=Math.round((endDate-today)/86400000);
-      let cardClass='tech-rdv-card',deadlineClass='green',deadlineText='';
-      if(diff<0){deadlineClass='green';deadlineText='✅ Terminé';}
-      else if(diff===0){cardClass+=' today';deadlineClass='orange';deadlineText='⚠️ À terminer AUJOURD\'HUI';}
-      else if(diff===1){cardClass+=' urgent';deadlineClass='orange';deadlineText='⏰ À terminer demain';}
-      else{deadlineClass='green';deadlineText=`📅 À terminer le ${fFR(endDate)}`;}
-      const posteNom=appt.type==='loan'?(state.loanNames[appt.row]||'BAYON'):(state.noLoanNames[appt.row]||'Poste');
-      const card=document.createElement('div');card.className=cardClass;
-      card.innerHTML=`<div class="tech-rdv-card-header"><div class="tech-rdv-color" style="background:${appt.color||'#2980b9'}"></div><div class="tech-rdv-nom">${appt.name}</div><div class="tech-rdv-poste">${posteNom}</div></div>
-        <div class="tech-rdv-body">
-          <div class="tech-rdv-row">📅 <span>Du <strong>${fFR(startDay)}</strong> au <strong>${fFR(endDate)}</strong></span></div>
-          <div class="tech-rdv-row">⏱ <span><strong>${appt.hours||0}h</strong> de travail · <strong>${appt.totalDays||1}j</strong></span></div>
-          ${appt.tel?`<div class="tech-rdv-row">📞 <span><a href="tel:${appt.tel}" style="color:var(--accent);font-weight:700;text-decoration:none;">${appt.tel}</a></span></div>`:''}
-          ${appt.adresse?`<div class="tech-rdv-row">📍 <span>${appt.adresse}</span></div>`:''}
-          ${appt.immat?`<div class="tech-rdv-row">🚗 <span>${appt.immat}</span></div>`:''}
-          ${appt.pieceStatus==='ordered'?`<div class="tech-rdv-row">📦 <span style="color:#e67e22;font-weight:600;">Pièce commandée${appt.pieceFournisseur?' chez '+appt.pieceFournisseur:''}</span></div>`:''}
-          ${appt.pieceStatus==='delivered'?`<div class="tech-rdv-row">✅ <span style="color:#27ae60;font-weight:600;">Pièce livrée</span></div>`:''}
-          <div class="tech-rdv-deadline ${deadlineClass}">${deadlineText}</div>
-          ${appt.memo?`<div class="tech-rdv-memo">💬 ${appt.memo}</div>`:''}
-          <div class="tech-heures-section">
-            <div class="tech-heures-title">⏱ Ajouter des heures</div>
-            <div class="tech-heures-add-form">
-              <div class="thf-field"><label>Date</label><input type="date" class="thf-date" id="thfDate_${appt.groupId}" value="${todayISO()}"></div>
-              <div class="thf-row">
-                <div class="thf-field"><label>Type</label><select class="thf-type" id="thfType_${appt.groupId}"><option value="T1">T1 Tôlerie 1</option><option value="T2">T2 Tôlerie 2</option><option value="P">P Peinture</option></select></div>
-                <div class="thf-field"><label>Heures</label><input type="number" class="thf-hours" id="thfHours_${appt.groupId}" min="0" step="0.5" placeholder="0"></div>
-              </div>
-              <button class="tech-heures-add-btn" data-gid="${appt.groupId}">➕ Ajouter l'heure</button>
-            </div>
-            <div class="tech-heures-entry-list" id="thEntryList_${appt.groupId}"></div>
-            <div class="tech-heures-quota" id="thQuota_${appt.groupId}" style="display:none;"></div>
-          </div>
-          ${(appt.photos&&appt.photos.length)?`<div class="tech-photos-section"><div class="tech-photos-title">📸 Photos (${appt.photos.length}/${MAX_PHOTOS})</div><div class="tech-photos-grid">${appt.photos.map(ph=>`<img src="${ph}" class="tech-photo-thumb">`).join('')}</div></div>`:''}
-          <div class="tech-photos-section">
-            <div class="tech-photos-title">📸 Ajouter des photos</div>
-            <label class="tech-photo-add" for="techPhotoInput_${appt.groupId}"><span class="add-icon">📷</span>Ajouter</label>
-            <input type="file" id="techPhotoInput_${appt.groupId}" accept="image/*" multiple style="display:none;" data-gid="${appt.groupId}">
-          </div>
-        </div>`;
-      list.appendChild(card);
-    }catch(e){console.error(e);}
-  });
-  // Rendu des entrées d'heures déjà saisies par ce technicien pour chaque RDV
-  myAppts.forEach(appt=>{
-    const box=document.getElementById('thEntryList_'+appt.groupId);
-    const quotaBox=document.getElementById('thQuota_'+appt.groupId);
-    if(!box)return;
-    const mine=hState.entries.filter(e=>e&&e.groupId===appt.groupId&&e.techId===currentTech).sort((a,b)=>b.date.localeCompare(a.date)||b.createdAt-a.createdAt);
-    if(!mine.length){box.innerHTML='';if(quotaBox)quotaBox.style.display='none';return;}
-    box.innerHTML=mine.map(e=>{
-      const typeLabel={T1:'T1',T2:'T2',P:'P'}[e.type]||e.type;
-      return `<div class="tech-heures-entry-item"><span class="thei-date">${dFR(e.date)}</span><span class="thei-type">${typeLabel}</span><span class="thei-hours">${e.hours}h</span><button class="thei-del" data-eid="${e.id}">✕</button></div>`;
-    }).join('');
-    if(quotaBox){
-      const total=Math.round(mine.reduce((s,e)=>s+(parseFloat(e.hours)||0),0)*10)/10;
-      quotaBox.style.display='block';
-      quotaBox.textContent=`⏱ Total ajouté sur ce dossier : ${total}h`;
-    }
-    box.querySelectorAll('.thei-del').forEach(btn=>{
-      btn.addEventListener('click',async()=>{
-        hState.entries=hState.entries.filter(e=>e.id!==btn.dataset.eid);
-        await saveHeures();
-      });
-    });
-  });
-  // Events ajout d'heures technicien
-  list.querySelectorAll('.tech-heures-add-btn').forEach(btn=>{
-    btn.addEventListener('click',async()=>{
-      const gid=btn.dataset.gid;
-      const appt=state.appointments.find(a=>a&&a.groupId===gid&&a.segmentIndex===0);if(!appt)return;
-      const dateInp=document.getElementById('thfDate_'+gid),typeInp=document.getElementById('thfType_'+gid),hoursInp=document.getElementById('thfHours_'+gid);
-      const hoursVal=parseFloat(hoursInp.value);
-      if(!hoursVal||hoursVal<=0){hoursInp.focus();return;}
-      const tech=TECHS.find(t=>t.id===currentTech);
-      const entry={id:genId(),groupId:gid,apptName:appt.name,techId:currentTech,techNom:tech?tech.nom:currentTech,date:dateInp.value||todayISO(),type:typeInp.value,hours:hoursVal,createdAt:Date.now()};
-      hState.entries=[...(hState.entries||[]),entry];
-      btn.disabled=true;
-      await saveHeures();
-      hoursInp.value='';
-      btn.disabled=false;
-      renderTechView();
-    });
-  });
-  // Events photos technicien
-  list.querySelectorAll('input[type="file"][id^="techPhotoInput_"]').forEach(input=>{
-    input.addEventListener('change',async(e)=>{
-      const gid=input.dataset.gid;
-      const files=Array.from(e.target.files);if(!files.length)return;
-      const appt=state.appointments.find(a=>a&&a.groupId===gid&&a.segmentIndex===0);if(!appt)return;
-      const existing=appt.photos||[];
-      if(existing.length>=MAX_PHOTOS){alert('Maximum '+MAX_PHOTOS+' photos.');return;}
-      const newPhotos=[...existing];
-      for(const file of files.slice(0,MAX_PHOTOS-existing.length)){newPhotos.push(await fileToBase64(file));}
-      state.appointments=state.appointments.map(a=>(!a||a.groupId!==gid)?a:{...a,photos:newPhotos});
-      await saveFBTech();renderTechView();
-    });
-  });
-  // Event lightbox photos tech
-  list.querySelectorAll('.tech-photo-thumb').forEach(img=>{
-    img.addEventListener('click',()=>openLightbox(img.src));
-  });
-}
 
 document.getElementById('btnAdminPanel').addEventListener('click',()=>{document.getElementById('adminPanel').classList.add('open');loadUsers();});
 document.getElementById('btnCloseAdmin').addEventListener('click',()=>document.getElementById('adminPanel').classList.remove('open'));
@@ -1671,7 +1439,6 @@ document.getElementById('btnAddUser').addEventListener('click',async()=>{
   const email=document.getElementById('newUserEmail').value.trim();
   const pw=document.getElementById('newUserPassword').value;
   const role=document.getElementById('newUserRole').value;
-  const tech=document.getElementById('newUserTech').value;
   const errEl=document.getElementById('addUserError');errEl.style.display='none';
   if(!email||!pw){errEl.textContent='Remplissez email et mot de passe.';errEl.style.display='block';return;}
   if(pw.length<6){errEl.textContent='Mot de passe minimum 6 caractères.';errEl.style.display='block';return;}
@@ -1681,9 +1448,8 @@ document.getElementById('btnAddUser').addEventListener('click',async()=>{
     const data=await res.json();
     if(data.error){errEl.textContent=data.error.message==='EMAIL_EXISTS'?'Cet email existe déjà.':'Erreur: '+data.error.message;errEl.style.display='block';btn.disabled=false;btn.textContent="➕ Créer l'utilisateur";return;}
     const userData={email,role,createdAt:Date.now()};
-    if(tech)userData.tech=tech;
     await setDoc(doc(db,'users',data.localId),userData);
-    document.getElementById('newUserEmail').value='';document.getElementById('newUserPassword').value='';document.getElementById('newUserRole').value='lecteur';document.getElementById('newUserTech').value='';
+    document.getElementById('newUserEmail').value='';document.getElementById('newUserPassword').value='';document.getElementById('newUserRole').value='lecteur';
     loadUsers();
   }catch(e){errEl.textContent='Erreur réseau.';errEl.style.display='block';}
   btn.disabled=false;btn.textContent="➕ Créer l'utilisateur";
@@ -1723,7 +1489,7 @@ function setupFirebaseListeners(){
   },err=>{console.error(err);});
   onSnapshot(docConges,snap=>{if(isSavC)return;if(snap.exists()){cState={...snap.data()};if(!Array.isArray(cState.absences))cState.absences=[];}else cState={absences:[]};ssc('ok');if(curPage==='conges'){if(isMobile())renderMobileConges();else renderConges();}},err=>{console.error(err);ssc('err');});
   onSnapshot(docContrats,snap=>{if(isSavCt)return;if(snap.exists()){ctState={...snap.data()};if(!Array.isArray(ctState.contrats))ctState.contrats=[];}else ctState={contrats:[]};if(curPage==='contrats'){renderContrats();if(isMobile())renderMobileContrats();}},err=>{console.error(err);});
-  onSnapshot(docHeures,snap=>{if(isSavH)return;if(snap.exists()){hState={...snap.data()};if(!Array.isArray(hState.entries))hState.entries=[];}else hState={entries:[]};if(curPage==='heures'){renderDossiers();if(isMobile())renderMobileDossiers();}},err=>{console.error(err);});
+  onSnapshot(docHeures,snap=>{if(isSavH)return;if(snap.exists()){hState={...snap.data()};if(!Array.isArray(hState.entries))hState.entries=[];}else hState={entries:[]};},err=>{console.error(err);});
   onSnapshot(docDossiers,snap=>{if(isSavD)return;if(snap.exists()){dState={...snap.data()};if(!Array.isArray(dState.items))dState.items=[];}else dState={items:[]};renderDossiersPending();if(isMobile())renderMobileDossiersPending();},err=>{console.error(err);});
   onSnapshot(docTechs,snap=>{
     if(snap.exists()&&Array.isArray(snap.data().list)&&snap.data().list.length){TECHS=snap.data().list;}else{TECHS=[...DEFAULT_TECHS];}
@@ -1762,86 +1528,22 @@ function setupFirebaseListeners(){
 
 window.switchPage=function(page){
   curPage=page;
-  ['atelier','conges','contrats','heures','sinistre','parametres'].forEach(p=>{document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active',p===page);});
-  ['navAtelier','navConges','navContrats','navHeures','navSinistre','navParametres'].forEach(b=>document.getElementById(b)?.classList.remove('active'));
-  const nm={atelier:'navAtelier',conges:'navConges',contrats:'navContrats',heures:'navHeures',sinistre:'navSinistre',parametres:'navParametres'};document.getElementById(nm[page])?.classList.add('active');
-  ['mbnAtelier','mbnConges','mbnContrats','mbnHeures','mbnSinistre'].forEach(b=>document.getElementById(b)?.classList.remove('active'));
-  const mb={atelier:'mbnAtelier',conges:'mbnConges',contrats:'mbnContrats',heures:'mbnHeures',sinistre:'mbnSinistre'};document.getElementById(mb[page])?.classList.add('active');
+  ['atelier','conges','contrats','sinistre','parametres'].forEach(p=>{document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active',p===page);});
+  ['navAtelier','navConges','navContrats','navSinistre','navParametres'].forEach(b=>document.getElementById(b)?.classList.remove('active'));
+  const nm={atelier:'navAtelier',conges:'navConges',contrats:'navContrats',sinistre:'navSinistre',parametres:'navParametres'};document.getElementById(nm[page])?.classList.add('active');
+  ['mbnAtelier','mbnConges','mbnContrats','mbnSinistre'].forEach(b=>document.getElementById(b)?.classList.remove('active'));
+  const mb={atelier:'mbnAtelier',conges:'mbnConges',contrats:'mbnContrats',sinistre:'mbnSinistre'};document.getElementById(mb[page])?.classList.add('active');
   document.getElementById('atelierTopRight').style.display=page==='atelier'?'flex':'none';
   document.getElementById('congesTopRight').style.display=page==='conges'?'flex':'none';
   document.getElementById('contratsTopRight').style.display=page==='contrats'?'flex':'none';
   document.getElementById('mobileWeekNav').style.display=page==='atelier'?'flex':'none';
-  const titles={atelier:'🔧 Planning Atelier',conges:'🏖️ Congés Techniciens',contrats:'📄 Contrats de prêt',heures:'🗂️ Suivi Technicien',sinistre:'🆕 Nouveau dossier',parametres:'⚙️ Paramètres'};
+  const titles={atelier:'🔧 Planning Atelier',conges:'🏖️ Congés Techniciens',contrats:'📄 Contrats de prêt',sinistre:'🆕 Nouveau dossier',parametres:'⚙️ Paramètres'};
   const tt=document.getElementById('topbarTitle');if(tt)tt.textContent=titles[page]||'';
   if(page==='conges'){if(isMobile())renderMobileConges();else renderConges();}
   if(page==='contrats'){renderContrats();if(isMobile())renderMobileContrats();}
-  if(page==='heures'){renderDossiers();if(isMobile())renderMobileDossiers();}
   if(page==='sinistre'){renderDossiersPending();if(isMobile())renderMobileDossiersPending();renderEadCalendar();if(isMobile())renderMobileEadCalendar();}
   if(page==='parametres'){renderCabinetsManageList();}
 };
-
-function buildDossierList(searchTerm){
-  const term=(searchTerm||'').trim().toLowerCase();
-  const dossiers=state.appointments.filter(a=>a&&a.segmentIndex===0).map(a=>{
-    const entries=hState.entries.filter(e=>e&&e.groupId===a.groupId).sort((x,y)=>y.date.localeCompare(x.date)||y.createdAt-x.createdAt);
-    const hasPhotos=a.photos&&a.photos.length>0;
-    return{appt:a,entries,hasPhotos};
-  }).filter(d=>d.entries.length>0||d.hasPhotos);
-  const filtered=term?dossiers.filter(d=>(d.appt.name||'').toLowerCase().includes(term)||(d.appt.tel||'').toLowerCase().includes(term)):dossiers;
-  filtered.sort((a,b)=>{
-    const la=Math.max(a.entries[0]?a.entries[0].createdAt:0,0);
-    const lb=Math.max(b.entries[0]?b.entries[0].createdAt:0,0);
-    return lb-la;
-  });
-  return filtered;
-}
-
-function dossierCardHTML(d){
-  const a=d.appt;
-  const posteNom=a.type==='loan'?(state.loanNames[a.row]||'BAYON'):(state.noLoanNames[a.row]||'Poste');
-  const totalH=d.entries.reduce((s,e)=>s+(parseFloat(e.hours)||0),0);
-  const hoursRows=d.entries.map(e=>{
-    const typeLabel={T1:'T1',T2:'T2',P:'P'}[e.type]||e.type;
-    return `<div class="dossier-hours-row"><span class="dhr-tech">${e.techNom||e.techId}</span><span class="dhr-date">${dFR(e.date)}</span><span class="dhr-type">${typeLabel}</span><span class="dhr-h">${e.hours}h</span><button class="dhr-del" data-eid="${e.id}">✕</button></div>`;
-  }).join('');
-  const photosHTML=(a.photos&&a.photos.length)?`<div class="dossier-section-mini"><div class="dossier-section-mini-title">📸 Photos (${a.photos.length}/${MAX_PHOTOS})</div><div class="dossier-photos-mini">${a.photos.map(ph=>`<img src="${ph}" class="dossier-photo-mini">`).join('')}</div></div>`:'';
-  return `<div class="dossier-card" data-gid="${a.groupId}">
-    <div class="dossier-header"><div class="dossier-color-dot" style="background:${a.color||'#2980b9'}"></div><div class="dossier-name">${a.name}</div><div class="dossier-poste">${posteNom}</div></div>
-    <div class="dossier-meta">${a.tel?`📞 ${a.tel} · `:''}${a.immat?`🚗 ${a.immat} · `:''}${a.adresse?`📍 ${a.adresse}`:''}</div>
-    ${d.entries.length?`<div class="dossier-section-mini"><div class="dossier-section-mini-title">⏱ Heures saisies</div><div class="dossier-hours-list">${hoursRows}</div><div class="dossier-hours-total">Total : ${Math.round(totalH*10)/10}h</div></div>`:''}
-    ${photosHTML}
-  </div>`;
-}
-
-function wireDossierCardEvents(container){
-  container.querySelectorAll('.dhr-del').forEach(btn=>{
-    btn.addEventListener('click',async()=>{
-      if(isRO()){showRO();return;}
-      hState.entries=hState.entries.filter(e=>e.id!==btn.dataset.eid);
-      await saveHeures();
-      renderDossiers();if(isMobile())renderMobileDossiers();
-    });
-  });
-  container.querySelectorAll('.dossier-photo-mini').forEach(img=>{
-    img.addEventListener('click',()=>openLightbox(img.src));
-  });
-}
-
-function renderDossiers(){
-  const wrap=document.getElementById('dossiersListWrap');if(!wrap)return;
-  const list=buildDossierList(dossierSearch);
-  if(!list.length){wrap.innerHTML='<div class="dossier-empty">📭 Aucun dossier avec heures ou photos pour le moment.</div>';return;}
-  wrap.innerHTML=list.map(dossierCardHTML).join('');
-  wireDossierCardEvents(wrap);
-}
-
-function renderMobileDossiers(){
-  const wrap=document.getElementById('mobileDossiersList');if(!wrap)return;
-  const list=buildDossierList(mDossierSearch);
-  if(!list.length){wrap.innerHTML='<div class="dossier-empty">📭 Aucun dossier avec heures ou photos pour le moment.</div>';return;}
-  wrap.innerHTML=list.map(dossierCardHTML).join('');
-  wireDossierCardEvents(wrap);
-}
 
 // ===== Nouveau dossier (avis de sinistre PDF) =====
 if(typeof pdfjsLib!=='undefined'){
@@ -2601,22 +2303,6 @@ async function saveFB(){
   }catch(e){console.error(e);ss('err');}
   setTimeout(()=>isSav=false,600);
 }
-// Sauvegarde utilisée par la vue technicien : un technicien a le rôle "lecteur" + un poste assigné,
-// il doit pouvoir enregistrer SES photos même si isRO() renvoie true pour son compte.
-async function saveFBTech(){
-  isSav=true;
-  try{
-    const strippedAppts=await migratePhotosBeforeSave();
-    await setDoc(docRef,{
-      loanNames:state.loanNames,
-      noLoanNames:state.noLoanNames,
-      absences:state.absences,
-      appointments:strippedAppts,
-      updatedAt:Date.now()
-    });
-  }catch(e){console.error(e);}
-  setTimeout(()=>isSav=false,600);
-}
 
 function ssc(s){const el=document.getElementById('syncStatusConges');if(!el)return;const m={ok:['✅','sync-ok'],wait:['⏳','sync-wait'],save:['💾','sync-wait'],err:['❌','sync-err']};el.textContent=m[s][0];el.className='sync-indicator '+m[s][1];}
 async function saveCG(){if(isRO()){showRO();return;}isSavC=true;ssc('save');try{await setDoc(docConges,{...cState,updatedAt:Date.now()});ssc('ok');}catch(e){console.error(e);ssc('err');}setTimeout(()=>isSavC=false,600);}
@@ -2675,7 +2361,6 @@ function gWO(ws){const a=gMon(new Date(ws)),b=gMon(new Date());return Math.round
 function calcFin(dd,n){const f=new Date(dd);let r=(n||1)-1;while(r>0){f.setDate(f.getDate()+1);const dow=f.getDay();if(dow!==0&&dow!==6)r--;}return f;}
 function split(sd,td,wsDate){const segs=[];let rem=td,cur=sd,idx=0;let ws=new Date(wsDate);while(rem>0){const d=Math.min(rem,5-cur);segs.push({weekStart:new Date(ws),day:cur,span:d,segmentIndex:idx,hasPrev:idx>0,hasNext:rem-d>0});rem-=d;cur=0;ws=new Date(ws);ws.setDate(ws.getDate()+7);idx++;}return segs;}
 function upPrev(id,sd,wo,n){if(!n||n<1){document.getElementById(id).textContent='📅 —';return;}const days=gWD(wo);const dd=days[sd];const df=calcFin(dd,n);const s=split(sd,n,days[0]);let t=`📅 Du ${fFR(dd)} au ${fFR(df)} (${n}j)`;if(s.length>1)t+=` — ${s.length} sem.`;document.getElementById(id).textContent=t;}
-function getTechInfo(techId){if(!techId)return null;return TECHS.find(t=>t.id===techId)||null;}
 function chTech(d){if(isRO()){showRO();return;}nbTech=Math.max(1,Math.min(20,nbTech+d));localStorage.setItem('carrosserie_tech',nbTech);upTech();}
 function upTech(){const cap=nbTech*39;document.getElementById('techCount').textContent=nbTech;document.getElementById('totalCapacity').textContent=cap+'h';const days=gWD(),ws=days[0].toDateString();const wa=state.appointments.filter(a=>a&&new Date(a.weekStart).toDateString()===ws);const used=wa.reduce((s,a)=>s+hSeg(a.hours||0,a.totalDays||1,a.span||1),0);const pct=cap>0?Math.round((used/cap)*100):0;const el=document.getElementById('fillRate');if(el){el.textContent=pct+'%';el.style.color=pct>=100?'#e74c3c':pct>=80?'#f5a623':'#2ecc71';}}
 function getOcc(days){const ws=days[0].toDateString();const occ=new Set();state.appointments.filter(a=>{if(!a||!a.weekStart)return false;try{return new Date(a.weekStart).toDateString()===ws;}catch(e){return false;}}).forEach(a=>{for(let d=a.day;d<Math.min(a.day+(a.span||1),5);d++)occ.add(`${a.type}-${a.row}-${d}`);});return occ;}
@@ -2784,15 +2469,8 @@ function renderAppts(days){
     if(span>1){el.style.right=`calc(-${(span-1)*100}% - ${span-1}px)`;el.style.zIndex=15;}
     let pb='';if(appt.pieceStatus==='delivered')pb='<span class="badge badge-blue">✅</span>';else if(appt.pieceStatus==='ordered')pb='<span class="badge badge-orange">📦</span>';else if(appt.pieceStatus==='sans')pb='<span class="badge badge-green">✔️</span>';
     const cb=isLF?`<button class="btn-contrat-inline">📄 Contrat</button>`:'';
-    const techInfo=getTechInfo(appt.technicien);
-    const techBadge=techInfo?`<span class="tech-badge-appt" style="background:${techInfo.color}88;">${techInfo.nom.slice(0,3).toUpperCase()}</span>`:'';
-    const techInfo2=getTechInfo(appt.technicien2);
-    const techBadge2=techInfo2?`<span class="tech-badge-appt" style="background:${techInfo2.color}88;">${techInfo2.nom.slice(0,3).toUpperCase()}</span>`:'';
-    const totalSaisi=Math.round(((parseFloat(appt.heuresT1)||0)+(parseFloat(appt.heuresT2)||0)+(parseFloat(appt.heuresP)||0))*10)/10;
-    const heuresDot=totalSaisi>0?`<span class="appt-memo-dot" title="${totalSaisi}h saisis">⏱</span>`:'';
-    const photosDot=appt.photos&&appt.photos.length?`<span class="appt-memo-dot">📸</span>`:'';
     el.innerHTML=`<div class="prio-strip"></div><button class="appt-del-btn">✕</button>
-      <div class="appt-top">${appt.hasPrev?'<span class="badge-prev">◀</span>':''}<span class="appt-name">${appt.name}</span>${techBadge}${techBadge2}${prio==='haute'?'<span class="badge badge-red">🔴</span>':''}${appt.arrived?'<span class="badge badge-green">✔</span>':''}${pb}${appt.memo?'<span class="appt-memo-dot">📝</span>':''}${heuresDot}${photosDot}${appt.hasNext?'<span class="badge-next">▶</span>':''}</div>
+      <div class="appt-top">${appt.hasPrev?'<span class="badge-prev">◀</span>':''}<span class="appt-name">${appt.name}</span>${prio==='haute'?'<span class="badge badge-red">🔴</span>':''}${appt.arrived?'<span class="badge badge-green">✔</span>':''}${pb}${appt.memo?'<span class="appt-memo-dot">📝</span>':''}${appt.hasNext?'<span class="badge-next">▶</span>':''}</div>
       <div class="appt-bottom"><span class="appt-hours-tag">${hS}h·${span}j</span>${appt.immat?`<span class="appt-immat-tag">🚗 ${appt.immat}</span>`:''}${appt.tel?`<span class="appt-tel-tag">📞 ${appt.tel}</span>`:''}${cb}</div>`;
     el.querySelector('.appt-del-btn').addEventListener('click',e=>{e.stopPropagation();if(isRO()){showRO();return;}confirmDel(appt.groupId,appt.name);});
     if(isLF)el.querySelector('.btn-contrat-inline').addEventListener('click',e=>{e.stopPropagation();openContrat(appt,dd,df,td);});
@@ -2853,10 +2531,9 @@ function renderMobileRow(type,ri,name,days,occ,gc,tW){
     const appts=state.appointments.filter(a=>a&&new Date(a.weekStart).toDateString()===ws&&a.type===type&&a.row===ri&&a.day===di);
     appts.forEach(appt=>{
       const span=appt.span||1;const td=appt.totalDays||1;const hS=hSeg(appt.hours||0,td,span);
-      const techInfo=getTechInfo(appt.technicien);
       const ea=document.createElement('div');ea.className='mg-appt';ea.dataset.gid=appt.groupId;ea.style.background=appt.color||'#2980b9';
       if(span>1){ea.style.width=`calc(${span*100}% + ${span-1}px)`;ea.style.zIndex=10;}
-      ea.innerHTML=`<div class="mg-appt-name">${appt.hasPrev?'◀ ':''}<b>${appt.name}</b>${appt.hasNext?' ▶':''}${techInfo?` <span style="font-size:.5rem;opacity:.85;">${techInfo.nom.slice(0,3).toUpperCase()}</span>`:''}</div><div class="mg-appt-info">${hS}h${appt.immat?' · 🚗'+appt.immat:''}${appt.tel?' · '+appt.tel:''}</div>`;
+      ea.innerHTML=`<div class="mg-appt-name">${appt.hasPrev?'◀ ':''}<b>${appt.name}</b>${appt.hasNext?' ▶':''}</div><div class="mg-appt-info">${hS}h${appt.immat?' · 🚗'+appt.immat:''}${appt.tel?' · '+appt.tel:''}</div>`;
       ea.addEventListener('click',e=>{e.stopPropagation();openMobileEditModal(appt.groupId);});
       cell.appendChild(ea);
     });
@@ -2988,8 +2665,6 @@ function openModal(type,row,day){
   document.getElementById('apptTel').value=pendingPlacement?pendingPlacement.tel:'';
   document.getElementById('apptAdresse').value=pendingPlacement?pendingPlacement.adresse:'';
   document.getElementById('apptImmat').value=pendingPlacement?(pendingPlacement.immat||''):'';
-  document.getElementById('apptTech').value=he?(he.technicien||''):'';
-  document.getElementById('apptTech2').value=he?(he.technicien2||''):'';
   document.getElementById('apptDays').value=he?(he.totalDays||1):1;
   document.getElementById('apptHours').value=he?(he.hours||4):(pendingPlacement&&pendingPlacement.expertiseHeures&&pendingPlacement.expertiseHeures.total>0?pendingPlacement.expertiseHeures.total:4);
   document.getElementById('apptMemo').value=he?(he.memo||''):(pendingPlacement&&pendingPlacement.compagnie?`🏢 Assurance : ${pendingPlacement.compagnie}`:'');
@@ -3015,8 +2690,8 @@ async function saveAppt(){
   const tel=document.getElementById('apptTel').value.trim();
   const adresse=document.getElementById('apptAdresse').value.trim();
   const immat=document.getElementById('apptImmat').value.trim().toUpperCase();
-  const tech=document.getElementById('apptTech').value;
-  const tech2=document.getElementById('apptTech2').value;
+  const tech='';
+  const tech2='';
   const days=Math.max(1,Math.min(20,parseInt(document.getElementById('apptDays').value)||1));
   const hours=parseFloat(document.getElementById('apptHours').value)||0;
   const memo=document.getElementById('apptMemo').value.trim();
@@ -3052,8 +2727,6 @@ function openEditModal(gid){
   document.getElementById('editApptTel').value=root.tel||'';
   document.getElementById('editApptAdresse').value=root.adresse||'';
   document.getElementById('editApptImmat').value=root.immat||'';
-  document.getElementById('editApptTech').value=root.technicien||'';
-  document.getElementById('editApptTech2').value=root.technicien2||'';
   document.getElementById('editApptHours').value=root.hours||'';
   document.getElementById('editApptDays').value=root.totalDays||1;
   document.getElementById('editApptMemo').value=root.memo||'';
@@ -3115,8 +2788,8 @@ async function saveEditAppt(){
   const tel=document.getElementById('editApptTel').value.trim();
   const adresse=document.getElementById('editApptAdresse').value.trim();
   const immat=document.getElementById('editApptImmat').value.trim().toUpperCase();
-  const tech=document.getElementById('editApptTech').value;
-  const tech2=document.getElementById('editApptTech2').value;
+  const tech='';
+  const tech2='';
   const days=Math.max(1,Math.min(20,parseInt(document.getElementById('editApptDays').value)||1));
   const hours=parseFloat(document.getElementById('editApptHours').value)||0;
   const memo=document.getElementById('editApptMemo').value.trim();
@@ -3249,23 +2922,6 @@ async function delAbs(id){
 }
 
 // ===== Photos =====
-function fileToBase64(file){
-  return new Promise((resolve,reject)=>{
-    const reader=new FileReader();
-    reader.onload=e=>{
-      const img=new Image();
-      img.onload=()=>{
-        const MAX=640;let w=img.width,h=img.height;
-        if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
-        const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
-        canvas.getContext('2d').drawImage(img,0,0,w,h);
-        resolve(canvas.toDataURL('image/jpeg',0.6));
-      };
-      img.onerror=reject;img.src=e.target.result;
-    };
-    reader.onerror=reject;reader.readAsDataURL(file);
-  });
-}
 function downloadPhoto(src,name){
   const a=document.createElement('a');a.href=src;a.download=name||'photo.jpg';document.body.appendChild(a);a.click();document.body.removeChild(a);
 }
@@ -3345,13 +3001,7 @@ function renderCongesStats(){
 
 // ===== Gestion dynamique des techniciens (ajout/retrait selon les mois) =====
 function rebuildTechSelects(){
-  const selects=['apptTech','apptTech2','editApptTech','editApptTech2','mApptTech','mApptTech2','newUserTech'];
-  selects.forEach(id=>{
-    const el=document.getElementById(id);if(!el)return;
-    const current=el.value;
-    el.innerHTML='<option value="">— Aucun —</option>'+TECHS.map(t=>`<option value="${t.id}">${t.nom}</option>`).join('');
-    if(TECHS.some(t=>t.id===current))el.value=current;
-  });
+  // Les sélecteurs de technicien sur les RDV ont été retirés (plus d'assignation technicien sur les dossiers).
 }
 function techManageItemHTML(t){
   return `<div class="tech-manage-item"><div class="tech-manage-dot" style="background:${t.color}"></div><span>${t.nom}</span><button class="tech-manage-del" data-tid="${t.id}">✕</button></div>`;
@@ -3926,7 +3576,6 @@ function openMobileModal(type,row,day){
   document.getElementById('mModalTitle').textContent=pendingPlacement?'Placer le dossier « '+pendingPlacement.nom+' »':'Nouveau rendez-vous';
   document.getElementById('mApptName').value=pendingPlacement?pendingPlacement.nom:'';document.getElementById('mApptTel').value=pendingPlacement?pendingPlacement.tel:'';document.getElementById('mApptAdresse').value=pendingPlacement?pendingPlacement.adresse:'';
   document.getElementById('mApptImmat').value=pendingPlacement?(pendingPlacement.immat||''):'';
-  document.getElementById('mApptTech').value=he?(he.technicien||''):'';document.getElementById('mApptTech2').value=he?(he.technicien2||''):'';
   document.getElementById('mApptDays').value=he?(he.totalDays||1):1;document.getElementById('mApptHours').value=he?(he.hours||4):(pendingPlacement&&pendingPlacement.expertiseHeures&&pendingPlacement.expertiseHeures.total>0?pendingPlacement.expertiseHeures.total:4);document.getElementById('mApptMemo').value=he?(he.memo||''):(pendingPlacement&&pendingPlacement.compagnie?`🏢 Assurance : ${pendingPlacement.compagnie}`:'');
   mNewPrio=he?(he.priority||'moyenne'):'moyenne';['mPrioBasse','mPrioMoyenne','mPrioHaute'].forEach(id=>document.getElementById(id).className='mprio-btn');document.getElementById('mPrio'+mNewPrio.charAt(0).toUpperCase()+mNewPrio.slice(1)).classList.add('active-'+mNewPrio);
   mSelColor=he&&he.color?Math.max(0,COLORS.indexOf(he.color)):0;buildMCP(i=>mSelColor=i,mSelColor);
@@ -3941,7 +3590,6 @@ function openMobileEditModal(gid){
   document.getElementById('mModalTitle').textContent='Modifier le rendez-vous';
   document.getElementById('mApptName').value=root.name||'';document.getElementById('mApptTel').value=root.tel||'';document.getElementById('mApptAdresse').value=root.adresse||'';
   document.getElementById('mApptImmat').value=root.immat||'';
-  document.getElementById('mApptTech').value=root.technicien||'';document.getElementById('mApptTech2').value=root.technicien2||'';
   document.getElementById('mApptDays').value=root.totalDays||1;document.getElementById('mApptHours').value=root.hours||'';document.getElementById('mApptMemo').value=root.memo||'';
   mNewPrio=root.priority||'moyenne';['mPrioBasse','mPrioMoyenne','mPrioHaute'].forEach(id=>document.getElementById(id).className='mprio-btn');document.getElementById('mPrio'+mNewPrio.charAt(0).toUpperCase()+mNewPrio.slice(1)).classList.add('active-'+mNewPrio);
   mSelColor=Math.max(0,COLORS.indexOf(root.color));buildMCP(i=>mSelColor=i,mSelColor);
@@ -3962,8 +3610,8 @@ document.getElementById('mBtnSaveAppt').addEventListener('click',async()=>{
   const tel=document.getElementById('mApptTel').value.trim();
   const adresse=document.getElementById('mApptAdresse').value.trim();
   const immat=document.getElementById('mApptImmat').value.trim().toUpperCase();
-  const tech=document.getElementById('mApptTech').value;
-  const tech2=document.getElementById('mApptTech2').value;
+  const tech='';
+  const tech2='';
   const days=Math.max(1,Math.min(20,parseInt(document.getElementById('mApptDays').value)||1));
   const hours=parseFloat(document.getElementById('mApptHours').value)||0;
   const memo=document.getElementById('mApptMemo').value.trim();
@@ -4045,10 +3693,8 @@ function renderHistory(){
 }
 
 // ===== Dossiers (recherche) =====
-document.getElementById('dossiersSearchInput').addEventListener('input',e=>{dossierSearch=e.target.value;renderDossiers();});
 document.getElementById('pendingDossierSearch').addEventListener('input',e=>{pendingDossierSearch=e.target.value;renderDossiersPending();});
 document.getElementById('mPendingDossierSearch').addEventListener('input',e=>{mPendingDossierSearch=e.target.value;renderMobileDossiersPending();});
-document.getElementById('mDossiersSearch').addEventListener('input',e=>{mDossierSearch=e.target.value;renderMobileDossiers();});
 
 // ===== Câblage global des boutons restants =====
 function setupEvents(){
@@ -4082,8 +3728,8 @@ function setupEvents(){
     },80);
   });
   window.addEventListener('resize',()=>{
-    if(isMobile()){document.getElementById('sidebar').style.display='none';renderMobile();if(curPage==='conges')renderMobileConges();if(curPage==='contrats')renderMobileContrats();if(curPage==='heures')renderMobileDossiers();}
-    else{if(!currentTech)document.getElementById('sidebar').style.display='flex';}
+    if(isMobile()){document.getElementById('sidebar').style.display='none';renderMobile();if(curPage==='conges')renderMobileConges();if(curPage==='contrats')renderMobileContrats();}
+    else{document.getElementById('sidebar').style.display='flex';}
   });
 }
 </script>
