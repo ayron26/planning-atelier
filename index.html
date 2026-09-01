@@ -1259,6 +1259,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
       <div><label>Carburant</label><select id="cCarburant"><option value="plein">Plein</option><option value="3/4">3/4</option><option value="1/2">1/2</option><option value="1/4">1/4</option></select></div>
       <div><label>Immatriculation</label><input type="text" id="cImmatPret"></div>
       <div><label>Couleur</label><input type="text" id="cCouleurPret"></div>
+      <div><label>Heure de réception</label><input type="time" id="cHeureReception"></div>
     </div>
     <div style="font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 8px;">✍️ Signature du client</div>
     <div class="signature-pad-wrap">
@@ -1275,6 +1276,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <h2 style="gap:8px;">🔑 Restitution du véhicule</h2>
     <div id="restitInfo" style="background:#f8f9fa;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.88rem;font-weight:600;color:var(--steel);border:1px solid var(--border);"></div>
     <label>Date de restitution</label><input type="date" id="restitDate">
+    <label>Heure de restitution</label><input type="time" id="restitHeure">
     <label>Kilométrage retour</label><input type="number" id="restitKm">
     <label>Carburant retour</label><select id="restitCarburant"><option value="plein">Plein</option><option value="3/4">3/4</option><option value="1/2">1/2</option><option value="1/4">1/4</option></select>
     <label>Remarques / État</label><textarea id="restitRemarques" placeholder="RAS, rayure sur aile gauche…"></textarea>
@@ -1345,6 +1347,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <h3>🔑 Restitution véhicule</h3>
     <div id="mRestitInfo" style="background:#f8f9fa;border-radius:8px;padding:10px;margin-bottom:12px;font-size:.85rem;font-weight:600;color:var(--steel);border:1px solid var(--border);"></div>
     <label>Date restitution</label><input type="date" id="mRestitDate">
+    <label>Heure restitution</label><input type="time" id="mRestitHeure">
     <label>Kilométrage retour</label><input type="number" id="mRestitKm">
     <label>Carburant retour</label><select id="mRestitCarburant"><option value="plein">Plein</option><option value="3/4">3/4</option><option value="1/2">1/2</option><option value="1/4">1/4</option></select>
     <label>Remarques</label><textarea id="mRestitRemarques" placeholder="RAS, rayure…"></textarea>
@@ -2649,6 +2652,7 @@ async function copyToClipboard(text){
   try{await navigator.clipboard.writeText(text);return true;}catch(e){return false;}
 }
 function todayISO(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function nowHHMM(){const d=new Date();return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;}
 function dFR(iso){try{const [y,m,d]=iso.split('-');return `${d}/${m}/${y.slice(2)}`;}catch(e){return iso;}}
 
 function na(a){
@@ -3664,8 +3668,8 @@ function contratCardHTML(c,mobile){
   if(mobile){
     return `<div class="mobile-contrat-item ${st==='restitue'?'restitue-ok':st==='en-retard'?'en-retard':'en-cours'}" data-cid="${c.id}">
       <div class="mci-header"><div class="mci-nom">${c.nom}</div><span class="mci-immat">${getImmatPret(c)||'—'}</span></div>
-      <div class="mci-meta">📞 ${c.tel||'—'}<br>📅 Du ${fSh(new Date(c.dateDebut))} au ${fSh(new Date(c.dateFin))}<br><span class="chi-status-badge ${st}">${stLabel}</span></div>
-      ${c.dateRestitution?`<span class="mci-restitue">✅ Restitué le ${fSh(new Date(c.dateRestitution))}</span>`:''}
+      <div class="mci-meta">📞 ${c.tel||'—'}<br>📅 Du ${fSh(new Date(c.dateDebut))}${c.heureReception?' à '+c.heureReception:''} au ${fSh(new Date(c.dateFin))}<br><span class="chi-status-badge ${st}">${stLabel}</span></div>
+      ${c.dateRestitution?`<span class="mci-restitue">✅ Restitué le ${fSh(new Date(c.dateRestitution))}${c.heureRestitution?' à '+c.heureRestitution:''}</span>`:''}
       <div class="mci-actions">
         ${!c.dateRestitution?`<button class="mci-btn mci-btn-blue mci-restit-btn">🔑 Restitution</button>`:''}
         <button class="mci-btn mci-btn-green mci-print-btn">🖨️ Contrat</button>
@@ -3676,8 +3680,8 @@ function contratCardHTML(c,mobile){
   return `<div class="contrat-history-item ${st==='restitue'?'restitue-ok':st==='en-retard'?'en-retard':'en-cours'}" data-cid="${c.id}">
     <div class="chi-info">
       <div class="chi-header"><span class="chi-nom">${c.nom}</span><span class="chi-immat">${getImmatPret(c)||'—'}</span><span class="chi-status-badge ${st}">${stLabel}</span></div>
-      <div class="chi-meta">📞 ${c.tel||'—'} ${c.adresse?'· 📍 '+c.adresse:''}<br>📅 Du <strong>${fSh(new Date(c.dateDebut))}</strong> au <strong>${fSh(new Date(c.dateFin))}</strong> · KM départ : ${c.km||'—'} · Carburant : ${c.carburant||'—'}</div>
-      ${c.dateRestitution?`<div class="chi-restitue-info">✅ Restitué le ${fSh(new Date(c.dateRestitution))}${c.kmRetour?' · KM retour : '+c.kmRetour:''}</div>`:''}
+      <div class="chi-meta">📞 ${c.tel||'—'} ${c.adresse?'· 📍 '+c.adresse:''}<br>📅 Du <strong>${fSh(new Date(c.dateDebut))}${c.heureReception?' à '+c.heureReception:''}</strong> au <strong>${fSh(new Date(c.dateFin))}</strong> · KM départ : ${c.km||'—'} · Carburant : ${c.carburant||'—'}</div>
+      ${c.dateRestitution?`<div class="chi-restitue-info">✅ Restitué le ${fSh(new Date(c.dateRestitution))}${c.heureRestitution?' à '+c.heureRestitution:''}${c.kmRetour?' · KM retour : '+c.kmRetour:''}</div>`:''}
       <div class="chi-actions">
         ${!c.dateRestitution?`<button class="btn-restit chi-restit-btn">🔑 Enregistrer la restitution</button>`:''}
         <button class="btn-print-restit chi-print-btn">🖨️ Réimprimer le contrat</button>
@@ -3747,6 +3751,7 @@ function openContrat(appt,dd,df,td){
   document.getElementById('cCarburant').value='plein';
   document.getElementById('cImmatPret').value=state.loanNames[appt.row]||'';
   document.getElementById('cCouleurPret').value='';
+  document.getElementById('cHeureReception').value=nowHHMM();
   document.getElementById('contratModalOverlay').classList.add('open');
   setTimeout(()=>{setupSignaturePad('cSignatureCanvas');clearSignaturePad('cSignatureCanvas');},50);
 }
@@ -3826,7 +3831,7 @@ function buildContratHTML(c){
       <div class="cp-box"><div class="cp-box-title">Véhicule prêté</div><div class="cp-row"><span class="cp-label">Modèle :</span><span class="cp-val">HYUNDAI BAYON</span></div><div class="cp-row"><span class="cp-label">Immatriculation :</span><span class="cp-val">${getImmatPret(c)||'—'}</span></div><div class="cp-row"><span class="cp-label">Couleur :</span><span class="cp-val">${c.couleurPret||'—'}</span></div></div>
     </div>
     <div class="cp-dates">
-      <div><div class="cp-date-label">Date de départ</div><div class="cp-date-val">${fSh(new Date(c.dateDebut))}</div><div class="cp-date-sub">KM départ : ${c.km||'—'} · Carburant : ${c.carburant||'—'}</div></div>
+      <div><div class="cp-date-label">Date de départ</div><div class="cp-date-val">${fSh(new Date(c.dateDebut))}${c.heureReception?' à '+c.heureReception:''}</div><div class="cp-date-sub">KM départ : ${c.km||'—'} · Carburant : ${c.carburant||'—'}</div></div>
       <div><div class="cp-date-label">Date de retour prévue</div><div class="cp-date-val">${fSh(new Date(c.dateFin))}</div></div>
     </div>
     <div class="cp-conditions"><div class="cp-conditions-title">Conditions de prêt</div><ul>
@@ -3843,7 +3848,7 @@ function buildContratHTML(c){
 async function imprimerContrat(){
   if(!contratAppt)return;
   const {appt,dd,df,td}=contratAppt;
-  const c={id:genId(),numero:Date.now().toString().slice(-6),nom:document.getElementById('cNom').value.trim(),tel:document.getElementById('cTel').value.trim(),adresse:document.getElementById('cAdresse').value.trim(),km:document.getElementById('cKm').value,carburant:document.getElementById('cCarburant').value,immatPret:document.getElementById('cImmatPret').value.trim(),couleurPret:document.getElementById('cCouleurPret').value.trim(),signatureClient:getSignatureDataURL('cSignatureCanvas'),dateDebut:dd.toISOString(),dateFin:df.toISOString(),groupId:appt.groupId,createdAt:Date.now()};
+  const c={id:genId(),numero:Date.now().toString().slice(-6),nom:document.getElementById('cNom').value.trim(),tel:document.getElementById('cTel').value.trim(),adresse:document.getElementById('cAdresse').value.trim(),km:document.getElementById('cKm').value,carburant:document.getElementById('cCarburant').value,immatPret:document.getElementById('cImmatPret').value.trim(),couleurPret:document.getElementById('cCouleurPret').value.trim(),heureReception:document.getElementById('cHeureReception').value,signatureClient:getSignatureDataURL('cSignatureCanvas'),dateDebut:dd.toISOString(),dateFin:df.toISOString(),groupId:appt.groupId,createdAt:Date.now()};
   ctState.contrats=[...(ctState.contrats||[]),c];
   await saveCT();
   document.getElementById('contrat-print-zone').innerHTML=buildContratHTML(c);
@@ -3863,9 +3868,9 @@ function buildRestitutionHTML(c){
     <div class="restit-title-box">✅ Restitution du véhicule de prêt</div>
     <div class="restit-grid">
       <div class="restit-box"><div class="restit-box-title">Emprunteur</div><div class="cp-row"><span class="cp-label">Nom :</span><span class="cp-val">${c.nom}</span></div><div class="cp-row"><span class="cp-label">Véhicule :</span><span class="cp-val">HYUNDAI BAYON — ${getImmatPret(c)||'—'}</span></div></div>
-      <div class="restit-box"><div class="restit-box-title">Départ</div><div class="cp-row"><span class="cp-label">Date :</span><span class="cp-val">${fSh(new Date(c.dateDebut))}</span></div><div class="cp-row"><span class="cp-label">KM :</span><span class="cp-val">${c.km||'—'}</span></div><div class="cp-row"><span class="cp-label">Carburant :</span><span class="cp-val">${c.carburant||'—'}</span></div></div>
+      <div class="restit-box"><div class="restit-box-title">Départ</div><div class="cp-row"><span class="cp-label">Date :</span><span class="cp-val">${fSh(new Date(c.dateDebut))}${c.heureReception?' à '+c.heureReception:''}</span></div><div class="cp-row"><span class="cp-label">KM :</span><span class="cp-val">${c.km||'—'}</span></div><div class="cp-row"><span class="cp-label">Carburant :</span><span class="cp-val">${c.carburant||'—'}</span></div></div>
     </div>
-    <div class="restit-box" style="margin-bottom:14px;"><div class="restit-box-title">Retour</div><div class="cp-row"><span class="cp-label">Date :</span><span class="cp-val">${fSh(new Date(c.dateRestitution))}</span></div><div class="cp-row"><span class="cp-label">KM :</span><span class="cp-val">${c.kmRetour||'—'}</span></div><div class="cp-row"><span class="cp-label">Carburant :</span><span class="cp-val">${c.carburantRetour||'—'}</span></div>${c.remarques?`<div class="cp-row"><span class="cp-label">Remarques :</span><span class="cp-val">${c.remarques}</span></div>`:''}</div>
+    <div class="restit-box" style="margin-bottom:14px;"><div class="restit-box-title">Retour</div><div class="cp-row"><span class="cp-label">Date :</span><span class="cp-val">${fSh(new Date(c.dateRestitution))}${c.heureRestitution?' à '+c.heureRestitution:''}</span></div><div class="cp-row"><span class="cp-label">KM :</span><span class="cp-val">${c.kmRetour||'—'}</span></div><div class="cp-row"><span class="cp-label">Carburant :</span><span class="cp-val">${c.carburantRetour||'—'}</span></div>${c.remarques?`<div class="cp-row"><span class="cp-label">Remarques :</span><span class="cp-val">${c.remarques}</span></div>`:''}</div>
     <div class="restit-signatures"><div><div class="restit-sig-label">Signature du garage</div><div class="restit-sig-line">Carrosserie Brun</div></div><div><div class="restit-sig-label"${c.signatureRestitution?' style="margin-bottom:4px;"':''}>Signature de l'emprunteur</div>${c.signatureRestitution?`<img src="${c.signatureRestitution}" style="max-width:100%;max-height:70px;display:block;margin-bottom:4px;">`:''}<div class="restit-sig-line">${c.nom}</div></div></div>
     <div class="restit-footer">Carrosserie Brun — Valence Motors · 307 avenue de Romans, 26000 Valence · Tél : 04 75 55 64 39</div>
   </div>`;
@@ -3876,6 +3881,7 @@ function openRestitution(cid){
   restitId=cid;
   document.getElementById('restitInfo').textContent=`${c.nom} — ${getImmatPret(c)||''}`;
   document.getElementById('restitDate').value=todayISO();
+  document.getElementById('restitHeure').value=nowHHMM();
   document.getElementById('restitKm').value='';
   document.getElementById('restitCarburant').value='plein';
   document.getElementById('restitRemarques').value='';
@@ -3887,7 +3893,7 @@ document.getElementById('restitutionModalOverlay').addEventListener('click',func
 document.getElementById('btnSaveRestitution').addEventListener('click',async()=>{
   if(isRO()){showRO();return;}
   if(!restitId)return;
-  ctState.contrats=(ctState.contrats||[]).map(c=>c.id!==restitId?c:{...c,dateRestitution:document.getElementById('restitDate').value?new Date(document.getElementById('restitDate').value).toISOString():new Date().toISOString(),kmRetour:document.getElementById('restitKm').value,carburantRetour:document.getElementById('restitCarburant').value,remarques:document.getElementById('restitRemarques').value.trim(),signatureRestitution:getSignatureDataURL('restitSignatureCanvas')||c.signatureRestitution||''});
+  ctState.contrats=(ctState.contrats||[]).map(c=>c.id!==restitId?c:{...c,dateRestitution:document.getElementById('restitDate').value?new Date(document.getElementById('restitDate').value).toISOString():new Date().toISOString(),heureRestitution:document.getElementById('restitHeure').value,kmRetour:document.getElementById('restitKm').value,carburantRetour:document.getElementById('restitCarburant').value,remarques:document.getElementById('restitRemarques').value.trim(),signatureRestitution:getSignatureDataURL('restitSignatureCanvas')||c.signatureRestitution||''});
   document.getElementById('restitutionModalOverlay').classList.remove('open');
   await saveCT();renderContrats();if(isMobile())renderMobileContrats();
   render();if(isMobile())renderMobile();upStats();
@@ -3903,6 +3909,7 @@ function openMobileRestitution(cid){
   mRestitId=cid;
   document.getElementById('mRestitInfo').textContent=`${c.nom} — ${getImmatPret(c)||''}`;
   document.getElementById('mRestitDate').value=todayISO();
+  document.getElementById('mRestitHeure').value=nowHHMM();
   document.getElementById('mRestitKm').value='';
   document.getElementById('mRestitCarburant').value='plein';
   document.getElementById('mRestitRemarques').value='';
@@ -3912,7 +3919,7 @@ document.getElementById('mBtnCloseRestit').addEventListener('click',()=>document
 document.getElementById('mBtnSaveRestit').addEventListener('click',async()=>{
   if(isRO()){showRO();return;}
   if(!mRestitId)return;
-  ctState.contrats=(ctState.contrats||[]).map(c=>c.id!==mRestitId?c:{...c,dateRestitution:document.getElementById('mRestitDate').value?new Date(document.getElementById('mRestitDate').value).toISOString():new Date().toISOString(),kmRetour:document.getElementById('mRestitKm').value,carburantRetour:document.getElementById('mRestitCarburant').value,remarques:document.getElementById('mRestitRemarques').value.trim()});
+  ctState.contrats=(ctState.contrats||[]).map(c=>c.id!==mRestitId?c:{...c,dateRestitution:document.getElementById('mRestitDate').value?new Date(document.getElementById('mRestitDate').value).toISOString():new Date().toISOString(),heureRestitution:document.getElementById('mRestitHeure').value,kmRetour:document.getElementById('mRestitKm').value,carburantRetour:document.getElementById('mRestitCarburant').value,remarques:document.getElementById('mRestitRemarques').value.trim()});
   document.getElementById('mobileRestitutionOverlay').classList.remove('open');
   await saveCT();renderMobileContrats();
   render();if(isMobile())renderMobile();upStats();
