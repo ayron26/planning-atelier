@@ -251,6 +251,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
 .modal{background:#fff;border-radius:14px;padding:28px 30px;width:460px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+@media(max-width:768px){
+  .modal{width:calc(100vw - 32px)!important;padding:20px !important;}
+}
 .modal h2{font-size:1.1rem;font-weight:700;color:var(--steel);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
 .modal h2::before{content:'🔧';font-size:1.2rem;}
 .modal label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;margin-top:14px;}
@@ -1303,6 +1306,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color
     <label>Téléphone</label><input type="text" id="mApptTel" placeholder="06 XX XX XX XX">
     <label>Adresse</label><input type="text" id="mApptAdresse" placeholder="12 rue des Lilas">
     <label>Immatriculation (véhicule client)</label><input type="text" id="mApptImmat" placeholder="AA-123-AA" style="text-transform:uppercase;">
+    <div id="mContratWrap" style="display:none;margin:12px 0;">
+      <button class="mbtn-primary" id="mBtnOpenContrat" style="width:100%;background:#1a5276;font-size:.95rem;padding:14px;">📄 Contrat du véhicule de prêt</button>
+    </div>
     <label>Technicien assigné</label>
     <select id="mApptTech"><option value="">— Aucun —</option><option value="fabien">Fabien</option><option value="eric">Éric</option><option value="david">David</option><option value="alois">Aloïs</option><option value="anthony">Anthony</option></select>
     <label>Technicien 2 (optionnel)</label>
@@ -3921,6 +3927,7 @@ function upPrevM(day,weekOffset,n){
 function openMobileModal(type,row,day){
   if(isRO()){showRO();return;}
   isEditing=false;mEditGid=null;
+  document.getElementById('mContratWrap').style.display='none';
   mPendingAppt={type,row,day,weekOffset:state.weekOffset};
   const he=pendingPlacement&&pendingPlacement.heldExtra;
   document.getElementById('mModalTitle').textContent=pendingPlacement?'Placer le dossier « '+pendingPlacement.nom+' »':'Nouveau rendez-vous';
@@ -3947,6 +3954,14 @@ function openMobileEditModal(gid){
   mSelColor=Math.max(0,COLORS.indexOf(root.color));buildMCP(i=>mSelColor=i,mSelColor);
   mPendingAppt={type:root.type,row:root.row,day:root.day,weekOffset:gWO(root.weekStart)};
   upPrevM(root.day,mPendingAppt.weekOffset,root.totalDays);
+  const contratWrap=document.getElementById('mContratWrap');
+  if(root.type==='loan'){
+    contratWrap.style.display='block';
+    const dF=gWD(mPendingAppt.weekOffset);const dd=dF[root.day]||dF[0];const td=root.totalDays||1;const df=calcFin(dd,td);
+    document.getElementById('mBtnOpenContrat').onclick=()=>{document.getElementById('mobileModalOverlay').classList.remove('open');openContrat(root,dd,df,td);};
+  }else{
+    contratWrap.style.display='none';
+  }
   document.getElementById('mobileModalOverlay').classList.add('open');
 }
 document.getElementById('mApptDays').addEventListener('input',()=>{if(mPendingAppt)upPrevM(mPendingAppt.day,mPendingAppt.weekOffset,parseInt(document.getElementById('mApptDays').value)||1);});
